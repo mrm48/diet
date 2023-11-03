@@ -26,7 +26,9 @@ public class MealController{
 	} */
 
     @PostMapping("/addfood")
-    public Integer addFood(Food f){
+    public Integer addFood(String food){
+        // Get food from string
+        Food f = new Food(food, 1, 0);
         return f.getCalories();
     }
 
