@@ -1,7 +1,6 @@
 package com.trinsic.diet3.meal;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,9 +14,7 @@ public class MealController{
 
     private final MealService mealService;
 
-    @Autowired
     public MealController(MealService mealService){
-        this.mealService = mealService;
     }
 
 	@GetMapping("/listmeals")
@@ -37,8 +34,7 @@ public class MealController{
 
     @GetMapping("/getRemainingCalories")
     public Integer getremainingcalories(){
-        return new Integer(0);
+        return Integer.valueOf(0);
     }
-
 
 }
