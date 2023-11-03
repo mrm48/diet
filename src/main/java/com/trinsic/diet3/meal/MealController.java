@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
+
+import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.meal.Meal;
 import com.trinsic.diet3.meal.MealService;
 
@@ -18,19 +20,14 @@ public class MealController{
         this.mealService = mealService;
     }
 
-	@GetMapping("/listmeals")
-	public List<Meal> listMeals(){
-        return mealService.listMeals();
-	}
+/* 	@GetMapping("/listfood")
+	public List<Food> listFood(){
+        return mealService.listFood();
+	} */
 
-    @PostMapping("/addmeal")
-    public void addMeal(){
-    
-    }
-
-    @GetMapping("/listtodaysmeals")
-    public List<Meal> listTodaysMeals(){
-        return List.of(new Meal());
+    @PostMapping("/addfood")
+    public Integer addFood(Food f){
+        return f.getCalories();
     }
 
     @GetMapping("/getRemainingCalories")

@@ -1,6 +1,6 @@
 package com.trinsic.diet3.meal;
 
-import com.trinsic.diet3.food.Food;
+//import com.trinsic.diet3.food.Food;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 @Table
 public class Meal {
-
     @Id
     @SequenceGenerator(
         name = "meal_sequence",
@@ -29,24 +28,23 @@ public class Meal {
     private Long id;
     private String name;
     private LocalDate day;
-    private List<Food> items;
+    //private List<Food> items;
     private Integer calories;
 
     public Meal() {
     }
 
-    public Meal(String name, LocalDate day, List<Food> items, Integer calories) {
+    public Meal(String name, LocalDate day, Integer calories) {
         this.name = name;
         this.day = day;
-        this.items = items;
+        //this.items = items;
         this.calories = calories;
     }
 
-    public Meal(Long id, String name, LocalDate day, List<Food> items, Integer calories) {
+    public Meal(Long id, String name, LocalDate day, Integer calories) {
         this.id = id;
         this.name = name;
         this.day = day;
-        this.items = items;
         this.calories = calories;
     }
 
@@ -66,40 +64,11 @@ public class Meal {
         this.day = day;
     }
 
-    public List<Food> getItems() {
-        return items;
-    }
-
-    public void setItems(List<Food> items) {
-        this.items = items;
-    }
-
-    public void addItem(Food item){
-        this.items.add(item);
-        updateCalories();
-    }
-
-    public void deleteItem(String item){
-        for (Food food : items) {
-           if(food.getName() == item){
-               this.items.remove(items.indexOf(food));
-           }
-        }
-        updateCalories();
-    }
-
     public Integer getCalories() {
         return calories;
     }
 
     public void setCalories(Integer calories) {
         this.calories = calories;
-    }
-
-    public void updateCalories(){
-        calories = 0; 
-        for (Food food : items) {
-            calories += food.getCalories();
-        }
     }
 }
