@@ -1,10 +1,10 @@
 package com.trinsic.diet3.meal;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 import com.trinsic.diet3.meal.Meal;
 import com.trinsic.diet3.meal.MealService;
