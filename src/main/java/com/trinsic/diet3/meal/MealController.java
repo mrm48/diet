@@ -15,6 +15,7 @@ public class MealController{
     private final MealService mealService;
 
     public MealController(MealService mealService){
+        this.mealService = mealService;
     }
 
 	@GetMapping("/listmeals")
