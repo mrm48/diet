@@ -31,8 +31,9 @@ public class FoodController {
 	}
 
     @PostMapping("/addcalories")
-    public void addCalories(){
-        
+    @ResponseBody
+    public Integer addCalories(@RequestBody Food hFood){
+        return hFood.getCalories();
     }
 
     @GetMapping("/getRemainingCalories")
