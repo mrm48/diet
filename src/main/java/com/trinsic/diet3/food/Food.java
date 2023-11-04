@@ -66,5 +66,9 @@ public class Food {
     public Integer getCalories(){
         return this.calories;
     }
+
+    public Long getID(){
+        return this.id;
+    }
 }
 

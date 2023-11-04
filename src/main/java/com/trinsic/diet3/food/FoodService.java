@@ -30,4 +30,12 @@ public class FoodService{
         }
         return queryStatus;
     }
+
+    public Integer addFood(Food f){
+        Integer queryStatus = Integer.valueOf(-1);
+        if(this.listCalories(f.getName()) != -1){
+            queryStatus = foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories(), f.getID());    
+        }
+        return queryStatus;
+    }
 }

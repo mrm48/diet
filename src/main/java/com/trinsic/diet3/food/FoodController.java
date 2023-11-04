@@ -37,6 +37,12 @@ public class FoodController {
         return foodService.addCaloriesByName(hFood.getName(), hFood.getCalories());
     }
 
+    @PostMapping("/addfood")
+    @ResponseBody
+    public Integer addFood(@RequestBody Food hFood){
+        return foodService.addFood(new Food(hFood.getName(), hFood.getUnits(), hFood.getCalories()));
+    }
+
     @GetMapping("/getRemainingCalories")
     public Integer getremainingcalories(){
         return Integer.valueOf(0);
