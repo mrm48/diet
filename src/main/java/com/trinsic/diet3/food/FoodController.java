@@ -21,7 +21,8 @@ public class FoodController {
 
 	@GetMapping("/listcalories")
 	public Integer listCalories(){
-        return foodService.listCalories();
+        //return foodService.listCalories();
+        return Integer.valueOf(1);
 	}
 
     @PostMapping("/addcalories")
