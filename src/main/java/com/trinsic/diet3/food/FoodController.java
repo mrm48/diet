@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.meal.Meal;
@@ -25,15 +26,15 @@ public class FoodController {
 
 	@RequestMapping(value = "/listcalories")
     @ResponseBody
-	public Integer listCalories(@RequestBody Food httpEntity){
-        json = httpEntity.getName();
+	public Integer listCalories(@RequestBody Food hFood){
+        json = hFood.getName();
         return foodService.listCalories(json);
 	}
 
     @PostMapping("/addcalories")
     @ResponseBody
     public Integer addCalories(@RequestBody Food hFood){
-        return hFood.getCalories();
+        return foodService.addCaloriesByName(hFood.getName(), hFood.getCalories());
     }
 
     @GetMapping("/getRemainingCalories")

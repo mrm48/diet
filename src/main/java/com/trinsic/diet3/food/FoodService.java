@@ -22,4 +22,12 @@ public class FoodService{
     public void setCalories(Food f){
         this.calories = f.getCalories();
     }
+
+    public Integer addCaloriesByName(String name, Integer cals){
+        Integer queryStatus = Integer.valueOf(-1);
+        if(this.listCalories(name) != -1){
+            queryStatus = foodRepository.addCaloriesByName(name, cals);    
+        }
+        return queryStatus;
+    }
 }
