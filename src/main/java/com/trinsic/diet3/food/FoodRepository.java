@@ -19,7 +19,7 @@ public interface FoodRepository
         Integer addCaloriesByName(String name, Integer cals);
 
         @Modifying
-        @Query("INSERT INTO Food (calories, units, id, name) VALUES (?3, ?2, ?4, ?1)")
-        Integer addFood(String name, Integer units, Integer cals, Long id);
+        @Query("INSERT INTO Food (calories, units, name) VALUES (?3, ?2, ?1)")
+        Integer addFood(String name, Integer units, Integer cals);
     
 }

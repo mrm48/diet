@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FoodService{
@@ -31,11 +32,10 @@ public class FoodService{
         return queryStatus;
     }
 
+    @Transactional
     public Integer addFood(Food f){
         Integer queryStatus = Integer.valueOf(-1);
-        if(this.listCalories(f.getName()) != -1){
-            queryStatus = foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories(), f.getID());    
-        }
+        queryStatus = foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());    
         return queryStatus;
     }
 }
