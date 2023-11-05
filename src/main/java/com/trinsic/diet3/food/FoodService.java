@@ -35,7 +35,11 @@ public class FoodService{
     @Transactional
     public Integer addFood(Food f){
         Integer queryStatus = Integer.valueOf(-1);
-        queryStatus = foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());    
+        Optional<Food> searchFood = foodRepository.findFoodByName(f.getName());
+        if (searchFood.isEmpty()) {
+            queryStatus = foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
+        }
         return queryStatus;
     }
+
 }
