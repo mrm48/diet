@@ -1,5 +1,6 @@
 package com.trinsic.diet3.meal;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,10 +16,10 @@ public interface MealRepository
         Optional<Meal> findMealByName(String name);
 
         @Modifying
-        @Query("UPDATE Meal f SET f.calories = ?2 WHERE f.name = ?1")
-        Integer addFood(String name, Integer cals);
+        @Query("UPDATE Meal f SET f.calories = ?2 WHERE f.name = ?1 AND f.day=?3")
+        Integer addFood(String name, Integer cals, LocalDate day);
 
         @Modifying
-        @Query("INSERT INTO Meal (calories, name) VALUES (?3, ?1)")
-        Integer addMeal(String name, Integer cals);
+        @Query("INSERT INTO Meal (calories, name, day) VALUES (?2, ?1, ?3)")
+        Integer addMeal(String name, Integer cals, LocalDate day);
 }
