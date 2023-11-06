@@ -3,7 +3,11 @@ package com.trinsic.diet3.meal;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.time.LocalDate;
 import java.util.List;
 
 import com.trinsic.diet3.food.Food;
@@ -30,6 +34,12 @@ public class MealController{
         // Get food from string
         Food f = new Food(food, 1, 0);
         return f.getCalories();
+    }
+
+    @PostMapping("/addmeal")
+    @ResponseBody
+    public Integer addMeal(@RequestBody Meal hMeal){
+        return mealService.addMeal(new Meal(hMeal.getName(), LocalDate.now(), hMeal.getCalories()));
     }
 
     @GetMapping("/getRemainingCalories")
