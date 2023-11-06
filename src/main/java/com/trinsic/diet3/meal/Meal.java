@@ -48,6 +48,12 @@ public class Meal {
         this.calories = calories;
     }
 
+    public Meal(String name, Integer calories) {
+        this.name = name;
+        this.day = LocalDate.now();
+        this.calories = calories;
+    }
+
     public String getName() {
         return name;
     }
