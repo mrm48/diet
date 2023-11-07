@@ -16,6 +16,7 @@ public class MealService{
 
     @Transactional
     public Integer addMeal(Meal f){
+        // Only add meal if there is not a meal with the same name for the day
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Meal> searchFood = mealRepository.findMealByName(f.getName(), f.getDay());
         if (searchFood.isEmpty()) {
@@ -25,6 +26,7 @@ public class MealService{
     }
 
     public Integer getCalories(String name, LocalDate day){
+        // Respond with number of calories or -1 for meal not found
         this.calories = -1;
         Optional<Meal> qMeal = mealRepository.findMealByName(name, day);
         qMeal.ifPresent(this::setCalories);
