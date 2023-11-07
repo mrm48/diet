@@ -1,4 +1,5 @@
 package com.trinsic.diet3.meal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import com.trinsic.diet3.food.Food;
 public class MealService{
 
     MealRepository mealRepository;
+    Integer calories;
 
     @Transactional
     public Integer addMeal(Meal f){
@@ -20,6 +22,17 @@ public class MealService{
             queryStatus = mealRepository.addMeal(f.getName(), f.getCalories(), f.getDay());  
         }
         return queryStatus;
+    }
+
+    public Integer getCalories(String name, LocalDate day){
+        this.calories = -1;
+        Optional<Meal> qMeal = mealRepository.findMealByName(name, day);
+        qMeal.ifPresent(this::setCalories);
+        return this.calories;
+    }
+
+    public void setCalories(Meal m){
+        this.calories = m.getCalories();
     }
 
 }
