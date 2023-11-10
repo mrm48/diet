@@ -25,6 +25,13 @@ public class MealService{
         return queryStatus;
     }
 
+    @Transactional
+    public Integer addCalories(Food f){
+        Integer queryStatus = Integer.valueOf(-1);
+        queryStatus = mealRepository.addFood(f.getName(),f.getCalories(),LocalDate.now());
+        return queryStatus;
+    }
+
     public Integer getCalories(String name, LocalDate day){
         // Respond with number of calories or -1 for meal not found
         this.calories = -1;

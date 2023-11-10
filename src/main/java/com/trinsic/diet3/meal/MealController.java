@@ -9,19 +9,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import com.trinsic.diet3.food.Food;
+import com.trinsic.diet3.food.FoodRepository;
 import com.trinsic.diet3.meal.Meal;
 import com.trinsic.diet3.meal.MealService;
+import com.trinsic.diet3.food.FoodService;
 
 @RestController
 @RequestMapping(path = "api/v1/meal")
 public class MealController{
 
     private final MealService mealService;
+    private final FoodRepository foodRepository;
 
-    public MealController(MealService mealService){
+    public MealController(MealService mealService, FoodRepository foodRepository){
         this.mealService = mealService;
+        this.foodRepository = foodRepository;
     }
 
 /* 	@GetMapping("/listfood")
@@ -32,8 +37,11 @@ public class MealController{
     @PostMapping("/addfood")
     public Integer addFood(String food){
         // Get food from string
-        Food f = new Food(food, 1, 0);
-        return f.getCalories();
+        Optional<Food> f = foodRepository.findFoodByName(food);
+        if(f.isPresent()){
+            return mealService.addCalories(f.get());
+        }
+        return Integer.valueOf(-1);
     }
 
     @PostMapping("/addmeal")
