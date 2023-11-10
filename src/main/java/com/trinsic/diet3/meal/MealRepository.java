@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface MealRepository 
         extends JpaRepository<Meal, Long>{
         
-        @Query("Select * FROM Food f WHERE f.name = ?1 AND f.day = ?3")
+        @Query("SELECT m FROM Meal m WHERE m.name = ?1 AND m.day = ?2")
         Optional<Meal> findMealByName(String name, LocalDate day);
 
         @Modifying
