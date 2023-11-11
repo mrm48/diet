@@ -14,6 +14,10 @@ public class MealService{
     MealRepository mealRepository;
     Integer calories;
 
+    public MealService(MealRepository mealRepository){
+        this.mealRepository = mealRepository;
+    }
+
     @Transactional
     public Integer addMeal(Meal f){
         // Only add meal if there is not a meal with the same name for the day
