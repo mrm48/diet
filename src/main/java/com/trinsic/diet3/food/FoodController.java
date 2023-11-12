@@ -1,19 +1,13 @@
 package com.trinsic.diet3.food;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-import java.util.Optional;
 
-import com.trinsic.diet3.food.Food;
-import com.trinsic.diet3.meal.Meal;
-import com.trinsic.diet3.meal.MealService;
 
 @RestController
 @RequestMapping(path = "api/v1/food")
