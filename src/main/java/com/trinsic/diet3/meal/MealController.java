@@ -24,11 +24,6 @@ public class MealController{
         this.foodRepository = foodRepository;
     }
 
-/* 	@GetMapping("/listfood")
-	public List<Food> listFood(){
-        return mealService.listFood();
-	} */
-
     @PostMapping("/addfood")
     public Integer addFood(String food){
         // Get food from string

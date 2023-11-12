@@ -1,7 +1,5 @@
 package com.trinsic.diet3.food;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

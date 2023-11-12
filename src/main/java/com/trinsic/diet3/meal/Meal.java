@@ -1,7 +1,5 @@
 package com.trinsic.diet3.meal;
 
-//import com.trinsic.diet3.food.Food;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +8,6 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table
@@ -28,7 +25,6 @@ public class Meal {
     private Long id;
     private String name;
     private LocalDate day;
-    //private List<Food> items;
     private Integer calories;
 
     public Meal() {
@@ -37,7 +33,6 @@ public class Meal {
     public Meal(String name, LocalDate day, Integer calories) {
         this.name = name;
         this.day = day;
-        //this.items = items;
         this.calories = calories;
     }
 

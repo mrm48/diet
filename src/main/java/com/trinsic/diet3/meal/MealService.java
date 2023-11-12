@@ -1,6 +1,5 @@
 package com.trinsic.diet3.meal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
