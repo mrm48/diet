@@ -29,9 +29,9 @@ public class MealController{
     @PostMapping("/addfood")
     public Integer addFood(String food){
         // Get food from string
-        Optional<Food> f = foodRepository.findFoodByName(food);
-        if(f.isPresent()){
-            return mealService.addCalories(f.get());
+        Optional<Food> foundFood = foodRepository.findFoodByName(food);
+        if(foundFood.isPresent()){
+            return mealService.addCalories(foundFood.get());
         }
         return Integer.valueOf(-1);
     }
@@ -47,8 +47,9 @@ public class MealController{
     public Integer getremainingcalories(){
         // Get calories for current day
         Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now());
+        Integer totalCalories = mealService.getTotalCalories();
         // Subtract from calories total (daily total, where to define?)
-        return Integer.valueOf(0);
+        return usedCalories - totalCalories;
     }
 
 }
