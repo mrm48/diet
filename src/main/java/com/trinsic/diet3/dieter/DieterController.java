@@ -1,4 +1,4 @@
-package com.trinsic.diet3.user;
+package com.trinsic.diet3.dieter;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,19 +14,19 @@ import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
 
 @RestController
-@RequestMapping(path = "api/v1/user")
-public class UserController{
+@RequestMapping(path = "api/v1/dieter")
+public class DieterController{
 
-    private final UserService userService;
+    private final DieterService dieterService;
 
-    public UserController(UserService userService, FoodRepository foodRepository){
-        this.userService = userService;
+    public DieterController(DieterService dieterService, FoodRepository foodRepository){
+        this.dieterService = dieterService;
     }
 
-    @PostMapping("/adduser")
+    @PostMapping("/adddieter")
     @ResponseBody
-    public Integer addUser(@RequestBody User hUser){
-        // call the User constructor that uses the current date as the value
-        return userService.addUser(new User(hUser.getName(), hUser.getTotalCalories()));
+    public Integer addDieter(@RequestBody Dieter hDieter){
+        // call the Dieter constructor that uses the current date as the value
+        return dieterService.addDieter(new Dieter(hDieter.getName(), hDieter.getTotalCalories()));
     }
 }

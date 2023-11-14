@@ -1,4 +1,4 @@
-package com.trinsic.diet3.user;
+package com.trinsic.diet3.dieter;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,31 +9,31 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table
-public class User {
+public class Dieter {
     @Id
     @SequenceGenerator(
-        name = "user_sequence",
-        sequenceName = "user_sequence",
+        name = "dieter_sequence",
+        sequenceName = "dieter_sequence",
         allocationSize = 1
     )
     @GeneratedValue(
         strategy = GenerationType.SEQUENCE,
-        generator = "user_sequence"
+        generator = "dieter_sequence"
     ) 
     private Long id;
     private String name;
     private Integer totalcalories;
 
-    public User() {
+    public Dieter() {
     }
 
-    public User (Long id, String name, Integer totalCalories){
+    public Dieter (Long id, String name, Integer totalCalories){
         this.id = id;
         this.name = name;
         this.totalcalories = totalCalories;
     }
 
-    public User(String name, Integer totalCalories){
+    public Dieter(String name, Integer totalCalories){
         this.name = name;
         this.totalcalories = totalCalories;
     }
