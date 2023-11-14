@@ -45,10 +45,14 @@ public class MealController{
 
     @GetMapping("/getRemainingCalories")
     public Integer getremainingcalories(){
+        
         // Get calories for current day
         Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now());
         Integer totalCalories = mealService.getTotalCalories();
-        // Subtract from calories total (daily total, where to define?)
+
+        // Subtract from calories total (daily total, need a new object of user
+        // type that is going to store total calories. For now, assume single
+        // user
         return usedCalories - totalCalories;
     }
 
