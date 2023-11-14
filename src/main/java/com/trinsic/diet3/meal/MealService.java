@@ -36,17 +36,17 @@ public class MealService{
 
     public Integer getCalories(String name, LocalDate day){
         // Respond with number of calories or -1 for meal not found
-        Optional<Meal> qMeal = mealRepository.findMealByName(name, day);
-        if (qMeal.isPresent()){
-            return qMeal.get().getCalories();
+        Optional<Meal> meal = mealRepository.findMealByName(name, day);
+        if (meal.isPresent()){
+            return meal.get().getCalories();
         }
         return -1;
     }
 
     public Integer getCaloriesByDay(LocalDate day){
-        Optional<Meal> qMeal = mealRepository.findMealByDay(day);
-        if (qMeal.isPresent()){
-            return qMeal.get().getCalories();
+        Optional<Meal> meal = mealRepository.findMealByDay(day);
+        if (meal.isPresent()){
+            return meal.get().getCalories();
         }
         return 0;
     }
