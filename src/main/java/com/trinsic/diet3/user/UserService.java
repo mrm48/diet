@@ -22,15 +22,18 @@ public class UserService{
         Integer queryStatus = Integer.valueOf(-1);
         Optional<User> searchUser = userRepository.findUserByName(newUser.getName());
         if (searchUser.isEmpty()) {
-            queryStatus = userRepository.addUser(newUser.getName(), newUser.getCalories());  
+            queryStatus = userRepository.addUser(newUser.getName(), newUser.getTotalCalories());  
         }
         return queryStatus;
     }
 
     @Transactional
-    public Integer addCalories(Food newFood){
+    public Integer addCalories(User user){
         Integer queryStatus = Integer.valueOf(-1);
-        queryStatus = userRepository.addFood(newFood.getName(),newFood.getCalories(),LocalDate.now());
+        Optional<User> searchUser = userRepository.findUserByName(user.getName());
+        if (searchUser.isPresent()){
+            queryStatus = userRepository.addTotalCalories(user.getName(),user.getTotalCalories());
+        }
         return queryStatus;
     }
 

@@ -12,11 +12,19 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository 
         extends JpaRepository<User, Long>{
         
-       @Query("SELECT m FROM User m WHERE m.name = ?1 AND m.day = ?2")
-        Optional<User> findUserByName(String name, LocalDate day);
+       @Query("SELECT u FROM User u WHERE u.name = ?1")
+        Optional<User> findUserByName(String name);
+
+       @Query("SELECT u.totalcalories FROM User u WHERE u.name = ?1")
+        Integer findUserCaloriesByDay(String name);
 
         @Modifying
-        @Query("INSERT INTO User (calories, name, day) VALUES (?2, ?1, ?3)")
-        Integer addUser(String name, Integer cals, LocalDate day);
+        @Query("INSERT INTO User (totalcalories, name) VALUES (?2, ?1)")
+        Integer addUser(String name, Integer cals);
+
+        @Modifying
+        @Query("UPDATE u FROM User SET u.totalcalories=?2 WHERE u.name = ?1")
+        Integer addTotalCalories(String name, Integer cals);
+
 }
 
