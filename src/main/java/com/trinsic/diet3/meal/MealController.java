@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
+import java.time.LocalDate;
 
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
@@ -23,6 +24,7 @@ public class MealController{
         this.mealService = mealService;
         this.foodRepository = foodRepository;
     }
+
 
     @PostMapping("/addfood")
     public Integer addFood(String food){
@@ -43,6 +45,9 @@ public class MealController{
 
     @GetMapping("/getRemainingCalories")
     public Integer getremainingcalories(){
+        // Get calories for current day
+        Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now());
+        // Subtract from calories total (daily total, where to define?)
         return Integer.valueOf(0);
     }
 
