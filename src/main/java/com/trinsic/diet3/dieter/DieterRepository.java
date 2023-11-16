@@ -14,7 +14,7 @@ public interface DieterRepository
        @Query("SELECT d FROM Dieter d WHERE d.name = ?1")
         Optional<Dieter> findDieterByName(String name);
 
-       @Query("SELECT d.totalcalories FROM Dieter d WHERE d.name = ?1")
+       @Query("SELECT d.calories FROM Dieter d WHERE d.name = ?1")
         Optional<Integer> findDieterCaloriesByDay(String name);
 
         @Modifying
