@@ -18,11 +18,11 @@ public interface DieterRepository
         Optional<Integer> findDieterCaloriesByDay(String name);
 
         @Modifying
-        @Query("INSERT INTO Dieter (name, totalcalories) VALUES (?1, ?2)")
+        @Query("INSERT INTO Dieter (name, calories) VALUES (?1, ?2)")
         Integer addDieter(String name, Integer cals);
 
         @Modifying
-        @Query("UPDATE Dieter SET totalcalories = ?2 WHERE name = ?1")
+        @Query("UPDATE Dieter SET calories = ?2 WHERE name = ?1")
         Integer addTotalCalories(String name, Integer cals);
 
 }

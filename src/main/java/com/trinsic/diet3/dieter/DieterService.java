@@ -20,7 +20,7 @@ public class DieterService{
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(newDieter.getName());
         if (searchDieter.isEmpty()) {
-            queryStatus = dieterRepository.addDieter(newDieter.getName(), newDieter.getTotalCalories());  
+            queryStatus = dieterRepository.addDieter(newDieter.getName(), newDieter.getCalories());  
         }
         return queryStatus;
     }
@@ -30,7 +30,7 @@ public class DieterService{
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
         if (searchDieter.isPresent()){
-            queryStatus = dieterRepository.addTotalCalories(dieter.getName(),dieter.getTotalCalories());
+            queryStatus = dieterRepository.addTotalCalories(dieter.getName(),dieter.getCalories());
         }
         return queryStatus;
     }

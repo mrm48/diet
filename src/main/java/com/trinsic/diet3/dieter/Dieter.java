@@ -22,20 +22,20 @@ public class Dieter {
     ) 
     private Long id;
     private String name;
-    private Integer totalcalories;
+    private Integer calories;
 
     public Dieter() {
     }
 
-    public Dieter (Long id, String name, Integer totalCalories){
+    public Dieter (Long id, String name, Integer calories){
         this.id = id;
         this.name = name;
-        this.totalcalories = totalCalories;
+        this.calories = calories;
     }
 
-    public Dieter(String name, Integer totalCalories){
+    public Dieter(String name, Integer calories){
         this.name = name;
-        this.totalcalories = totalCalories;
+        this.calories = calories;
     }
 
     public String getName(){
@@ -46,11 +46,11 @@ public class Dieter {
         this.name = name;
     }
 
-    public Integer getTotalCalories(){
-        return this.totalcalories;
+    public Integer getCalories(){
+        return this.calories;
     }
 
-    public void setTotalCalories(Integer totalCalories){
-        this.totalcalories = totalCalories;
+    public void setCalories(Integer calories){
+        this.calories = calories;
     }
 }

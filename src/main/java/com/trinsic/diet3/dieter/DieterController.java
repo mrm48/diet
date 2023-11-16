@@ -22,7 +22,6 @@ public class DieterController{
     @PostMapping("/adddieter")
     @ResponseBody
     public Integer addDieter(@RequestBody Dieter hDieter){
-        // call the Dieter constructor that uses the current date as the value
-        return dieterService.addDieter(new Dieter(hDieter.getName(), hDieter.getTotalCalories()));
+        return dieterService.addDieter(new Dieter(hDieter.getName(), hDieter.getCalories()));
     }
 }
