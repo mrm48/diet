@@ -11,18 +11,18 @@ import org.springframework.stereotype.Repository;
 public interface DieterRepository 
         extends JpaRepository<Dieter, Long>{
         
-       @Query("SELECT u FROM Dieter u WHERE u.name = ?1")
+       @Query("SELECT d FROM Dieter d WHERE d.name = ?1")
         Optional<Dieter> findDieterByName(String name);
 
-       @Query("SELECT u.totalcalories FROM Dieter u WHERE u.name = ?1")
+       @Query("SELECT d.totalcalories FROM Dieter d WHERE d.name = ?1")
         Optional<Integer> findDieterCaloriesByDay(String name);
 
         @Modifying
-        @Query("INSERT INTO Dieter (totalcalories, name) VALUES (?2, ?1)")
+        @Query("INSERT INTO Dieter (name, totalcalories) VALUES (?1, ?2)")
         Integer addDieter(String name, Integer cals);
 
         @Modifying
-        @Query("UPDATE Dieter SET totalcalories=?2 WHERE name = ?1")
+        @Query("UPDATE Dieter SET totalcalories = ?2 WHERE name = ?1")
         Integer addTotalCalories(String name, Integer cals);
 
 }

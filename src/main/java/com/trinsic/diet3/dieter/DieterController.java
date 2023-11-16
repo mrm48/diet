@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
-import java.time.LocalDate;
-
-import com.trinsic.diet3.food.Food;
-import com.trinsic.diet3.food.FoodRepository;
 
 @RestController
 @RequestMapping(path = "api/v1/dieter")
@@ -19,7 +15,7 @@ public class DieterController{
 
     private final DieterService dieterService;
 
-    public DieterController(DieterService dieterService, FoodRepository foodRepository){
+    public DieterController(DieterService dieterService){
         this.dieterService = dieterService;
     }
 
