@@ -24,4 +24,10 @@ public class DieterController{
     public Integer addDieter(@RequestBody Dieter hDieter){
         return dieterService.addDieter(new Dieter(hDieter.getName(), hDieter.getCalories()));
     }
+
+    @PostMapping("/setcalories")
+    @ResponseBody
+    public Integer setCalories(@RequestBody Dieter hDieter){
+        return dieterService.setCalories(new Dieter(hDieter.getName(), hDieter.getCalories()));
+    }
 }

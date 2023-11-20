@@ -19,6 +19,7 @@ public class DieterService{
         // Only add dieter if there is not a meal with the same name for the day
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(newDieter.getName());
+        System.out.println(newDieter.getName());
         if (searchDieter.isEmpty()) {
             queryStatus = dieterRepository.addDieter(newDieter.getName(), newDieter.getCalories());  
         }
@@ -26,7 +27,7 @@ public class DieterService{
     }
 
     @Transactional
-    public Integer addCalories(Dieter dieter){
+    public Integer setCalories(Dieter dieter){
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
         if (searchDieter.isPresent()){
