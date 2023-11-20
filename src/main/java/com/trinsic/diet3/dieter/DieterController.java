@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Optional;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping(path = "api/v1/dieter")
@@ -22,12 +22,18 @@ public class DieterController{
     @PostMapping("/adddieter")
     @ResponseBody
     public Integer addDieter(@RequestBody Dieter hDieter){
-        return dieterService.addDieter(new Dieter(hDieter.getName(), hDieter.getCalories()));
+        return dieterService.addDieter(hDieter);
     }
 
     @PostMapping("/setcalories")
     @ResponseBody
     public Integer setCalories(@RequestBody Dieter hDieter){
-        return dieterService.setCalories(new Dieter(hDieter.getName(), hDieter.getCalories()));
+        return dieterService.setCalories(hDieter);
+    }
+
+    @GetMapping("/getcalories")
+    @ResponseBody
+    public Integer getCalories(@RequestBody Dieter hDieter){
+        return dieterService.getCaloriesByDay(hDieter, LocalDate.now());
     }
 }

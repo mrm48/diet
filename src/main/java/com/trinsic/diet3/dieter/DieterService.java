@@ -41,7 +41,7 @@ public class DieterService{
         if (currentCalories.isPresent()){
             return currentCalories.get();
         }
-        return 0;
+        return -1;
     }
 
 }
