@@ -44,4 +44,12 @@ public class DieterService{
         return -1;
     }
 
+    public Long getID(Dieter dieter){
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
+        if (searchDieter.isPresent()){
+            return searchDieter.get().getId();
+        }
+        return Long.valueOf(-1);
+    }
+
 }

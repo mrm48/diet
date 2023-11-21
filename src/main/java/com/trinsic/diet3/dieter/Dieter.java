@@ -53,4 +53,8 @@ public class Dieter {
     public void setCalories(Integer calories){
         this.calories = calories;
     }
+
+    public Long getId(){
+        return this.id;
+    }
 }

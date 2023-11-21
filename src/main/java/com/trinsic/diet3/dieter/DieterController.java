@@ -36,4 +36,10 @@ public class DieterController{
     public Integer getCalories(@RequestBody Dieter hDieter){
         return dieterService.getCaloriesByDay(hDieter, LocalDate.now());
     }
+
+    @GetMapping("/getid")
+    @ResponseBody
+    public Long getID(@RequestBody Dieter hDieter){
+        return dieterService.getID(hDieter);
+    }
 }
