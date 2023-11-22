@@ -34,7 +34,7 @@ public class FoodController {
     @PostMapping("/addfood")
     @ResponseBody
     public Integer addFood(@RequestBody Food hFood){
-        return foodService.addFood(new Food(hFood.getName(), hFood.getUnits(), hFood.getCalories()));
+        return foodService.addFood(hFood);
     }
 
     @GetMapping("/getRemainingCalories")
