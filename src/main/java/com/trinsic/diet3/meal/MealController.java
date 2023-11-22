@@ -39,8 +39,7 @@ public class MealController{
     @PostMapping("/addmeal")
     @ResponseBody
     public Integer addMeal(@RequestBody Meal hMeal){
-        // call the Meal constructor that uses the current date as the value
-        return mealService.addMeal(new Meal(hMeal.getName(), hMeal.getCalories()));
+        return mealService.addMeal(hMeal);
     }
 
     @GetMapping("/getRemainingCalories")
