@@ -7,10 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.trinsic.diet3.food.Food;
 
+import com.trinsic.diet3.dieter.*;
+
 @Service
 public class MealService{
 
     MealRepository mealRepository;
+    DieterRepository dieterRepository;
 
     public MealService(MealRepository mealRepository){
         this.mealRepository = mealRepository;
@@ -20,33 +23,48 @@ public class MealService{
     public Integer addMeal(Meal newMeal){
         // Only add meal if there is not a meal with the same name for the day
         Integer queryStatus = Integer.valueOf(-1);
-        Optional<Meal> searchFood = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay());
+        Optional<Meal> searchFood = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
         if (searchFood.isEmpty()) {
-            queryStatus = mealRepository.addMeal(newMeal.getName(), newMeal.getCalories(), newMeal.getDay());  
+            queryStatus = mealRepository.addMeal(newMeal.getName(), newMeal.getCalories(), newMeal.getDay(), newMeal.getDieterId());  
         }
         return queryStatus;
     }
 
     @Transactional
-    public Integer addCalories(Food newFood){
+    public Integer addCalories(Food newFood, String dieterName){
         Integer queryStatus = Integer.valueOf(-1);
-        queryStatus = mealRepository.addFood(newFood.getName(),newFood.getCalories(),LocalDate.now());
+        Long dieterid;
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
+        if (searchDieter.isPresent()){
+            dieterid = searchDieter.get().getId();
+            queryStatus = mealRepository.addFood(newFood.getName(),newFood.getCalories(),LocalDate.now(),dieterid);
+        }
         return queryStatus;
     }
 
-    public Integer getCalories(String name, LocalDate day){
+    public Integer getCalories(String name, LocalDate day, String dieterName){
         // Respond with number of calories or -1 for meal not found
-        Optional<Meal> meal = mealRepository.findMealByName(name, day);
-        if (meal.isPresent()){
-            return meal.get().getCalories();
+        Long dieterid;
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
+        if (searchDieter.isPresent()){
+            dieterid = searchDieter.get().getId();
+            Optional<Meal> meal = mealRepository.findMealByName(name, day, dieterid);
+            if (meal.isPresent()){
+                return meal.get().getCalories();
+            }
         }
         return -1;
     }
 
-    public Integer getCaloriesByDay(LocalDate day){
-        Optional<Meal> meal = mealRepository.findMealByDay(day);
-        if (meal.isPresent()){
-            return meal.get().getCalories();
+    public Integer getCaloriesByDay(LocalDate day, String dieterName){
+        Long dieterid;
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
+        if (searchDieter.isPresent()){
+            dieterid = searchDieter.get().getId();
+            Optional<Meal> meal = mealRepository.findMealByDay(day, dieterid);
+            if (meal.isPresent()){
+                return meal.get().getCalories();
+            }
         }
         return 0;
     }

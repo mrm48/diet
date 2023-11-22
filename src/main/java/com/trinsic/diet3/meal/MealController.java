@@ -27,11 +27,11 @@ public class MealController{
 
 
     @PostMapping("/addfood")
-    public Integer addFood(String food){
+    public Integer addFood(String food, String dietername){
         // Get food from string
         Optional<Food> foundFood = foodRepository.findFoodByName(food);
         if(foundFood.isPresent()){
-            return mealService.addCalories(foundFood.get());
+            return mealService.addCalories(foundFood.get(), dietername);
         }
         return Integer.valueOf(-1);
     }
@@ -43,10 +43,10 @@ public class MealController{
     }
 
     @GetMapping("/getRemainingCalories")
-    public Integer getremainingcalories(){
+    public Integer getremainingcalories(String dietername){
         
         // Get calories for current day
-        Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now());
+        Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now(), dietername);
         Integer totalCalories = mealService.getTotalCalories();
 
         // Subtract from calories total (daily total, need a new object of user
