@@ -57,7 +57,7 @@ public class MealController{
         // Subtract from calories total (daily total, need a new object of user
         // type that is going to store total calories. For now, assume single
         // user
-        return usedCalories;
+        return totalCalories - usedCalories;
     }
 
 }
