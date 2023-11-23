@@ -57,7 +57,7 @@ public class MealService{
         return -1;
     }
 
-    public Integer getCaloriesByDay(LocalDate day, String dieterName){
+    public Integer getCaloriesByDay(String dieterName, LocalDate day){
         Long dieterid;
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
         if (searchDieter.isPresent()){

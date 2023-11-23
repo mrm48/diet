@@ -49,7 +49,7 @@ public class MealController{
     public Integer getremainingcalories(@RequestBody String name){
         
         // Get calories for current day
-        Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now(), name);
+        Integer usedCalories = mealService.getCaloriesByDay(name, LocalDate.now());
 
         // Get dieter total calories
         Integer totalCalories = dieterService.getCaloriesByDay(name, LocalDate.now());
