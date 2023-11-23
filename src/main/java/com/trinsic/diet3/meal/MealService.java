@@ -69,9 +69,4 @@ public class MealService{
         return 0;
     }
 
-    public Integer getTotalCalories(){
-        // call to user table and grab total calories set
-        return 0;
-    }
-
 }

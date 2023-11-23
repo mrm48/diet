@@ -12,6 +12,7 @@ import java.time.LocalDate;
 
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
+import com.trinsic.diet3.dieter.DieterService;
 
 @RestController
 @RequestMapping(path = "api/v1/meal")
@@ -19,10 +20,12 @@ public class MealController{
 
     private final MealService mealService;
     private final FoodRepository foodRepository;
+    private final DieterService dieterService;
 
-    public MealController(MealService mealService, FoodRepository foodRepository){
+    public MealController(MealService mealService, FoodRepository foodRepository, DieterService dieterService){
         this.mealService = mealService;
         this.foodRepository = foodRepository;
+        this.dieterService = dieterService;
     }
 
 
@@ -47,12 +50,14 @@ public class MealController{
         
         // Get calories for current day
         Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now(), dietername);
-        Integer totalCalories = mealService.getTotalCalories();
+
+        // Get dieter total calories
+        Integer totalCalories = dieterService.getCaloriesByDay(dietername, LocalDate.now())
 
         // Subtract from calories total (daily total, need a new object of user
         // type that is going to store total calories. For now, assume single
         // user
-        return usedCalories - totalCalories;
+        return usedCalories;
     }
 
 }

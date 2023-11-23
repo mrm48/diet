@@ -27,19 +27,22 @@ public class DieterService{
     }
 
     @Transactional
-    public Integer setCalories(Dieter dieter){
+    public Integer setCalories(String dieter){
         Integer queryStatus = Integer.valueOf(-1);
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
         if (searchDieter.isPresent()){
-            queryStatus = dieterRepository.addTotalCalories(dieter.getName(),dieter.getCalories());
+            queryStatus = dieterRepository.addTotalCalories(searchDieter.get().getName(),searchDieter.get().getCalories());
         }
         return queryStatus;
     }
 
-    public Integer getCaloriesByDay(Dieter searchDieter, LocalDate day){
-        Optional<Integer> currentCalories = dieterRepository.findDieterCaloriesByDay(searchDieter.getName());
-        if (currentCalories.isPresent()){
-            return currentCalories.get();
+    public Integer getCaloriesByDay(String dieter, LocalDate day){
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
+        if(searchDieter.isPresent()){
+            Optional<Integer> currentCalories = dieterRepository.findDieterCaloriesByDay(searchDieter.get().getName());
+            if (currentCalories.isPresent()){
+                return currentCalories.get();
+            }
         }
         return -1;
     }
