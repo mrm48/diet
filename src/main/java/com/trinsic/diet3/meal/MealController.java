@@ -46,13 +46,13 @@ public class MealController{
     }
 
     @GetMapping("/getremainingcalories")
-    public Integer getremainingcalories(String dietername){
+    public Integer getremainingcalories(@RequestBody String name){
         
         // Get calories for current day
-        Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now(), dietername);
+        Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now(), name);
 
         // Get dieter total calories
-        Integer totalCalories = dieterService.getCaloriesByDay(dietername, LocalDate.now());
+        Integer totalCalories = dieterService.getCaloriesByDay(name, LocalDate.now());
 
         // Subtract from calories total (daily total, need a new object of user
         // type that is going to store total calories. For now, assume single

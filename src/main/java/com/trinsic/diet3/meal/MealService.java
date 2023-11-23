@@ -15,8 +15,9 @@ public class MealService{
     MealRepository mealRepository;
     DieterRepository dieterRepository;
 
-    public MealService(MealRepository mealRepository){
+    public MealService(MealRepository mealRepository, DieterRepository dieterRepository){
         this.mealRepository = mealRepository;
+        this.dieterRepository = dieterRepository;
     }
 
     @Transactional
