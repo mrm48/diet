@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
 import com.trinsic.diet3.dieter.DieterService;
+import com.trinsic.diet3.dieter.Dieter;
 
 @RestController
 @RequestMapping(path = "api/v1/meal")
@@ -46,8 +47,10 @@ public class MealController{
     }
 
     @GetMapping("/getremainingcalories")
-    public Integer getremainingcalories(@RequestBody String name){
-        
+    public Integer getremainingcalories(@RequestBody Dieter dieter){
+
+        String name = dieter.getName();
+
         // Get calories for current day
         Integer usedCalories = mealService.getCaloriesByDay(name, LocalDate.now());
 
