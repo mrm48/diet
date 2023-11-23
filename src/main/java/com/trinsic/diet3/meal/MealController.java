@@ -45,7 +45,7 @@ public class MealController{
     @ResponseBody
     public Integer addMeal(@RequestBody Meal hMeal){
         hMeal.setDay(LocalDate.now());
-        return mealService.addMeal(hMeal);
+        return mealService.addMeal(hMeal, hMeal.getDieterName());
     }
 
     @GetMapping("/getremainingcalories")

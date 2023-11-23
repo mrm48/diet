@@ -21,12 +21,12 @@ public class MealService{
     }
 
     @Transactional
-    public Integer addMeal(Meal newMeal){
+    public Integer addMeal(Meal newMeal, String dietername){
         // Only add meal if there is not a meal with the same name for the day
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Meal> searchFood = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
         if (searchFood.isEmpty()) {
-            queryStatus = mealRepository.addMeal(newMeal.getCalories(), newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
+            queryStatus = mealRepository.addMeal(newMeal.getCalories(), newMeal.getName(), newMeal.getDay(), newMeal.getDieterId(), newMeal.getDieterName());
         }
         return queryStatus;
     }
@@ -38,7 +38,7 @@ public class MealService{
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
         if (searchDieter.isPresent()){
             dieterid = searchDieter.get().getId();
-            queryStatus = mealRepository.addFood(newFood.getCalories(),newFood.getName(),LocalDate.now(),dieterid);
+            queryStatus = mealRepository.addFood(newFood.getCalories(),newFood.getName(),LocalDate.now(),dieterid,dieterName);
         }
         return queryStatus;
     }
