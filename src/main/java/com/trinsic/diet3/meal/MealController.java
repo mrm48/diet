@@ -45,7 +45,7 @@ public class MealController{
         return mealService.addMeal(hMeal);
     }
 
-    @GetMapping("/getRemainingCalories")
+    @GetMapping("/getremainingcalories")
     public Integer getremainingcalories(String dietername){
         
         // Get calories for current day
