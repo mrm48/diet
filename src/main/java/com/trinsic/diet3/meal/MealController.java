@@ -31,6 +31,7 @@ public class MealController{
 
 
     @PostMapping("/addfood")
+    @ResponseBody
     public Integer addFood(String food, String dietername){
         // Get food from string
         Optional<Food> foundFood = foodRepository.findFoodByName(food);
@@ -43,6 +44,7 @@ public class MealController{
     @PostMapping("/addmeal")
     @ResponseBody
     public Integer addMeal(@RequestBody Meal hMeal){
+        hMeal.setDay(LocalDate.now());
         return mealService.addMeal(hMeal);
     }
 

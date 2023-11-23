@@ -27,6 +27,7 @@ public class Meal {
     private LocalDate day;
     private Integer calories;
     private Long dieterid;
+    private String dietername;
 
     public Meal() {
     }
@@ -51,6 +52,13 @@ public class Meal {
         this.day = LocalDate.now();
         this.calories = calories;
         this.dieterid = dieterid;
+    }
+
+    public Meal(String name, Integer calories, String dietername){
+        this.name = name;
+        this.day = LocalDate.now();
+        this.calories = calories;
+        this.dietername = dietername;
     }
 
     public String getName() {
@@ -84,4 +92,13 @@ public class Meal {
     public void setDieterId(Long dieterid){
         this.dieterid = dieterid;
     }
+
+    public String getDieterName(){
+        return dietername;
+    }
+
+    public void setDieterName(String dietername){
+        this.dietername = dietername;
+    }
+
 }
