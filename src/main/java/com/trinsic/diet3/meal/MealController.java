@@ -52,7 +52,7 @@ public class MealController{
         Integer usedCalories = mealService.getCaloriesByDay(LocalDate.now(), dietername);
 
         // Get dieter total calories
-        Integer totalCalories = dieterService.getCaloriesByDay(dietername, LocalDate.now())
+        Integer totalCalories = dieterService.getCaloriesByDay(dietername, LocalDate.now());
 
         // Subtract from calories total (daily total, need a new object of user
         // type that is going to store total calories. For now, assume single
