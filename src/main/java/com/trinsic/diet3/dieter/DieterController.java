@@ -28,13 +28,13 @@ public class DieterController{
     @PostMapping("/setcalories")
     @ResponseBody
     public Integer setCalories(@RequestBody Dieter hDieter){
-        return dieterService.setCalories(hDieter);
+        return dieterService.setCalories(hDieter.getName());
     }
 
     @GetMapping("/getcalories")
     @ResponseBody
     public Integer getCalories(@RequestBody Dieter hDieter){
-        return dieterService.getCaloriesByDay(hDieter, LocalDate.now());
+        return dieterService.getCaloriesByDay(hDieter.getName(), LocalDate.now());
     }
 
     @GetMapping("/getid")
