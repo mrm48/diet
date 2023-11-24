@@ -27,38 +27,41 @@ public class Meal {
     private LocalDate day;
     private Integer calories;
     private Long dieterid;
-    private String dietername;
+    private String dieter;
 
     public Meal() {
     }
 
-    public Meal(String name, LocalDate day, Integer calories, Long dieterid) {
+    public Meal(String name, LocalDate day, Integer calories, Long dieterid, String dieter) {
         this.name = name;
         this.day = day;
         this.calories = calories;
         this.dieterid = dieterid;
+        this.dieter = dieter;
     }
 
-    public Meal(Long id, String name, LocalDate day, Integer calories, Long dieterid) {
+    public Meal(Long id, String name, LocalDate day, Integer calories, Long dieterid, String dieter) {
         this.id = id;
         this.name = name;
         this.day = day;
         this.calories = calories;
         this.dieterid = dieterid;
+        this.dieter = dieter;
     }
 
-    public Meal(String name, Integer calories, Long dieterid) {
+    public Meal(String name, Integer calories, Long dieterid, String dieter) {
         this.name = name;
         this.day = LocalDate.now();
         this.calories = calories;
         this.dieterid = dieterid;
+        this.dieter = dieter;
     }
 
-    public Meal(String name, Integer calories, String dietername){
+    public Meal(String name, Integer calories, String dieter){
         this.name = name;
         this.day = LocalDate.now();
         this.calories = calories;
-        this.dietername = dietername;
+        this.dieter = dieter;
     }
 
     public String getName() {
@@ -93,12 +96,12 @@ public class Meal {
         this.dieterid = dieterid;
     }
 
-    public String getDieterName(){
-        return dietername;
+    public String getDieter(){
+        return dieter;
     }
 
-    public void setDieterName(String dietername){
-        this.dietername = dietername;
+    public void setDieter(String dieter){
+        this.dieter = dieter;
     }
 
 }

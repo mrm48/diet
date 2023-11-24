@@ -12,8 +12,8 @@ import com.trinsic.diet3.dieter.*;
 @Service
 public class MealService{
 
-    MealRepository mealRepository;
-    DieterRepository dieterRepository;
+    private final MealRepository mealRepository;
+    private final DieterRepository dieterRepository;
 
     public MealService(MealRepository mealRepository, DieterRepository dieterRepository){
         this.mealRepository = mealRepository;
