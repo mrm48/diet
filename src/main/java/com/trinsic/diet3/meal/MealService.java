@@ -26,7 +26,10 @@ public class MealService{
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Meal> searchFood = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
         if (searchFood.isEmpty()) {
-            queryStatus = mealRepository.addMeal(newMeal.getCalories(), newMeal.getName(), newMeal.getDay(), newMeal.getDieterId(), newMeal.getDieterName());
+            Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dietername);
+            if (searchDieter.isPresent()) {
+                queryStatus = mealRepository.addMeal(newMeal.getCalories(), newMeal.getName(), newMeal.getDay(), searchDieter.get().getId(), dietername);
+            }
         }
         return queryStatus;
     }
