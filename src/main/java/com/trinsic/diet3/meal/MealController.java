@@ -29,7 +29,6 @@ public class MealController{
         this.dieterService = dieterService;
     }
 
-
     @PostMapping("/addfood")
     @ResponseBody
     public Integer addFood(String food, String dietername){
@@ -53,15 +52,9 @@ public class MealController{
 
         String name = dieter.getName();
 
-        // Get calories for current day
         Integer usedCalories = mealService.getCaloriesByDay(name, LocalDate.now());
-
-        // Get dieter total calories
         Integer totalCalories = dieterService.getCaloriesByDay(name, LocalDate.now());
 
-        // Subtract from calories total (daily total, need a new object of user
-        // type that is going to store total calories. For now, assume single
-        // user
         return totalCalories - usedCalories;
     }
 
