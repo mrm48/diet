@@ -22,7 +22,6 @@ public class MealService{
 
     @Transactional
     public Integer addMeal(Meal newMeal, String dietername){
-        // Only add meal if there is not a meal with the same name for the day
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Meal> searchFood = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
         if (searchFood.isEmpty()) {

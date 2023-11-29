@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DieterService{
 
-    DieterRepository dieterRepository;
+    private final DieterRepository dieterRepository;
 
     public DieterService(DieterRepository dieterRepository){
         this.dieterRepository = dieterRepository;
@@ -49,7 +49,6 @@ public class DieterService{
     public Long getID(Dieter dieter){
         Long queryStatus = Long.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
-
         if (searchDieter.isPresent()){
             queryStatus = searchDieter.get().getId();
         }

@@ -6,11 +6,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FoodService{
-    FoodRepository foodRepository;
+
+    private final FoodRepository foodRepository;
     private Integer calories;
+
     public FoodService(FoodRepository foodRepository){
         this.foodRepository = foodRepository;
     }
+
 	public Integer listCalories(String name){
         Optional<Food> searchFood = foodRepository.findFoodByName(name);
         this.calories = Integer.valueOf(-1);
