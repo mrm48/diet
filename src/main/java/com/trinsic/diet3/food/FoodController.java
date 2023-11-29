@@ -18,20 +18,20 @@ public class FoodController {
         this.foodService = foodService;
     }
 
-	@RequestMapping(value = "/listcalories")
+	@RequestMapping("/calories")
     @ResponseBody
 	public Integer listCalories(@RequestBody Food food){
         json = food.getName();
         return foodService.listCalories(json);
 	}
 
-    @PostMapping("/addcalories")
+    @PostMapping("/calories")
     @ResponseBody
     public Integer addCalories(@RequestBody Food food){
         return foodService.addCaloriesByName(food.getName(), food.getCalories());
     }
 
-    @PostMapping("/addfood")
+    @PostMapping("/")
     @ResponseBody
     public Integer addFood(@RequestBody Food food){
         return foodService.addFood(food);
