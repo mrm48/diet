@@ -15,7 +15,7 @@ public interface MealRepository
         @Query("SELECT m FROM Meal m WHERE m.day = ?1 AND m.dieterid = ?2")
         Optional<Meal> findMealByDay(LocalDate day, Long dieterid);
 
-       @Query("SELECT m FROM Meal m WHERE m.name = ?1 AND m.day = ?2 AND m.dieterid = ?3")
+        @Query("SELECT m FROM Meal m WHERE m.name = ?1 AND m.day = ?2 AND m.dieterid = ?3")
         Optional<Meal> findMealByName(String name, LocalDate day, Long dieterid);
 
         @Modifying

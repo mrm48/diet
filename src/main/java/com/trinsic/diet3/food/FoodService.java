@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class FoodService{
 
     private final FoodRepository foodRepository;
-    private Integer calories;
 
     public FoodService(FoodRepository foodRepository){
         this.foodRepository = foodRepository;
@@ -16,14 +15,12 @@ public class FoodService{
 
 	public Integer listCalories(String name){
         Optional<Food> searchFood = foodRepository.findFoodByName(name);
-        this.calories = Integer.valueOf(-1);
-        searchFood.ifPresent(this::setCalories);
-        return this.calories;
+        Integer calories = Integer.valueOf(-1);
+        if (searchFood.isPresent()){
+            searchFood.get().getCalories();
+        }
+        return calories;
 	}
-
-    public void setCalories(Food f){
-        this.calories = f.getCalories();
-    }
 
     public Integer addCaloriesByName(String name, Integer cals){
         Integer queryStatus = Integer.valueOf(-1);
