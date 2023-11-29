@@ -23,31 +23,31 @@ public class DieterController{
         this.mealService = mealService;
     }
 
-    @PostMapping("/adddieter")
+    @PostMapping("/")
     @ResponseBody
     public Integer addDieter(@RequestBody Dieter dieter){
         return dieterService.addDieter(dieter);
     }
 
-    @PostMapping("/setcalories")
+    @PostMapping("/calories")
     @ResponseBody
     public Integer setCalories(@RequestBody Dieter dieter){
         return dieterService.setCalories(dieter.getName());
     }
 
-    @GetMapping("/getcalories")
+    @GetMapping("/calories")
     @ResponseBody
     public Integer getCalories(@RequestBody Dieter dieter){
         return dieterService.getCaloriesByDay(dieter.getName(), LocalDate.now());
     }
 
-    @GetMapping("/getid")
+    @GetMapping("/id")
     @ResponseBody
     public Long getID(@RequestBody Dieter dieter){
         return dieterService.getID(dieter);
     }
 
-    @GetMapping("/getremainingcalories")
+    @GetMapping("/remaining")
     public Integer getremainingcalories(@RequestBody Dieter dieter){
 
         String name = dieter.getName();

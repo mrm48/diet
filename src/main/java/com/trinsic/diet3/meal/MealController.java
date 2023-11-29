@@ -29,7 +29,7 @@ public class MealController{
         this.dieterService = dieterService;
     }
 
-    @PostMapping("/addfood")
+    @PostMapping("/food")
     @ResponseBody
     public Integer addFood(String food, String dietername){
         // Get food from string
@@ -40,22 +40,11 @@ public class MealController{
         return Integer.valueOf(-1);
     }
 
-    @PostMapping("/addmeal")
+    @PostMapping("/")
     @ResponseBody
     public Integer addMeal(@RequestBody Meal meal){
         meal.setDay(LocalDate.now());
         return mealService.addMeal(meal, meal.getDieter());
-    }
-
-    @GetMapping("/getremainingcalories")
-    public Integer getremainingcalories(@RequestBody Dieter dieter){
-
-        String name = dieter.getName();
-
-        Integer usedCalories = mealService.getCaloriesByDay(name, LocalDate.now());
-        Integer totalCalories = dieterService.getCaloriesByDay(name, LocalDate.now());
-
-        return totalCalories - usedCalories;
     }
 
 }
