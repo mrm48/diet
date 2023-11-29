@@ -17,7 +17,7 @@ public class FoodService{
         Optional<Food> searchFood = foodRepository.findFoodByName(name);
         Integer calories = Integer.valueOf(-1);
         if (searchFood.isPresent()){
-            searchFood.get().getCalories();
+            calories = searchFood.get().getCalories();
         }
         return calories;
 	}
