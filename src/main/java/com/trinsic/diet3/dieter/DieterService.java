@@ -16,10 +16,8 @@ public class DieterService{
 
     @Transactional
     public Integer addDieter(Dieter newDieter){
-        // Only add dieter if there is not a meal with the same name for the day
         Integer queryStatus = Integer.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(newDieter.getName());
-        System.out.println(newDieter.getName());
         if (searchDieter.isEmpty()) {
             queryStatus = dieterRepository.addDieter(newDieter.getName(), newDieter.getCalories());  
         }
@@ -37,22 +35,25 @@ public class DieterService{
     }
 
     public Integer getCaloriesByDay(String dieter, LocalDate day){
+        Integer queryStatus = Integer.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
         if(searchDieter.isPresent()){
             Optional<Integer> currentCalories = dieterRepository.findDieterCaloriesByDay(searchDieter.get().getName());
             if (currentCalories.isPresent()){
-                return currentCalories.get();
+                queryStatus = currentCalories.get();
             }
         }
-        return -1;
+        return queryStatus;
     }
 
     public Long getID(Dieter dieter){
+        Long queryStatus = Long.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
+
         if (searchDieter.isPresent()){
-            return searchDieter.get().getId();
+            queryStatus = searchDieter.get().getId();
         }
-        return Long.valueOf(-1);
+        return queryStatus;
     }
 
 }
