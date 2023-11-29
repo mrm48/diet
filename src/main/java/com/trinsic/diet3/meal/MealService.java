@@ -47,30 +47,31 @@ public class MealService{
     }
 
     public Integer getCalories(String name, LocalDate day, String dieterName){
-        // Respond with number of calories or -1 for meal not found
         Long dieterid;
+        Integer queryStatus = Integer.valueOf(-1);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
         if (searchDieter.isPresent()){
             dieterid = searchDieter.get().getId();
             Optional<Meal> meal = mealRepository.findMealByName(name, day, dieterid);
             if (meal.isPresent()){
-                return meal.get().getCalories();
+                queryStatus = meal.get().getCalories();
             }
         }
-        return -1;
+        return queryStatus;
     }
 
     public Integer getCaloriesByDay(String dieterName, LocalDate day){
         Long dieterid;
+        Integer queryStatus = Integer.valueOf(0);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
         if (searchDieter.isPresent()){
             dieterid = searchDieter.get().getId();
             Optional<Meal> meal = mealRepository.findMealByDay(day, dieterid);
             if (meal.isPresent()){
-                return meal.get().getCalories();
+                queryStatus = meal.get().getCalories();
             }
         }
-        return 0;
+        return queryStatus;
     }
 
 }
