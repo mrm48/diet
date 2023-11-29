@@ -42,9 +42,9 @@ public class MealController{
 
     @PostMapping("/addmeal")
     @ResponseBody
-    public Integer addMeal(@RequestBody Meal hMeal){
-        hMeal.setDay(LocalDate.now());
-        return mealService.addMeal(hMeal, hMeal.getDieter());
+    public Integer addMeal(@RequestBody Meal meal){
+        meal.setDay(LocalDate.now());
+        return mealService.addMeal(meal, meal.getDieter());
     }
 
     @GetMapping("/getremainingcalories")
