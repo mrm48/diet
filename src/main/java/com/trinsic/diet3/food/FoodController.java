@@ -20,25 +20,21 @@ public class FoodController {
 
 	@RequestMapping(value = "/listcalories")
     @ResponseBody
-	public Integer listCalories(@RequestBody Food hFood){
-        json = hFood.getName();
+	public Integer listCalories(@RequestBody Food food){
+        json = food.getName();
         return foodService.listCalories(json);
 	}
 
     @PostMapping("/addcalories")
     @ResponseBody
-    public Integer addCalories(@RequestBody Food hFood){
-        return foodService.addCaloriesByName(hFood.getName(), hFood.getCalories());
+    public Integer addCalories(@RequestBody Food food){
+        return foodService.addCaloriesByName(food.getName(), food.getCalories());
     }
 
     @PostMapping("/addfood")
     @ResponseBody
-    public Integer addFood(@RequestBody Food hFood){
-        return foodService.addFood(hFood);
+    public Integer addFood(@RequestBody Food food){
+        return foodService.addFood(food);
     }
 
-    @GetMapping("/getRemainingCalories")
-    public Integer getremainingcalories(){
-        return Integer.valueOf(0);
-    }
 }

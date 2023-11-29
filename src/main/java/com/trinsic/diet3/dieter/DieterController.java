@@ -21,25 +21,25 @@ public class DieterController{
 
     @PostMapping("/adddieter")
     @ResponseBody
-    public Integer addDieter(@RequestBody Dieter hDieter){
-        return dieterService.addDieter(hDieter);
+    public Integer addDieter(@RequestBody Dieter dieter){
+        return dieterService.addDieter(dieter);
     }
 
     @PostMapping("/setcalories")
     @ResponseBody
-    public Integer setCalories(@RequestBody Dieter hDieter){
-        return dieterService.setCalories(hDieter.getName());
+    public Integer setCalories(@RequestBody Dieter dieter){
+        return dieterService.setCalories(dieter.getName());
     }
 
     @GetMapping("/getcalories")
     @ResponseBody
-    public Integer getCalories(@RequestBody Dieter hDieter){
-        return dieterService.getCaloriesByDay(hDieter.getName(), LocalDate.now());
+    public Integer getCalories(@RequestBody Dieter dieter){
+        return dieterService.getCaloriesByDay(dieter.getName(), LocalDate.now());
     }
 
     @GetMapping("/getid")
     @ResponseBody
-    public Long getID(@RequestBody Dieter hDieter){
-        return dieterService.getID(hDieter);
+    public Long getID(@RequestBody Dieter dieter){
+        return dieterService.getID(dieter);
     }
 }
