@@ -22,9 +22,13 @@ public class FoodService{
         return calories;
 	}
 
+	@Transactional
     public Integer addCaloriesByName(String name, Integer cals){
         Integer queryStatus = Integer.valueOf(-1);
+        System.out.println(name);
+        System.out.println(cals);
         if(this.listCalories(name) != -1){
+            System.out.println("changing " + name);
             queryStatus = foodRepository.addCaloriesByName(name, cals);    
         }
         return queryStatus;
