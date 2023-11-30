@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RestController
 @RequestMapping(path = "api/v1/food")
 public class FoodController {
+
     private final FoodService foodService;
-    private String json; 
+
     public FoodController(FoodService foodService){
         this.foodService = foodService;
     }
@@ -21,8 +22,8 @@ public class FoodController {
 	@RequestMapping("/calories")
     @ResponseBody
 	public Integer listCalories(@RequestBody Food food){
-        json = food.getName();
-        return foodService.listCalories(json);
+        String name = food.getName();
+        return foodService.listCalories(name);
 	}
 
     @PostMapping("/calories")
