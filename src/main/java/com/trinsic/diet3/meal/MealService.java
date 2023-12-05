@@ -5,7 +5,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.json.*;
+
 import com.trinsic.diet3.food.Food;
+import com.trinsic.diet3.food.FoodRepository;
 
 import com.trinsic.diet3.dieter.*;
 
@@ -14,17 +17,20 @@ public class MealService{
 
     private final MealRepository mealRepository;
     private final DieterRepository dieterRepository;
+    private final FoodRepository foodRepository;
 
-    public MealService(MealRepository mealRepository, DieterRepository dieterRepository){
+    public MealService(MealRepository mealRepository, DieterRepository dieterRepository, FoodRepository foodRepository){
         this.mealRepository = mealRepository;
         this.dieterRepository = dieterRepository;
+        this.foodRepository = foodRepository;
     }
 
     @Transactional
     public Integer addMeal(Meal newMeal, String dietername){
         Integer queryStatus = Integer.valueOf(-1);
-        Optional<Meal> searchFood = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
-        if (searchFood.isEmpty()) {
+        Optional<Meal> searchMeal = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
+        if (searchMeal.isEmpty()) {
+            newMeal.setDay(LocalDate.now());
             Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dietername);
             if (searchDieter.isPresent()) {
                 queryStatus = mealRepository.addMeal(newMeal.getCalories(), newMeal.getName(), newMeal.getDay(), searchDieter.get().getId(), dietername);
@@ -34,13 +40,19 @@ public class MealService{
     }
 
     @Transactional
-    public Integer addCalories(Food newFood, String dieterName){
-        Integer queryStatus = Integer.valueOf(-1);
-        Long dieterid;
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
-        if (searchDieter.isPresent()){
+    public Integer addCalories(String foodBlock){
+       Integer queryStatus = Integer.valueOf(-1);
+       Long dieterid;
+       String food;
+       String dieter;
+       JSONObject requestObject = new JSONObject(foodBlock);
+       food = requestObject.get("name").toString();
+       dieter = requestObject.get("dietername").toString();
+       Optional<Food> foundFood = foodRepository.findFoodByName(food);
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
+        if (searchDieter.isPresent() && foundFood.isPresent()){
             dieterid = searchDieter.get().getId();
-            queryStatus = mealRepository.addFood(newFood.getCalories(),newFood.getName(),LocalDate.now(),dieterid,dieterName);
+            queryStatus = mealRepository.addFood(foundFood.get().getCalories(),foundFood.get().getName(),LocalDate.now(),dieterid,dieter);
         }
         return queryStatus;
     }
