@@ -7,20 +7,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.trinsic.diet3.meal.MealService;
-
-import java.time.LocalDate;
-
 @RestController
 @RequestMapping(path = "api/v1/dieter")
 public class DieterController{
 
     private final DieterService dieterService;
-    private final MealService mealService;
 
-    public DieterController(DieterService dieterService, MealService mealService){
+    public DieterController(DieterService dieterService){
         this.dieterService = dieterService;
-        this.mealService = mealService;
     }
 
     @PostMapping("/")
@@ -43,12 +37,6 @@ public class DieterController{
 
     @GetMapping("/calories")
     public Integer getremainingcalories(@RequestBody Dieter dieter){
-
-        String name = dieter.getName();
-
-        Integer usedCalories = mealService.getCaloriesByDay(name, LocalDate.now());
-        Integer totalCalories = dieterService.getCaloriesByDay(name, LocalDate.now());
-
-        return totalCalories - usedCalories;
+        return dieterService.getRemainingCalories(dieter);
     }
 }

@@ -5,13 +5,17 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.trinsic.diet3.meal.MealService;
+
 @Service
 public class DieterService{
 
     private final DieterRepository dieterRepository;
+    private final MealService mealService;
 
-    public DieterService(DieterRepository dieterRepository){
+    public DieterService(DieterRepository dieterRepository, MealService mealService){
         this.dieterRepository = dieterRepository;
+        this.mealService = mealService;
     }
 
     @Transactional
@@ -44,6 +48,14 @@ public class DieterService{
             }
         }
         return queryStatus;
+    }
+
+    public Integer getRemainingCalories(Dieter dieter){
+        LocalDate day = LocalDate.now();
+        String dieterName = dieter.getName();
+        Integer totalCalories = getCaloriesByDay(dieterName, day);
+        Integer usedCalories = mealService.getCaloriesByDay(dieterName, day);
+        return totalCalories - usedCalories;
     }
 
     public Long getID(Dieter dieter){
