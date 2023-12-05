@@ -35,19 +35,13 @@ public class DieterController{
         return dieterService.setCalories(dieter.getName());
     }
 
-    @GetMapping("/calories")
-    @ResponseBody
-    public Integer getCalories(@RequestBody Dieter dieter){
-        return dieterService.getCaloriesByDay(dieter.getName(), LocalDate.now());
-    }
-
     @GetMapping("/id")
     @ResponseBody
     public Long getID(@RequestBody Dieter dieter){
         return dieterService.getID(dieter);
     }
 
-    @GetMapping("/remaining")
+    @GetMapping("/calories")
     public Integer getremainingcalories(@RequestBody Dieter dieter){
 
         String name = dieter.getName();
