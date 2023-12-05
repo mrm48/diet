@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Optional;
 import java.time.LocalDate;
 
+import org.json.*;
+
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
 import com.trinsic.diet3.dieter.DieterService;
@@ -31,11 +33,15 @@ public class MealController{
 
     @PostMapping("/food")
     @ResponseBody
-    public Integer addFood(String food, String dietername){
-        // Get food from string
-        Optional<Food> foundFood = foodRepository.findFoodByName(food);
+    public Integer addFood(@RequestBody String foodBlock){
+       String food;
+       String dieter;
+       JSONObject requestObject = new JSONObject(foodBlock);
+       food = requestObject.get("name").toString();
+       dieter = requestObject.get("dietername").toString();
+       Optional<Food> foundFood = foodRepository.findFoodByName(food);
         if(foundFood.isPresent()){
-            return mealService.addCalories(foundFood.get(), dietername);
+            return mealService.addCalories(foundFood.get(), dieter);
         }
         return Integer.valueOf(-1);
     }
