@@ -23,8 +23,7 @@ public class FoodController {
 	@RequestMapping("/calories")
     @ResponseBody
 	public Integer listCalories(@RequestBody Food food){
-        String name = food.getName();
-        return foodService.listCalories(name);
+        return foodService.listCalories(food.getName());
 	}
 
     @PostMapping("/calories")
