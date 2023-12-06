@@ -29,4 +29,10 @@ public class MealController{
         return mealService.addMeal(meal, meal.getDieter());
     }
 
+    @GetMapping("/")
+    @ResponseBody
+    public Meal getMeal(@RequestBody String mealBlock){
+        return mealService.getMeal(mealBlock);
+    }
+
 }

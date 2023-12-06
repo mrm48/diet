@@ -85,4 +85,17 @@ public class MealService{
         return queryStatus;
     }
 
+    public Meal getMeal(String mealBlock){
+        JSONObject jsonObject = new JSONObject(mealBlock);
+        String dieter = jsonObject.get("dieterName").toString();
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
+        if (searchDieter.isPresent()){
+            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), searchDieter.get().getId());
+            if (meal.isPresent()){
+                return meal.get();
+            }
+        }
+        return null;
+    }
+
 }
