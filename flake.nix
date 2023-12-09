@@ -17,5 +17,6 @@
         pkgs.mkShell { 
           buildInputs = [ pkgs.jdk19 pkgs.maven ]; 
         };
-   };
+      }
+    );
 }
