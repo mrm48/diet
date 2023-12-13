@@ -11,12 +11,15 @@
     flake-utils.lib.eachDefaultSystem (system:
       let pkgs = nixpkgs.legacyPackages.x86_64-linux;
       in {
-        #packages.flatpak-builder = pkgs.flatpak-builder;
-
         devShell =
         pkgs.mkShell { 
           buildInputs = [ pkgs.jdk19 pkgs.maven ]; 
+
+          shellHook = ''
+            export PS1="dev > "
+          '';
         };
+
       }
     );
 }
