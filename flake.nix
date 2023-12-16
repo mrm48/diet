@@ -1,5 +1,5 @@
 {
-  description = "Build flatpaks for getting older versions of Godot";
+  description = "Build diet3 using maven and java with this flake";
 
   #inputs
   inputs = {
