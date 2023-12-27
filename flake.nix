@@ -13,7 +13,7 @@
       in {
         devShell =
         pkgs.mkShell { 
-          buildInputs = [ pkgs.jdk19 pkgs.maven ]; 
+          buildInputs = with pkgs; [ jdk19 maven ]; 
 
           shellHook = ''
             export PS1="dev > "
