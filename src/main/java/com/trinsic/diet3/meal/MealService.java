@@ -27,7 +27,7 @@ public class MealService{
 
     @Transactional
     public Integer addMeal(Meal newMeal, String dietername){
-        Integer queryStatus = Integer.valueOf(-1);
+        Integer queryStatus = -1;
         Optional<Meal> searchMeal = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
         if (searchMeal.isEmpty()) {
             newMeal.setDay(LocalDate.now());
@@ -41,7 +41,7 @@ public class MealService{
 
     @Transactional
     public Integer addCalories(String foodBlock){
-       Integer queryStatus = Integer.valueOf(-1);
+       Integer queryStatus = -1;
        Long dieterid;
        String food;
        String dieter;
@@ -59,7 +59,7 @@ public class MealService{
 
     public Integer getCalories(String name, LocalDate day, String dieterName){
         Long dieterid;
-        Integer queryStatus = Integer.valueOf(-1);
+        Integer queryStatus = -1;
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
         if (searchDieter.isPresent()){
             dieterid = searchDieter.get().getId();
@@ -73,7 +73,7 @@ public class MealService{
 
     public Integer getCaloriesByDay(String dieterName, LocalDate day){
         Long dieterid;
-        Integer queryStatus = Integer.valueOf(0);
+        Integer queryStatus = 0;
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
         if (searchDieter.isPresent()){
             dieterid = searchDieter.get().getId();

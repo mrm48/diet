@@ -15,7 +15,7 @@ public class FoodService{
 
 	public Integer listCalories(String name){
         Optional<Food> searchFood = foodRepository.findFoodByName(name);
-        Integer calories = Integer.valueOf(-1);
+        Integer calories = -1;
         if (searchFood.isPresent()){
             calories = searchFood.get().getCalories();
         }
@@ -24,7 +24,7 @@ public class FoodService{
 
 	@Transactional
     public Integer addCaloriesByName(String name, Integer cals){
-        Integer queryStatus = Integer.valueOf(-1);
+        Integer queryStatus = -1;
         System.out.println(name);
         System.out.println(cals);
         if(this.listCalories(name) != -1){
@@ -36,7 +36,7 @@ public class FoodService{
 
     @Transactional
     public Integer addFood(Food f){
-        Integer queryStatus = Integer.valueOf(-1);
+        Integer queryStatus = -1;
         Optional<Food> searchFood = foodRepository.findFoodByName(f.getName());
         if (searchFood.isEmpty()) {
             queryStatus = foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
