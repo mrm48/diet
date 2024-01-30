@@ -25,7 +25,7 @@ public class MealController{
 
     @PostMapping("/")
     @ResponseBody
-    public Integer addMeal(@RequestBody Meal meal){
+    public Meal addMeal(@RequestBody Meal meal){
         return mealService.addMeal(meal, meal.getDieter());
     }
 
