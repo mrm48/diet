@@ -19,8 +19,8 @@ public class MealController{
 
     @PostMapping("/food")
     @ResponseBody
-    public Integer addFood(@RequestBody String foodBlock){
-        return mealService.addCalories(foodBlock);
+    public Integer addFood(@RequestBody String foodData){
+        return mealService.addCalories(foodData);
     }
 
     @PostMapping("/")

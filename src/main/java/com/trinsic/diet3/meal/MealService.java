@@ -42,18 +42,23 @@ public class MealService{
     }
 
     @Transactional
-    public Integer addCalories(String foodBlock){
+    public Integer addCalories(String foodData){
        Long dieterid;
        String food;
        String dieter;
-       JSONObject requestObject = new JSONObject(foodBlock);
+       String meal;
+       JSONObject requestObject = new JSONObject(foodData);
        food = requestObject.get("name").toString();
        dieter = requestObject.get("dietername").toString();
+       meal = requestObject.get("mealname").toString();
        Optional<Food> foundFood = foodRepository.findFoodByName(food);
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
         if (searchDieter.isPresent() && foundFood.isPresent()){
             dieterid = searchDieter.get().getId();
-            mealRepository.addFood(foundFood.get().getCalories(),foundFood.get().getName(),LocalDate.now(),dieterid,dieter);
+            Optional<Meal> searchMeal = mealRepository.findMealByName(meal, LocalDate.now(), searchDieter.get().getId());
+            if (searchMeal.isPresent()){
+                mealRepository.addFood(foundFood.get().getCalories(),searchMeal.get().getId(),foundFood.get().getName(),LocalDate.now(),dieterid,dieter);
+            }
             return foundFood.get().getCalories();
         }
         return 0;
