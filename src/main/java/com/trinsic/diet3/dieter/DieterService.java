@@ -33,7 +33,8 @@ public class DieterService{
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
         if (searchDieter.isPresent()){
             dieterRepository.addTotalCalories(dieter.getName(),dieter.getCalories());
-            return dieter;
+            searchDieter.get().setCalories(dieter.getCalories());
+            return searchDieter.get();
         }
         return null;
     }
