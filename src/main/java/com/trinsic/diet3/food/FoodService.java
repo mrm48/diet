@@ -15,33 +15,28 @@ public class FoodService{
 
 	public Integer listCalories(String name){
         Optional<Food> searchFood = foodRepository.findFoodByName(name);
-        Integer calories = -1;
         if (searchFood.isPresent()){
-            calories = searchFood.get().getCalories();
+            return searchFood.get().getCalories();
         }
-        return calories;
+        return -1;
 	}
 
 	@Transactional
     public Integer addCaloriesByName(String name, Integer cals){
-        Integer queryStatus = -1;
-        System.out.println(name);
-        System.out.println(cals);
         if(this.listCalories(name) != -1){
             System.out.println("changing " + name);
-            queryStatus = foodRepository.addCaloriesByName(name, cals);    
+            return foodRepository.addCaloriesByName(name, cals);    
         }
-        return queryStatus;
+        return -1;
     }
 
     @Transactional
     public Integer addFood(Food f){
-        Integer queryStatus = -1;
         Optional<Food> searchFood = foodRepository.findFoodByName(f.getName());
         if (searchFood.isEmpty()) {
-            queryStatus = foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
+            return foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
         }
-        return queryStatus;
+        return -1;
     }
 
 }
