@@ -104,4 +104,8 @@ public class Meal {
         this.dieter = dieter;
     }
 
+    public Long getId(){
+        return id;
+    }
+
 }
