@@ -31,12 +31,13 @@ public class FoodService{
     }
 
     @Transactional
-    public Integer addFood(Food f){
+    public Food addFood(Food f){
         Optional<Food> searchFood = foodRepository.findFoodByName(f.getName());
         if (searchFood.isEmpty()) {
-            return foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
+            foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
+            return f;
         }
-        return -1;
+        return null;
     }
 
 }

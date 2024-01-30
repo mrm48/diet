@@ -20,7 +20,7 @@ public class FoodController {
         this.foodService = foodService;
     }
 
-	@RequestMapping("/calories")
+	@GetMapping("/calories")
     @ResponseBody
 	public Integer listCalories(@RequestBody Food food){
         return foodService.listCalories(food.getName());
@@ -40,7 +40,7 @@ public class FoodController {
 
     @PostMapping("/")
     @ResponseBody
-    public Integer addFood(@RequestBody Food food){
+    public Food addFood(@RequestBody Food food){
         return foodService.addFood(food);
     }
 
