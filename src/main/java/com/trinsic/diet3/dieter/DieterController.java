@@ -19,7 +19,7 @@ public class DieterController{
 
     @PostMapping("/")
     @ResponseBody
-    public Integer addDieter(@RequestBody Dieter dieter){
+    public Dieter addDieter(@RequestBody Dieter dieter){
         return dieterService.addDieter(dieter);
     }
 

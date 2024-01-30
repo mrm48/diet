@@ -19,12 +19,13 @@ public class DieterService{
     }
 
     @Transactional
-    public Integer addDieter(Dieter newDieter){
+    public Dieter addDieter(Dieter newDieter){
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(newDieter.getName());
         if (searchDieter.isEmpty()) {
-            return dieterRepository.addDieter(newDieter.getName(), newDieter.getCalories());  
+            dieterRepository.addDieter(newDieter.getName(), newDieter.getCalories());  
+            return newDieter;
         }
-        return -1;
+        return null;
     }
 
     @Transactional
