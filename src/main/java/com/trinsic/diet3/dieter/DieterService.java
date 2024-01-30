@@ -29,12 +29,13 @@ public class DieterService{
     }
 
     @Transactional
-    public Integer setCalories(String dieter){
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
+    public Dieter setCalories(Dieter dieter){
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
         if (searchDieter.isPresent()){
-            return dieterRepository.addTotalCalories(searchDieter.get().getName(),searchDieter.get().getCalories());
+            dieterRepository.addTotalCalories(dieter.getName(),dieter.getCalories());
+            return dieter;
         }
-        return -1;
+        return null;
     }
 
     public Integer getCaloriesByDay(String dieter, LocalDate day){

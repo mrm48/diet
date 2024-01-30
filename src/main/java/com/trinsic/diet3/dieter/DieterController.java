@@ -25,8 +25,8 @@ public class DieterController{
 
     @PostMapping("/calories")
     @ResponseBody
-    public Integer setCalories(@RequestBody Dieter dieter){
-        return dieterService.setCalories(dieter.getName());
+    public Dieter setCalories(@RequestBody Dieter dieter){
+        return dieterService.setCalories(dieter);
     }
 
     @GetMapping("/id")
