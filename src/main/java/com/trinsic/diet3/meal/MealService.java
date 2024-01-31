@@ -42,7 +42,7 @@ public class MealService{
     }
 
     @Transactional
-    public Integer addCalories(String foodData){
+    public Meal addCalories(String foodData){
        Long dieterid;
        String food;
        String dieter;
@@ -58,10 +58,16 @@ public class MealService{
             Optional<Meal> searchMeal = mealRepository.findMealByName(meal, LocalDate.now(), searchDieter.get().getId());
             if (searchMeal.isPresent()){
                 mealRepository.addFood(foundFood.get().getCalories(),searchMeal.get().getId(),foundFood.get().getName(),LocalDate.now(),dieterid,dieter);
+                searchMeal.get().setCalories(searchMeal.get().getCalories() + foundFood.get().getCalories());
+                return searchMeal.get();
             }
-            return foundFood.get().getCalories();
+            else{
+                mealRepository.addMeal(foundFood.get().getCalories(),meal,LocalDate.now(),dieterid,dieter);
+                Optional<Meal> newMeal = mealRepository.findMealByName(meal, LocalDate.now(), searchDieter.get().getId());
+                return newMeal.get();
+            }
         }
-        return 0;
+        return null;
     }
 
     public Integer getCalories(String name, LocalDate day, String dieterName){

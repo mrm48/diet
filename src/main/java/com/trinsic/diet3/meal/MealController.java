@@ -19,7 +19,7 @@ public class MealController{
 
     @PostMapping("/food")
     @ResponseBody
-    public Integer addFood(@RequestBody String foodData){
+    public Meal addFood(@RequestBody String foodData){
         return mealService.addCalories(foodData);
     }
 
