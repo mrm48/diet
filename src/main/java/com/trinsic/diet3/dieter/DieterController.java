@@ -29,6 +29,12 @@ public class DieterController{
         return dieterService.setCalories(dieter);
     }
 
+    @GetMapping("/")
+    @ResponseBody
+    public Dieter get(@RequestBody String dieterName){
+        return dieterService.getDieterByName(dieterName);
+    }
+
     @GetMapping("/id")
     @ResponseBody
     public Long getID(@RequestBody Dieter dieter){

@@ -1,6 +1,7 @@
 package com.trinsic.diet3.dieter;
 import java.time.LocalDate;
 import java.util.Optional;
+import org.json.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,5 +66,16 @@ public class DieterService{
         }
         return Long.valueOf(-1);
     }
+
+    public Dieter getDieterByName(String req){
+        JSONObject requestBody = new JSONObject(req);
+        String dieterName = requestBody.get("name").toString();
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
+        if (searchDieter.isPresent()){
+            return searchDieter.get();
+        }
+        return null;
+    }
+    
 
 }
