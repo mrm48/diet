@@ -2,6 +2,7 @@ package com.trinsic.diet3.meal;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +20,7 @@ public interface MealRepository
         Optional<Meal> findMealByName(String name, LocalDate day, Long dieterid);
 
         @Query("SELECT calories from Meal m WHERE m.dieter = ?1 AND m.day = ?2")
-        Optional<Integer> findDieterCaloriesByDay(String name, LocalDate day);
+        Optional<List<Integer>> findDieterCaloriesByDay(String name, LocalDate day);
 
         @Modifying
         @Query("UPDATE Meal m SET m.calories = ?1 WHERE m.id = ?2 AND m.name = ?3 AND m.day = ?4 AND m.dieterid = ?5 AND m.dieter = ?6")
