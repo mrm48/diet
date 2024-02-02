@@ -6,8 +6,6 @@ import org.json.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.trinsic.diet3.meal.MealService;
-
 import com.trinsic.diet3.meal.MealRepository;
 
 @Service
@@ -15,12 +13,10 @@ public class DieterService{
 
     private final DieterRepository dieterRepository;
     private final MealRepository mealRepository;
-    private final MealService mealService;
 
-    public DieterService(DieterRepository dieterRepository, MealRepository mealRepository, MealService mealService){
+    public DieterService(DieterRepository dieterRepository, MealRepository mealRepository){
         this.dieterRepository = dieterRepository;
         this.mealRepository = mealRepository;
-        this.mealService = mealService;
     }
 
     @Transactional
