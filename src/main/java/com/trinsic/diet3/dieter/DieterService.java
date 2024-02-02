@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.trinsic.diet3.meal.MealService;
+
 import com.trinsic.diet3.meal.MealRepository;
 
 @Service
@@ -43,27 +44,37 @@ public class DieterService{
         return null;
     }
 
-    public Dieter getCaloriesByDay(String dieter, LocalDate day){
-        Optional<Dieter> namedDieter = dieterRepository.findDieterByName(dieter);
+    public Dieter getCaloriesByDay(Dieter dieter, LocalDate day){
+        Optional<Dieter> namedDieter = dieterRepository.findDieterByName(dieter.getName());
+        Dieter foundDieter = null; 
         if(namedDieter.isPresent()){
-            Integer currentCalories = mealRepository.findCaloriesByDay(namedDieter.get().getName(), day);
-            namedDieter.get().setCalories(currentCalories);
-            return namedDieter.get();
+            foundDieter = namedDieter.get();
+            Integer currentCalories = mealRepository.findCaloriesByDay(foundDieter.getName(), day);
+            foundDieter.setCalories(currentCalories);
+            return foundDieter;
         }
-        return null;
+        return foundDieter;
     }
 
     public Dieter getRemainingCalories(Dieter dieter){
         LocalDate day = LocalDate.now();
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
-        dieter = getCaloriesByDay(dieter.getName(), day);
-        Integer usedCalories = mealService.getCaloriesByDay(dieter.getName(), day);
-        dieter.setCalories(usedCalories);
+        String returnName = dieter.getName();
+        Integer totalCalories = searchDieter.get().getCalories();
+        Dieter responseDieter = new Dieter();
+        responseDieter = getCaloriesByDay(dieter, day);
         if(searchDieter.isPresent()){
-            dieter.setCalories(searchDieter.get().getCalories() - dieter.getCalories());
-            return dieter;
+            if(responseDieter.getCalories() != null){
+                responseDieter.setName(returnName);
+                responseDieter.setCalories(totalCalories - responseDieter.getCalories());
+            }
+            else{
+                responseDieter.setName(returnName);
+                responseDieter.setCalories(totalCalories);
+            }
+            return responseDieter;
         }
-        return null;
+        return responseDieter;
     }
 
     public Dieter getID(Dieter dieter){

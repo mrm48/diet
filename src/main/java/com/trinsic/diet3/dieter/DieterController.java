@@ -50,7 +50,7 @@ public class DieterController{
     }
 
     @GetMapping("/caloriesToday")
-    public Dieter getCaloriesByDay(@RequestBody String dieterName){
-        return dieterService.getCaloriesByDay(dieterName, LocalDate.now());
+    public Dieter getCaloriesByDay(@RequestBody Dieter dieter){
+        return dieterService.getCaloriesByDay(dieter, LocalDate.now());
     }
 }
