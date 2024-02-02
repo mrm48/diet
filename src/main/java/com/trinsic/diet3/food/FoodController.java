@@ -26,16 +26,18 @@ public class FoodController {
         return foodService.listCalories(food);
 	}
 
+    // Add
     @PostMapping("/calories")
     @ResponseBody
     public Food addCalories(@RequestBody Food food){
         return foodService.addCaloriesByName(food);
     }
 
+    // Update
     @PutMapping("/calories")
     @ResponseBody
     public Food setCaloriesByName(@RequestBody Food food){
-        return foodService.addCaloriesByName(food);
+        return foodService.updateCaloriesByName(food);
     }
 
     @PostMapping("/")

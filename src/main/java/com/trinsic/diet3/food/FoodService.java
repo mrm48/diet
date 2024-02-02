@@ -22,12 +22,27 @@ public class FoodService{
 	}
 
 	@Transactional
+    public Food updateCaloriesByName(Food food){
+        Food responseFood = this.listCalories(food);
+        if(responseFood != null){
+            responseFood.setCalories(food.getCalories());
+            foodRepository.addCaloriesByName(responseFood.getName(), responseFood.getCalories());    
+            return responseFood;
+        }
+        return null;
+    }
+
+
+	@Transactional
     public Food addCaloriesByName(Food food){
         Food responseFood = this.listCalories(food);
         if(responseFood != null){
             responseFood.setCalories(food.getCalories());
             foodRepository.addCaloriesByName(responseFood.getName(), responseFood.getCalories());    
             return responseFood;
+        }
+        else{
+            foodRepository.addFood(food.getName(), food.getUnits(), food.getCalories());
         }
         return null;
     }
