@@ -12,14 +12,14 @@ import org.springframework.stereotype.Repository;
 public interface MealRepository 
         extends JpaRepository<Meal, Long>{
         
-        @Query("SELECT m FROM Meal m WHERE m.day = ?1 AND m.dieterid = ?2")
-        Optional<Meal> findMealByDay(LocalDate day, Long dieterid);
-
         @Query("SELECT m FROM Meal m WHERE m.name = ?1 AND m.day = ?2 AND m.dieterid = ?3")
         Optional<Meal> findMealByName(String name, LocalDate day, Long dieterid);
 
         @Query("SELECT SUM(calories) from Meal m WHERE m.dieter = ?1 AND m.day = ?2")
-        Integer findDieterCaloriesByDay(String name, LocalDate day);
+        Integer findCaloriesByDay(String name, LocalDate day);
+        
+        @Query("SELECT m FROM Meal m WHERE m.day = ?1 AND m.dieterid = ?2 AND m.name = ?3")
+        Optional<Meal> findMealByDay(LocalDate day, Long dieterid, String mealname);
 
         @Modifying
         @Query("UPDATE Meal m SET m.calories = ?1 WHERE m.id = ?2 AND m.name = ?3 AND m.day = ?4 AND m.dieterid = ?5 AND m.dieter = ?6")

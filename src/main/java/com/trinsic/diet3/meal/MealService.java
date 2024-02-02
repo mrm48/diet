@@ -84,24 +84,20 @@ public class MealService{
     }
 
     public Integer getCaloriesByDay(String dieterName, LocalDate day){
-        Long dieterid;
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
         if (searchDieter.isPresent()){
-            dieterid = searchDieter.get().getId();
-            Optional<Meal> meal = mealRepository.findMealByDay(day, dieterid);
-            if (meal.isPresent()){
-                return meal.get().getCalories();
-            }
+            Integer meal = mealRepository.findCaloriesByDay(dieterName, day);
+            return meal;
         }
         return 0;
     }
 
-    public Meal getMeal(String mealBlock){
-        JSONObject jsonObject = new JSONObject(mealBlock);
+    public Meal getMeal(String mealData){
+        JSONObject jsonObject = new JSONObject(mealData);
         String dieter = jsonObject.get("dieterName").toString();
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
         if (searchDieter.isPresent()){
-            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), searchDieter.get().getId());
+            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), searchDieter.get().getId(), jsonObject.get("mealName").toString());
             if (meal.isPresent()){
                 return meal.get();
             }

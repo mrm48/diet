@@ -43,31 +43,35 @@ public class DieterService{
         return null;
     }
 
-    public Integer getCaloriesByDay(String req, LocalDate day){
-        JSONObject requestBody = new JSONObject(req);
-        String dieter = requestBody.get("name").toString();
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
-        if(searchDieter.isPresent()){
-            Integer currentCalories = mealRepository.findDieterCaloriesByDay(searchDieter.get().getName(), day);
-                return currentCalories;
+    public Dieter getCaloriesByDay(String dieter, LocalDate day){
+        Optional<Dieter> namedDieter = dieterRepository.findDieterByName(dieter);
+        if(namedDieter.isPresent()){
+            Integer currentCalories = mealRepository.findCaloriesByDay(namedDieter.get().getName(), day);
+            namedDieter.get().setCalories(currentCalories);
+            return namedDieter.get();
         }
-        return 0;
+        return null;
     }
 
-    public Integer getRemainingCalories(Dieter dieter){
+    public Dieter getRemainingCalories(Dieter dieter){
         LocalDate day = LocalDate.now();
-        String dieterName = dieter.getName();
-        Integer totalCalories = getCaloriesByDay(dieterName, day);
-        Integer usedCalories = mealService.getCaloriesByDay(dieterName, day);
-        return totalCalories - usedCalories;
+        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
+        dieter = getCaloriesByDay(dieter.getName(), day);
+        Integer usedCalories = mealService.getCaloriesByDay(dieter.getName(), day);
+        dieter.setCalories(usedCalories);
+        if(searchDieter.isPresent()){
+            dieter.setCalories(searchDieter.get().getCalories() - dieter.getCalories());
+            return dieter;
+        }
+        return null;
     }
 
-    public Long getID(Dieter dieter){
+    public Dieter getID(Dieter dieter){
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
         if (searchDieter.isPresent()){
-            return searchDieter.get().getId();
+            return searchDieter.get();
         }
-        return Long.valueOf(-1);
+        return null;
     }
 
     public Dieter getDieterByName(String req){

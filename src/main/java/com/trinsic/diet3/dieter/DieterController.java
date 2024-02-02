@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
+import org.json.*;
 
 @RestController
 @RequestMapping(path = "api/v1/dieter")
@@ -39,17 +40,17 @@ public class DieterController{
 
     @GetMapping("/id")
     @ResponseBody
-    public Long getID(@RequestBody Dieter dieter){
+    public Dieter getID(@RequestBody Dieter dieter){
         return dieterService.getID(dieter);
     }
 
     @GetMapping("/calories")
-    public Integer getremainingcalories(@RequestBody Dieter dieter){
+    public Dieter getremainingcalories(@RequestBody Dieter dieter){
         return dieterService.getRemainingCalories(dieter);
     }
 
     @GetMapping("/caloriesToday")
-    public Integer getCaloriesByDay(@RequestBody String dieterName){
+    public Dieter getCaloriesByDay(@RequestBody String dieterName){
         return dieterService.getCaloriesByDay(dieterName, LocalDate.now());
     }
 }
