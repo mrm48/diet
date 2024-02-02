@@ -13,21 +13,23 @@ public class FoodService{
         this.foodRepository = foodRepository;
     }
 
-	public Integer listCalories(String name){
-        Optional<Food> searchFood = foodRepository.findFoodByName(name);
+	public Food listCalories(Food food){
+        Optional<Food> searchFood = foodRepository.findFoodByName(food.getName());
         if (searchFood.isPresent()){
-            return searchFood.get().getCalories();
+            return searchFood.get();
         }
-        return -1;
+        return null;
 	}
 
 	@Transactional
-    public Integer addCaloriesByName(String name, Integer cals){
-        if(this.listCalories(name) != -1){
-            System.out.println("changing " + name);
-            return foodRepository.addCaloriesByName(name, cals);    
+    public Food addCaloriesByName(Food food){
+        Food responseFood = this.listCalories(food);
+        if(responseFood != null){
+            responseFood.setCalories(food.getCalories());
+            foodRepository.addCaloriesByName(responseFood.getName(), responseFood.getCalories());    
+            return responseFood;
         }
-        return -1;
+        return null;
     }
 
     @Transactional

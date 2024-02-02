@@ -22,20 +22,20 @@ public class FoodController {
 
 	@GetMapping("/calories")
     @ResponseBody
-	public Integer listCalories(@RequestBody Food food){
-        return foodService.listCalories(food.getName());
+	public Food listCalories(@RequestBody Food food){
+        return foodService.listCalories(food);
 	}
 
     @PostMapping("/calories")
     @ResponseBody
-    public Integer addCalories(@RequestBody Food food){
-        return foodService.addCaloriesByName(food.getName(), food.getCalories());
+    public Food addCalories(@RequestBody Food food){
+        return foodService.addCaloriesByName(food);
     }
 
     @PutMapping("/calories")
     @ResponseBody
-    public Integer setCaloriesByName(@RequestBody Food food){
-        return foodService.addCaloriesByName(food.getName(), food.getCalories());
+    public Food setCaloriesByName(@RequestBody Food food){
+        return foodService.addCaloriesByName(food);
     }
 
     @PostMapping("/")
