@@ -1,7 +1,6 @@
 package com.trinsic.diet3.dieter;
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.List;
 import org.json.*;
 
 import org.springframework.stereotype.Service;
@@ -49,14 +48,8 @@ public class DieterService{
         String dieter = requestBody.get("name").toString();
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
         if(searchDieter.isPresent()){
-            Optional<List<Integer>> currentCalories = mealRepository.findDieterCaloriesByDay(searchDieter.get().getName(), day);
-            if (currentCalories.isPresent()){
-                Integer caloriesToday = 0;
-                for (Integer meal : currentCalories.get()) {
-                   caloriesToday += meal; 
-                }
-                return caloriesToday;
-            }
+            Integer currentCalories = mealRepository.findDieterCaloriesByDay(searchDieter.get().getName(), day);
+                return currentCalories;
         }
         return 0;
     }
