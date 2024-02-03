@@ -52,7 +52,7 @@ public class FoodService{
         Optional<Food> searchFood = foodRepository.findFoodByName(f.getName());
         if (searchFood.isEmpty()) {
             foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
-            return f;
+            return listCalories(f);
         }
         return null;
     }
