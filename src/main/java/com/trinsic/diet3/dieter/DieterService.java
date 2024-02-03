@@ -24,7 +24,7 @@ public class DieterService{
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(newDieter.getName());
         if (searchDieter.isEmpty()) {
             dieterRepository.addDieter(newDieter.getName(), newDieter.getCalories());  
-            return newDieter;
+            return getID(newDieter);
         }
         return null;
     }
