@@ -35,7 +35,7 @@ public class MealService{
                 newMeal.setDieterId(searchDieter.get().getId());
                 newMeal.setDieter(dietername);
                 mealRepository.addMeal(newMeal.getCalories(), newMeal.getName(), newMeal.getDay(), searchDieter.get().getId(), dietername);
-                return newMeal;
+                return getMeal(newMeal);
             }
         }
         return null;
@@ -92,12 +92,11 @@ public class MealService{
         return 0;
     }
 
-    public Meal getMeal(String mealData){
-        JSONObject jsonObject = new JSONObject(mealData);
-        String dieter = jsonObject.get("dieterName").toString();
+    public Meal getMeal(Meal mealData){
+        String dieter = mealData.getDieter();
         Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
         if (searchDieter.isPresent()){
-            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), searchDieter.get().getId(), jsonObject.get("mealName").toString());
+            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), searchDieter.get().getId(), mealData.getName());
             if (meal.isPresent()){
                 return meal.get();
             }

@@ -31,8 +31,8 @@ public class MealController{
 
     @GetMapping("/")
     @ResponseBody
-    public Meal getMeal(@RequestBody String mealBlock){
-        return mealService.getMeal(mealBlock);
+    public Meal getMeal(@RequestBody Meal meal){
+        return mealService.getMeal(meal);
     }
 
 }
