@@ -5,6 +5,21 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 	- [x] Food
 		- [x] GET
 			- [x] /calories - retrieve number of calories by name
+                -Example request:
+                ```
+                {
+                    "name": "Cheerios"
+                }
+                ```
+                -Example response:
+                ```
+                {
+                    "id":1,
+                    "name":"Cheerios",
+                    "units":1,
+                    "calories":250
+                }
+                ```
 		- [x] POST
 			- [x] / - add a new food
 			- [x] /calories - add calories to a new food
