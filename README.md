@@ -176,7 +176,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 ```
 	PostgresQL 15.4
 	openJDK 17
-	Maven
+	Maven 3.9.1
 ```
 
 ### Optional
