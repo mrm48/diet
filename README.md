@@ -81,7 +81,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 					"calories": 500  
 				}
 				```
-			- [x	] /food - add a food to the latest meal by user
+			- [x] /food - add a food to the latest meal by user
 				- Example request:
 				```
 				{
