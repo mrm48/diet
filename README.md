@@ -22,9 +22,33 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
                 ```
 		- [x] POST
 			- [x] / - add a new food
+				- Example request:
+				```
+				{
+    					"name": "Plain Bagel",
+    					"calories": 270,
+    					"units": 1
+				}
+				```
 			- [x] /calories - add calories to a new food
+				- Example request:
+				```
+				{
+    					"name": "Beef and Bean Burritos",
+    					"calories": 290,
+    					"units": 1
+				}
+				```
 		- [x] PUT
 			- [x] /calories - update a food's number of calories
+				- Example request:
+				```
+				{
+    					"name": "Beef and Bean Burritos",
+    					"calories": 290,
+    					"units": 1
+				}
+				```
 	- [x] Meal
 		- [x] GET
 			- [x] / - retrieve the most recent meal by user
