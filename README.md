@@ -52,18 +52,123 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 	- [x] Meal
 		- [x] GET
 			- [x] / - retrieve the most recent meal by user
+				- Example request:
+				```
+				{
+    					"name": "Lunch",
+    					"dieter": "Matt",
+    					"calories": 500    
+				}
+				```
+				- Example response:
+				```
+				{
+    					"id": 7,
+    					"name": "Lunch",
+    					"day": "2024-02-08",
+    					"calories": 500,
+    					"dieter": "Matt",
+    					"dieterId": 1
+				}
+				```
 		- [x] POST
 			- [x] / - create a new meal today
-			- [x] /food - add a food to the latest meal by user
+				- Example request:
+				```
+				{
+					"name": "Lunch",
+					"dieter": "Matt",
+					"calories": 500  
+				}
+				```
+			- [x	] /food - add a food to the latest meal by user
+				- Example request:
+				```
+				{
+    					"name": "Cheerios",
+    					"dietername": "Matt",
+    					"mealname": "Lunch"
+				}
+				```
 	- [x] Dieter
 		- [x] GET
 			- [x] / - get information on a user
+				- Example request:
+				```
+				{
+				    "name": "Matt"
+				}
+				```
+				- Example response:
+				```
+				{
+				    "id": 1,
+				    "name": "Matt",
+				    "calories": 1500
+				}
+				```
 			- [x] /id - retrive the ID from a user
+				- Example request:
+				```
+				{
+				    "name": "Matt"
+				}
+				```
+				- Example response:
+				```
+				{
+				    "id": 1,
+				    "name": "Matt",
+				    "calories": 1500
+				}
+				```
 			- [x] /calories - get the remaining number of calories for a user
+				- Example request:
+				```
+				{
+				    "name": "Matt"
+				}
+				```
+				- Example response:
+				```
+				{
+				    "id": 1,
+				    "name": "Matt",
+				    "calories": 1000
+				}
+				```
 			- [x] /caloriesToday - get the number of calories used today by a user
+				- Example request:
+				```
+				{
+				    "name": "Matt"
+				}
+				```
+				- Example response:
+				```
+				{
+				    "id": 1,
+				    "name": "Matt",
+				    "calories": 500
+				}
+				```
 		- [x] POST
 			- [x] / - create a new user
+				- Example request:
+				```
+				{
+				    "name": "Matt",
+				    "calories": 1500
+				}
+				```
 			- [x] /calories - set total number of calories by day for a user
+				- Example request:
+				```
+				{
+				    "name": "Matt",
+				    "calories": 1500
+				}
+				```
 
 ## Setup
 
