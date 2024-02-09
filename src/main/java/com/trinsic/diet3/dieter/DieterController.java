@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
-import org.json.*;
 
 @RestController
 @RequestMapping(path = "api/v1/dieter")
