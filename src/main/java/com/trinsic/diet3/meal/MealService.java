@@ -26,56 +26,52 @@ public class MealService{
     }
 
     @Transactional
-    public Meal addMeal(Meal newMeal, String dietername){
-        Optional<Meal> searchMeal = mealRepository.findMealByName(newMeal.getName(), newMeal.getDay(), newMeal.getDieterId());
-        if (searchMeal.isEmpty()) {
-            newMeal.setDay(LocalDate.now());
-            Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dietername);
-            if (searchDieter.isPresent()) {
-                newMeal.setDieterId(searchDieter.get().getId());
-                newMeal.setDieter(dietername);
-                mealRepository.addMeal(newMeal.getCalories(), newMeal.getName(), newMeal.getDay(), searchDieter.get().getId(), dietername);
-                return getMeal(newMeal);
+    public Meal addMeal(Meal requestMeal, String requestDieter){
+        Optional<Meal> meal = mealRepository.findMealByName(requestMeal.getName(), requestMeal.getDay(), requestMeal.getDieterId());
+        if (meal.isEmpty()) {
+            requestMeal.setDay(LocalDate.now());
+            Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
+            if (dieter.isPresent()) {
+                requestMeal.setDieterId(dieter.get().getId());
+                requestMeal.setDieter(requestDieter);
+                mealRepository.addMeal(requestMeal.getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter);
+                return getMeal(requestMeal);
             }
         }
         return null;
     }
 
     @Transactional
-    public Meal addCalories(String foodData){
-       Long dieterid;
-       String food;
-       String dieter;
-       String meal;
-       JSONObject requestObject = new JSONObject(foodData);
-       food = requestObject.get("name").toString();
-       dieter = requestObject.get("dietername").toString();
-       meal = requestObject.get("mealname").toString();
-       Optional<Food> foundFood = foodRepository.findFoodByName(food);
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
-        if (searchDieter.isPresent() && foundFood.isPresent()){
-            dieterid = searchDieter.get().getId();
-            Optional<Meal> searchMeal = mealRepository.findMealByName(meal, LocalDate.now(), searchDieter.get().getId());
-            if (searchMeal.isPresent()){
-                mealRepository.addFood(foundFood.get().getCalories(),searchMeal.get().getId(),foundFood.get().getName(),LocalDate.now(),dieterid,dieter);
-                searchMeal.get().setCalories(searchMeal.get().getCalories() + foundFood.get().getCalories());
-                return searchMeal.get();
+    public Meal addCalories(String requestMeal){
+       String requestFood;
+       String requestDieter;
+       String requestMealName;
+       JSONObject requestObject = new JSONObject(requestMeal);
+       requestFood = requestObject.get("name").toString();
+       requestDieter = requestObject.get("dietername").toString();
+       requestMealName = requestObject.get("mealname").toString();
+       Optional<Food> food = foodRepository.findFoodByName(requestFood);
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
+        if (dieter.isPresent() && food.isPresent()){
+            Optional<Meal> meal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
+            if (meal.isPresent()){
+                mealRepository.addFood(food.get().getCalories(),meal.get().getId(),food.get().getName(),LocalDate.now(),dieter.get().getId(),requestDieter);
+                meal.get().setCalories(meal.get().getCalories() + food.get().getCalories());
+                return meal.get();
             }
             else{
-                mealRepository.addMeal(foundFood.get().getCalories(),meal,LocalDate.now(),dieterid,dieter);
-                Optional<Meal> newMeal = mealRepository.findMealByName(meal, LocalDate.now(), searchDieter.get().getId());
+                mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter);
+                Optional<Meal> newMeal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
                 return newMeal.get();
             }
         }
         return null;
     }
 
-    public Integer getCalories(String name, LocalDate day, String dieterName){
-        Long dieterid;
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
-        if (searchDieter.isPresent()){
-            dieterid = searchDieter.get().getId();
-            Optional<Meal> meal = mealRepository.findMealByName(name, day, dieterid);
+    public Integer getCalories(String requestMeal, LocalDate requestDay, String requestDieter){
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
+        if (dieter.isPresent()){
+            Optional<Meal> meal = mealRepository.findMealByName(requestMeal, requestDay, dieter.get().getId());
             if (meal.isPresent()){
                 return meal.get().getCalories();
             }
@@ -83,20 +79,20 @@ public class MealService{
         return 0;
     }
 
-    public Integer getCaloriesByDay(String dieterName, LocalDate day){
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
-        if (searchDieter.isPresent()){
-            Integer meal = mealRepository.findCaloriesByDay(dieterName, day);
+    public Integer getCaloriesByDay(String requestDieter, LocalDate requestDay){
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
+        if (dieter.isPresent()){
+            Integer meal = mealRepository.findCaloriesByDay(requestDieter, requestDay);
             return meal;
         }
         return 0;
     }
 
-    public Meal getMeal(Meal mealData){
-        String dieter = mealData.getDieter();
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter);
-        if (searchDieter.isPresent()){
-            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), searchDieter.get().getId(), mealData.getName());
+    public Meal getMeal(Meal requestMeal){
+        String requestDieter = requestMeal.getDieter();
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
+        if (dieter.isPresent()){
+            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), dieter.get().getId(), requestMeal.getName());
             if (meal.isPresent()){
                 return meal.get();
             }
