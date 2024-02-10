@@ -2,7 +2,7 @@
 A REST API that queries and modifies a PostgresQL database using Spring Boot. There is also a nix flake to get started. 
 
 ## Endpoints
-	- Food
+	1. Food
 		- GET
 			- /calories - retrieve number of calories by name
                 - Example request:
@@ -49,7 +49,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"units": 1
 				}
 				```
-	- Meal
+	2. Meal
 		- GET
 			- / - retrieve the most recent meal by user
 				- Example request:
@@ -90,7 +90,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"mealname": "Lunch"
 				}
 				```
-	- Dieter
+	3. Dieter
 		- GET
 			- / - get information on a user
 				- Example request:
