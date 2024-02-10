@@ -13,19 +13,19 @@ public class FoodService{
         this.foodRepository = foodRepository;
     }
 
-	public Food listCalories(Food food){
-        Optional<Food> searchFood = foodRepository.findFoodByName(food.getName());
-        if (searchFood.isPresent()){
-            return searchFood.get();
+	public Food listCalories(Food requestFood){
+        Optional<Food> food = foodRepository.findFoodByName(requestFood.getName());
+        if (food.isPresent()){
+            return food.get();
         }
         return null;
 	}
 
 	@Transactional
-    public Food updateCaloriesByName(Food food){
-        Food responseFood = this.listCalories(food);
+    public Food updateCaloriesByName(Food requestFood){
+        Food responseFood = this.listCalories(requestFood);
         if(responseFood != null){
-            responseFood.setCalories(food.getCalories());
+            responseFood.setCalories(requestFood.getCalories());
             foodRepository.addCaloriesByName(responseFood.getName(), responseFood.getCalories());    
             return responseFood;
         }
@@ -34,25 +34,25 @@ public class FoodService{
 
 
 	@Transactional
-    public Food addCaloriesByName(Food food){
-        Food responseFood = this.listCalories(food);
+    public Food addCaloriesByName(Food requestFood){
+        Food responseFood = this.listCalories(requestFood);
         if(responseFood != null){
-            responseFood.setCalories(food.getCalories());
+            responseFood.setCalories(requestFood.getCalories());
             foodRepository.addCaloriesByName(responseFood.getName(), responseFood.getCalories());    
             return responseFood;
         }
         else{
-            foodRepository.addFood(food.getName(), food.getUnits(), food.getCalories());
+            foodRepository.addFood(requestFood.getName(), requestFood.getUnits(), requestFood.getCalories());
         }
         return null;
     }
 
     @Transactional
-    public Food addFood(Food f){
-        Optional<Food> searchFood = foodRepository.findFoodByName(f.getName());
-        if (searchFood.isEmpty()) {
-            foodRepository.addFood(f.getName(), f.getUnits(), f.getCalories());  
-            return listCalories(f);
+    public Food addFood(Food requestFood){
+        Optional<Food> food = foodRepository.findFoodByName(requestFood.getName());
+        if (food.isEmpty()) {
+            foodRepository.addFood(requestFood.getName(), requestFood.getUnits(), requestFood.getCalories());  
+            return listCalories(requestFood);
         }
         return null;
     }
