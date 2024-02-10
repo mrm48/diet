@@ -4,7 +4,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 ## Endpoints
 	- [x] Food
 		- [x] GET
-			- [x] /calories - retrieve number of calories by name
+		    - [x] /calories - retrieve number of calories by name
                 - Example request:
                 ```
                 {
