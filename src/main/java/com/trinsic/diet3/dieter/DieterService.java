@@ -46,7 +46,12 @@ public class DieterService{
         if(dieter.isPresent()){
             foundDieter = dieter.get();
             Integer currentCalories = mealRepository.findCaloriesByDay(foundDieter.getName(), requestDay);
-            foundDieter.setCalories(currentCalories);
+            if (currentCalories != null) {
+                foundDieter.setCalories(currentCalories);
+            }
+            else {
+                foundDieter.setCalories(0);
+            }
             return foundDieter;
         }
         return foundDieter;
