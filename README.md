@@ -2,26 +2,26 @@
 A REST API that queries and modifies a PostgresQL database using Spring Boot. There is also a nix flake to get started. 
 
 ## Endpoints
-	- [x] Food
-		- [x] GET
-		    - [x] /calories - retrieve number of calories by name
-                - Example request:
-                ```
-                {
-                    "name": "Cheerios"
-                }
-                ```
-                - Example response:
-                ```
-                {
-                    "id":1,
-                    "name":"Cheerios",
-                    "units":1,
-                    "calories":250
-                }
-                ```
-		- [x] POST
-			- [x] / - add a new food
+	- Food
+		- GET
+		    - /calories - retrieve number of calories by name
+                    - Example request:
+                    ```
+                    {
+                        "name": "Cheerios"
+                    }
+                    ```
+                    - Example response:
+                    ```
+                    {
+                        "id":1,
+                        "name":"Cheerios",
+                        "units":1,
+                        "calories":250
+                    }
+                    ```
+		- POST
+			- / - add a new food
 				- Example request:
 				```
 				{
@@ -30,7 +30,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"units": 1
 				}
 				```
-			- [x] /calories - add calories to a new food
+			- /calories - add calories to a new food
 				- Example request:
 				```
 				{
@@ -39,8 +39,8 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"units": 1
 				}
 				```
-		- [x] PUT
-			- [x] /calories - update a food's number of calories
+		- PUT
+			- /calories - update a food's number of calories
 				- Example request:
 				```
 				{
@@ -49,9 +49,9 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"units": 1
 				}
 				```
-	- [x] Meal
-		- [x] GET
-			- [x] / - retrieve the most recent meal by user
+	- Meal
+		- GET
+			- / - retrieve the most recent meal by user
 				- Example request:
 				```
 				{
@@ -71,8 +71,8 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"dieterId": 1
 				}
 				```
-		- [x] POST
-			- [x] / - create a new meal today
+		- POST
+			- / - create a new meal today
 				- Example request:
 				```
 				{
@@ -81,7 +81,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 					"calories": 500  
 				}
 				```
-			- [x] /food - add a food to the latest meal by user
+			- /food - add a food to the latest meal by user
 				- Example request:
 				```
 				{
@@ -90,9 +90,9 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"mealname": "Lunch"
 				}
 				```
-	- [x] Dieter
-		- [x] GET
-			- [x] / - get information on a user
+	- Dieter
+		- GET
+			- / - get information on a user
 				- Example request:
 				```
 				{
@@ -107,7 +107,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				    "calories": 1500
 				}
 				```
-			- [x] /id - retrive the ID from a user
+			- /id - retrive the ID from a user
 				- Example request:
 				```
 				{
@@ -122,7 +122,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				    "calories": 1500
 				}
 				```
-			- [x] /calories - get the remaining number of calories for a user
+			- /calories - get the remaining number of calories for a user
 				- Example request:
 				```
 				{
@@ -137,7 +137,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				    "calories": 1000
 				}
 				```
-			- [x] /caloriesToday - get the number of calories used today by a user
+			- /caloriesToday - get the number of calories used today by a user
 				- Example request:
 				```
 				{
@@ -152,8 +152,8 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				    "calories": 500
 				}
 				```
-		- [x] POST
-			- [x] / - create a new user
+		- POST
+			- / - create a new user
 				- Example request:
 				```
 				{
@@ -161,7 +161,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				    "calories": 1500
 				}
 				```
-			- [x] /calories - set total number of calories by day for a user
+			- /calories - set total number of calories by day for a user
 				- Example request:
 				```
 				{
