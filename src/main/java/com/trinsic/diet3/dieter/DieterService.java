@@ -54,18 +54,17 @@ public class DieterService{
 
     public Dieter getRemainingCalories(Dieter requestDieter){
         LocalDate day = LocalDate.now();
-        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
-        String returnName = requestDieter.getName();
+        String dieterName = requestDieter.getName();
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(dieterName);
         Integer totalCalories = dieter.get().getCalories();
         Dieter responseDieter = new Dieter();
         responseDieter = getCaloriesByDay(requestDieter, day);
         if(dieter.isPresent()){
+            responseDieter.setName(dieterName);
             if(responseDieter.getCalories() != null){
-                responseDieter.setName(returnName);
                 responseDieter.setCalories(totalCalories - responseDieter.getCalories());
             }
             else{
-                responseDieter.setName(returnName);
                 responseDieter.setCalories(totalCalories);
             }
             return responseDieter;
