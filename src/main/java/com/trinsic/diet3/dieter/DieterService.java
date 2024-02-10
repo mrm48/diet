@@ -20,46 +20,46 @@ public class DieterService{
     }
 
     @Transactional
-    public Dieter addDieter(Dieter newDieter){
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(newDieter.getName());
-        if (searchDieter.isEmpty()) {
-            dieterRepository.addDieter(newDieter.getName(), newDieter.getCalories());  
-            return getID(newDieter);
+    public Dieter addDieter(Dieter requestDieter){
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
+        if (dieter.isEmpty()) {
+            dieterRepository.addDieter(requestDieter.getName(), requestDieter.getCalories());  
+            return getID(requestDieter);
         }
         return null;
     }
 
     @Transactional
-    public Dieter setCalories(Dieter dieter){
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
-        if (searchDieter.isPresent()){
-            dieterRepository.addTotalCalories(dieter.getName(),dieter.getCalories());
-            searchDieter.get().setCalories(dieter.getCalories());
-            return searchDieter.get();
+    public Dieter setCalories(Dieter requestDieter){
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
+        if (dieter.isPresent()){
+            dieterRepository.addTotalCalories(requestDieter.getName(),requestDieter.getCalories());
+            dieter.get().setCalories(requestDieter.getCalories());
+            return dieter.get();
         }
         return null;
     }
 
-    public Dieter getCaloriesByDay(Dieter dieter, LocalDate day){
-        Optional<Dieter> namedDieter = dieterRepository.findDieterByName(dieter.getName());
+    public Dieter getCaloriesByDay(Dieter requestDieter, LocalDate requestDay){
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
         Dieter foundDieter = null; 
-        if(namedDieter.isPresent()){
-            foundDieter = namedDieter.get();
-            Integer currentCalories = mealRepository.findCaloriesByDay(foundDieter.getName(), day);
+        if(dieter.isPresent()){
+            foundDieter = dieter.get();
+            Integer currentCalories = mealRepository.findCaloriesByDay(foundDieter.getName(), requestDay);
             foundDieter.setCalories(currentCalories);
             return foundDieter;
         }
         return foundDieter;
     }
 
-    public Dieter getRemainingCalories(Dieter dieter){
+    public Dieter getRemainingCalories(Dieter requestDieter){
         LocalDate day = LocalDate.now();
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
-        String returnName = dieter.getName();
-        Integer totalCalories = searchDieter.get().getCalories();
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
+        String returnName = requestDieter.getName();
+        Integer totalCalories = dieter.get().getCalories();
         Dieter responseDieter = new Dieter();
-        responseDieter = getCaloriesByDay(dieter, day);
-        if(searchDieter.isPresent()){
+        responseDieter = getCaloriesByDay(requestDieter, day);
+        if(dieter.isPresent()){
             if(responseDieter.getCalories() != null){
                 responseDieter.setName(returnName);
                 responseDieter.setCalories(totalCalories - responseDieter.getCalories());
@@ -73,20 +73,20 @@ public class DieterService{
         return responseDieter;
     }
 
-    public Dieter getID(Dieter dieter){
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieter.getName());
-        if (searchDieter.isPresent()){
-            return searchDieter.get();
+    public Dieter getID(Dieter requestDieter){
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
+        if (dieter.isPresent()){
+            return dieter.get();
         }
         return null;
     }
 
-    public Dieter getDieterByName(String req){
-        JSONObject requestBody = new JSONObject(req);
+    public Dieter getDieterByName(String requestDieter){
+        JSONObject requestBody = new JSONObject(requestDieter);
         String dieterName = requestBody.get("name").toString();
-        Optional<Dieter> searchDieter = dieterRepository.findDieterByName(dieterName);
-        if (searchDieter.isPresent()){
-            return searchDieter.get();
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(dieterName);
+        if (dieter.isPresent()){
+            return dieter.get();
         }
         return null;
     }
