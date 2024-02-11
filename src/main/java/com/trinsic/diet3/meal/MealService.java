@@ -46,7 +46,7 @@ public class MealService{
        String requestFood;
        String requestDieter;
        String requestMealName;
-       requestFood = requestMeal.getFood().get(0);
+       requestFood = requestMeal.getFood()[0];
        requestDieter = requestMeal.getDieter();
        requestMealName = requestMeal.getName();
        Optional<Food> food = foodRepository.findFoodByName(requestFood);

@@ -9,8 +9,6 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 
-import java.util.List;
-
 @Entity
 @Table
 public class Meal {
@@ -30,7 +28,7 @@ public class Meal {
     private Integer calories;
     private Long dieterid;
     private String dieter;
-    private List<String> food;
+    private String[] food;
 
     public Meal() {
     }
@@ -52,7 +50,7 @@ public class Meal {
         this.dieter = dieter;
     }
 
-    public Meal(Long id, String name, LocalDate day, Integer calories, Long dieterid, String dieter, List<String> food) {
+    public Meal(Long id, String name, LocalDate day, Integer calories, Long dieterid, String dieter, String[] food) {
         this.id = id;
         this.name = name;
         this.day = day;
@@ -69,10 +67,10 @@ public class Meal {
         this.dieter = dieter;
     }
 
-    public Meal(String name, String dieter, String food){
+    public Meal(String name, String dieter, String[] food){
         this.name = name;
         this.dieter = dieter; 
-        this.food.add(food);
+        this.food = food;
     }
 
     public Meal(String name, Integer calories, String dieter){
@@ -126,20 +124,28 @@ public class Meal {
         return id;
     }
 
-    public void setFood(List<String> food){
+    public void setFood(String[] food){
         this.food = food;
     }
 
-    public void addFood(List<String> food){
-        if(this.food != null){
-            this.food.addAll(food);
+    public void addFood(String[] food){
+        String[] temp = this.food;
+        int lastIdx = 0;
+        System.out.println(this.food.length);
+        this.food = new String[this.food.length + food.length];
+        System.out.println(this.food.length);
+        System.out.println(food.length);
+        for (int i = 0; i < temp.length; i++) {
+           this.food[i] = temp[i];
+           lastIdx = i;
         }
-        else {
-            this.food = food;
+        for (int j = lastIdx; j - lastIdx < food.length; j++) {
+            System.out.println("j: " + j);
+            this.food[j] = food[j - lastIdx];
         }
     }
 
-    public List<String> getFood(){
+    public String[] getFood(){
         return food;
     }
 
