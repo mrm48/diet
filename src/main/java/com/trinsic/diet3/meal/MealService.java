@@ -31,10 +31,11 @@ public class MealService{
         if (meal.isEmpty()) {
             requestMeal.setDay(LocalDate.now());
             Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
-            if (dieter.isPresent()) {
+            Optional<Food> food = foodRepository.findFoodByName(requestMeal.getFood()[0]);
+            if (dieter.isPresent() && food.isPresent()) {
                 requestMeal.setDieterId(dieter.get().getId());
                 requestMeal.setDieter(requestDieter);
-                mealRepository.addMeal(requestMeal.getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
+                mealRepository.addMeal(food.get().getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
                 return getMeal(requestMeal);
             }
         }
