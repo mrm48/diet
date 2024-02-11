@@ -33,8 +33,8 @@ public class DieterController{
 
     @GetMapping("/")
     @ResponseBody
-    public Dieter get(@RequestBody String dieterName){
-        return dieterService.getDieterByName(dieterName);
+    public Dieter get(@RequestBody Dieter dieter){
+        return dieterService.getDieterByName(dieter);
     }
 
     @GetMapping("/id")
