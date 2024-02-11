@@ -78,6 +78,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				{
 					"name": "Lunch",
 					"dieter": "Matt",
+					"food": ["Cheerios", "Cheerios"],
 					"calories": 500  
 				}
 				```
@@ -85,9 +86,9 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				- Example request:
 				```
 				{
-    					"name": "Cheerios",
-    					"dietername": "Matt",
-    					"mealname": "Lunch"
+    					"name": "Lunch",
+    					"dieter": "Matt",
+    					"food": ["Cheerios"]
 				}
 				```
 	3. Dieter

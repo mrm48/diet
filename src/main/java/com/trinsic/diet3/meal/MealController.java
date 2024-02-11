@@ -19,14 +19,14 @@ public class MealController{
 
     @PostMapping("/food")
     @ResponseBody
-    public Meal addFood(@RequestBody String foodData){
-        return mealService.addCalories(foodData);
+    public Meal addFood(@RequestBody Meal meal){
+        return mealService.addCalories(meal);
     }
 
     @PostMapping("/")
     @ResponseBody
     public Meal addMeal(@RequestBody Meal meal){
-        return mealService.addMeal(meal, meal.getDieter());
+        return mealService.addMeal(meal);
     }
 
     @GetMapping("/")

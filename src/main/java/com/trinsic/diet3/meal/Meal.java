@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 
+import java.util.List;
+
 @Entity
 @Table
 public class Meal {
@@ -28,6 +30,7 @@ public class Meal {
     private Integer calories;
     private Long dieterid;
     private String dieter;
+    private List<String> food;
 
     public Meal() {
     }
@@ -49,12 +52,27 @@ public class Meal {
         this.dieter = dieter;
     }
 
+    public Meal(Long id, String name, LocalDate day, Integer calories, Long dieterid, String dieter, List<String> food) {
+        this.id = id;
+        this.name = name;
+        this.day = day;
+        this.calories = calories;
+        this.dieterid = dieterid;
+        this.dieter = dieter;
+        this.food = food;
+    }
     public Meal(String name, Integer calories, Long dieterid, String dieter) {
         this.name = name;
         this.day = LocalDate.now();
         this.calories = calories;
         this.dieterid = dieterid;
         this.dieter = dieter;
+    }
+
+    public Meal(String name, String dieter, String food){
+        this.name = name;
+        this.dieter = dieter; 
+        this.food.add(food);
     }
 
     public Meal(String name, Integer calories, String dieter){
@@ -106,6 +124,23 @@ public class Meal {
 
     public Long getId(){
         return id;
+    }
+
+    public void setFood(List<String> food){
+        this.food = food;
+    }
+
+    public void addFood(List<String> food){
+        if(this.food != null){
+            this.food.addAll(food);
+        }
+        else {
+            this.food = food;
+        }
+    }
+
+    public List<String> getFood(){
+        return food;
     }
 
 }

@@ -5,8 +5,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.json.*;
-
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
 
@@ -26,7 +24,9 @@ public class MealService{
     }
 
     @Transactional
-    public Meal addMeal(Meal requestMeal, String requestDieter){
+    public Meal addMeal(Meal requestMeal){
+        String requestDieter;
+        requestDieter = requestMeal.getDieter();
         Optional<Meal> meal = mealRepository.findMealByName(requestMeal.getName(), requestMeal.getDay(), requestMeal.getDieterId());
         if (meal.isEmpty()) {
             requestMeal.setDay(LocalDate.now());
@@ -34,7 +34,7 @@ public class MealService{
             if (dieter.isPresent()) {
                 requestMeal.setDieterId(dieter.get().getId());
                 requestMeal.setDieter(requestDieter);
-                mealRepository.addMeal(requestMeal.getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter);
+                mealRepository.addMeal(requestMeal.getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
                 return getMeal(requestMeal);
             }
         }
@@ -42,25 +42,26 @@ public class MealService{
     }
 
     @Transactional
-    public Meal addCalories(String requestMeal){
+    public Meal addCalories(Meal requestMeal){
        String requestFood;
        String requestDieter;
        String requestMealName;
-       JSONObject requestObject = new JSONObject(requestMeal);
-       requestFood = requestObject.get("name").toString();
-       requestDieter = requestObject.get("dietername").toString();
-       requestMealName = requestObject.get("mealname").toString();
+       requestFood = requestMeal.getFood().get(0);
+       requestDieter = requestMeal.getDieter();
+       requestMealName = requestMeal.getName();
        Optional<Food> food = foodRepository.findFoodByName(requestFood);
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
         if (dieter.isPresent() && food.isPresent()){
             Optional<Meal> meal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
             if (meal.isPresent()){
-                mealRepository.addFood(food.get().getCalories(),meal.get().getId(),food.get().getName(),LocalDate.now(),dieter.get().getId(),requestDieter);
+                meal.get().addFood(requestMeal.getFood());
+                mealRepository.addFood(food.get().getCalories(),meal.get().getId(),food.get().getName(),LocalDate.now(),dieter.get().getId(),requestDieter,meal.get().getFood());
                 meal.get().setCalories(meal.get().getCalories() + food.get().getCalories());
+                meal.get().addFood(requestMeal.getFood());
                 return meal.get();
             }
             else{
-                mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter);
+                mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter,requestMeal.getFood());
                 Optional<Meal> newMeal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
                 return newMeal.get();
             }
