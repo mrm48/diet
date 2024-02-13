@@ -1,4 +1,4 @@
-package com.trinsic.diet3.foodTracker;
+package com.trinsic.diet3.foodEntry;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table
-public class FoodTracker {
+public class FoodEntry {
     @Id
     @SequenceGenerator(
         name = "foodtracker_sequence",
@@ -26,10 +26,10 @@ public class FoodTracker {
     private Integer servings;
     private Integer calories;
 
-    public FoodTracker() {
+    public FoodEntry() {
     }
 
-    public FoodTracker(Long id, Long food_id, Long meal_id, Integer servings, Integer calories) {
+    public FoodEntry(Long id, Long food_id, Long meal_id, Integer servings, Integer calories) {
         this.id = id;
         this.food_id = food_id;
         this.meal_id = meal_id;
@@ -37,7 +37,7 @@ public class FoodTracker {
         this.calories = calories;
     }
 
-    public FoodTracker(Long food_id, Long meal_id, Integer servings, Integer calories) {
+    public FoodEntry(Long food_id, Long meal_id, Integer servings, Integer calories) {
         this.food_id = food_id;
         this.meal_id = meal_id;
         this.servings = servings;
