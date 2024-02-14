@@ -23,9 +23,9 @@ public interface MealRepository
 
         @Modifying
         @Query("UPDATE Meal m SET m.calories = ?1, m.food = ?7 WHERE m.id = ?2 AND m.name = ?3 AND m.day = ?4 AND m.dieterid = ?5 AND m.dieter = ?6")
-        Integer addFood(Integer cals, Long id, String name,  LocalDate day, Long dieterid, String dieter, Object[] food);
+        Meal addFood(Integer cals, Long id, String name,  LocalDate day, Long dieterid, String dieter, Object[] food);
 
         @Modifying
         @Query("INSERT INTO Meal (calories, name, day, dieterid, dieter, food) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
-        Integer addMeal(Integer cals, String name, LocalDate day, Long dieterid, String dieter, Object[] food);
+        Meal addMeal(Integer cals, String name, LocalDate day, Long dieterid, String dieter, Object[] food);
 }
