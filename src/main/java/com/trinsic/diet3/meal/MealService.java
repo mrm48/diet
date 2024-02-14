@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
-
+import com.trinsic.diet3.foodEntry.FoodEntryRepository;
 import com.trinsic.diet3.dieter.*;
 
 @Service
@@ -16,11 +16,13 @@ public class MealService{
     private final MealRepository mealRepository;
     private final DieterRepository dieterRepository;
     private final FoodRepository foodRepository;
+    private final FoodEntryRepository foodEntryRepository;
 
-    public MealService(MealRepository mealRepository, DieterRepository dieterRepository, FoodRepository foodRepository){
+    public MealService(MealRepository mealRepository, DieterRepository dieterRepository, FoodRepository foodRepository, FoodEntryRepository foodEntryRepository){
         this.mealRepository = mealRepository;
         this.dieterRepository = dieterRepository;
         this.foodRepository = foodRepository;
+        this.foodEntryRepository = foodEntryRepository;
     }
 
     @Transactional
@@ -35,8 +37,9 @@ public class MealService{
             if (dieter.isPresent() && food.isPresent()) {
                 requestMeal.setDieterId(dieter.get().getId());
                 requestMeal.setDieter(requestDieter);
-                mealRepository.addMeal(food.get().getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
-                return getMeal(requestMeal);
+                Meal newMeal = mealRepository.addMeal(food.get().getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
+                foodEntryRepository.addFoodEntry(food.get().getID(), newMeal.getId(), food.get().getCalories());
+                return newMeal;
             }
         }
         return null;
