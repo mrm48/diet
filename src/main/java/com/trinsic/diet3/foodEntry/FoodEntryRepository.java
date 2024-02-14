@@ -15,8 +15,8 @@ public interface FoodEntryRepository
         Optional<FoodEntry> findEntryByMeal(Long meal_id);
 
         @Modifying
-        @Query("INSERT INTO foodentry (food_id, meal_id, servings, calories) VALUES (?1 ?2 ?3 ?4)")
-        FoodEntry addFoodEntry(Long food_id, Long meal_id, Integer servings, Integer calories);
+        @Query("INSERT INTO foodentry (food_id, meal_id, calories) VALUES (?1 ?2 ?3)")
+        FoodEntry addFoodEntry(Long food_id, Long meal_id, Integer calories);
 
         @Modifying
         @Query("DELETE f FROM foodentry f WHERE f.id = ?1")
