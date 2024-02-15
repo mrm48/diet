@@ -60,14 +60,14 @@ public class MealService{
             if (meal.isPresent()){
                 meal.get().addFood(requestMeal.getFood());
                 mealRepository.addFood(food.get().getCalories(),meal.get().getId(),food.get().getName(),LocalDate.now(),dieter.get().getId(),requestDieter,meal.get().getFood());
+                foodEntryRepository.addFoodEntry(meal.get().getId(), food.get().getID(), food.get().getCalories());
                 meal.get().setCalories(meal.get().getCalories() + food.get().getCalories());
                 meal.get().addFood(requestMeal.getFood());
                 return meal.get();
             }
             else{
-                mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter,requestMeal.getFood());
-                Optional<Meal> newMeal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
-                return newMeal.get();
+                Meal newMeal = mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter,requestMeal.getFood());
+                return newMeal;
             }
         }
         return null;
@@ -78,7 +78,7 @@ public class MealService{
         if (dieter.isPresent()){
             Optional<Meal> meal = mealRepository.findMealByName(requestMeal, requestDay, dieter.get().getId());
             if (meal.isPresent()){
-                return meal.get().getCalories();
+                return foodEntryRepository.findCaloriesByMeal(meal.get().getId());
             }
         }
         return 0;

@@ -22,4 +22,6 @@ public interface FoodEntryRepository
         @Query("DELETE f FROM foodentry f WHERE f.id = ?1")
         FoodEntry removeFoodEntry(Long id);
 
+        @Query("SELECT SUM(calories) from foodentry f WHERE f.meal_id = ?1")
+        Integer findCaloriesByMeal(Long meal_id);
 }
