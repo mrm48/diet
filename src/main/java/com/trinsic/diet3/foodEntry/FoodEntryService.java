@@ -23,12 +23,12 @@ public class FoodEntryService{
 
     @Transactional
     public FoodEntry addFood(FoodEntry requestFood){
-            return foodEntryRepository.addFoodEntry(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getServings(), requestFood.getCalories());  
+            return foodEntryRepository.addFoodEntry(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());  
     }
 
     @Transactional
     public FoodEntry addFood(Long meal_id, Long food_id, Integer servings, Integer calories){
-        return foodEntryRepository.addFoodEntry(meal_id, food_id, servings, calories);
+        return foodEntryRepository.addFoodEntry(meal_id, food_id, calories);
     }
 
 }
