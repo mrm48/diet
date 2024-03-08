@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
-import com.trinsic.diet3.foodEntry.FoodEntryRepository;
+import com.trinsic.diet3.entry.EntryRepository;
 import com.trinsic.diet3.dieter.*;
 
 @Service
@@ -16,13 +16,13 @@ public class MealService{
     private final MealRepository mealRepository;
     private final DieterRepository dieterRepository;
     private final FoodRepository foodRepository;
-    private final FoodEntryRepository foodEntryRepository;
+    private final EntryRepository entryRepository;
 
-    public MealService(MealRepository mealRepository, DieterRepository dieterRepository, FoodRepository foodRepository, FoodEntryRepository foodEntryRepository){
+    public MealService(MealRepository mealRepository, DieterRepository dieterRepository, FoodRepository foodRepository, EntryRepository entryRepository){
         this.mealRepository = mealRepository;
         this.dieterRepository = dieterRepository;
         this.foodRepository = foodRepository;
-        this.foodEntryRepository = foodEntryRepository;
+        this.entryRepository = entryRepository;
     }
 
     @Transactional
@@ -38,7 +38,7 @@ public class MealService{
                 requestMeal.setDieterId(dieter.get().getId());
                 requestMeal.setDieter(requestDieter);
                 Meal newMeal = mealRepository.addMeal(food.get().getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
-                foodEntryRepository.addFoodEntry(food.get().getID(), newMeal.getId(), food.get().getCalories());
+                entryRepository.addFoodEntry(food.get().getID(), newMeal.getId(), food.get().getCalories());
                 return newMeal;
             }
         }
@@ -60,7 +60,7 @@ public class MealService{
             if (meal.isPresent()){
                 meal.get().addFood(requestMeal.getFood());
                 mealRepository.addFood(food.get().getCalories(),meal.get().getId(),food.get().getName(),LocalDate.now(),dieter.get().getId(),requestDieter,meal.get().getFood());
-                foodEntryRepository.addFoodEntry(meal.get().getId(), food.get().getID(), food.get().getCalories());
+                entryRepository.addFoodEntry(meal.get().getId(), food.get().getID(), food.get().getCalories());
                 meal.get().setCalories(meal.get().getCalories() + food.get().getCalories());
                 meal.get().addFood(requestMeal.getFood());
                 return meal.get();
@@ -78,7 +78,7 @@ public class MealService{
         if (dieter.isPresent()){
             Optional<Meal> meal = mealRepository.findMealByName(requestMeal, requestDay, dieter.get().getId());
             if (meal.isPresent()){
-                return foodEntryRepository.findCaloriesByMeal(meal.get().getId());
+                return entryRepository.findCaloriesByMeal(meal.get().getId());
             }
         }
         return 0;
