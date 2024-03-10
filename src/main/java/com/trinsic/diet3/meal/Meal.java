@@ -28,7 +28,6 @@ public class Meal {
     private Integer calories;
     private Long dieterid;
     private String dieter;
-    private String[] food;
 
     public Meal() {
     }
@@ -50,15 +49,6 @@ public class Meal {
         this.dieter = dieter;
     }
 
-    public Meal(Long id, String name, LocalDate day, Integer calories, Long dieterid, String dieter, String[] food) {
-        this.id = id;
-        this.name = name;
-        this.day = day;
-        this.calories = calories;
-        this.dieterid = dieterid;
-        this.dieter = dieter;
-        this.food = food;
-    }
     public Meal(String name, Integer calories, Long dieterid, String dieter) {
         this.name = name;
         this.day = LocalDate.now();
@@ -70,7 +60,6 @@ public class Meal {
     public Meal(String name, String dieter, String[] food){
         this.name = name;
         this.dieter = dieter; 
-        this.food = food;
     }
 
     public Meal(String name, Integer calories, String dieter){
@@ -122,31 +111,6 @@ public class Meal {
 
     public Long getId(){
         return id;
-    }
-
-    public void setFood(String[] food){
-        this.food = food;
-    }
-
-    public void addFood(String[] food){
-        String[] temp = this.food;
-        int lastIdx = 0;
-        System.out.println(this.food.length);
-        this.food = new String[this.food.length + food.length];
-        System.out.println(this.food.length);
-        System.out.println(food.length);
-        for (int i = 0; i < temp.length; i++) {
-           this.food[i] = temp[i];
-           lastIdx = i;
-        }
-        for (int j = lastIdx; j - lastIdx < food.length; j++) {
-            System.out.println("j: " + j);
-            this.food[j] = food[j - lastIdx];
-        }
-    }
-
-    public String[] getFood(){
-        return food;
     }
 
 }
