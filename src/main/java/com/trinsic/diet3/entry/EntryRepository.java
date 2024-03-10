@@ -15,13 +15,16 @@ public interface EntryRepository
         @Query("Select f FROM Entry f WHERE f.meal_id = ?1")
         Optional<Entry> findEntryByMeal(Long meal_id);
 
+        @Query("Select f FROM Entry f WHERE f.meal_id = ?1 AND f.food_id = ?2 AND f.calories = ?3")
+        Optional<Entry> findEntryById(Long meal_id, Long food_id, Integer calories);
+
         @Modifying
         @Query("INSERT INTO Entry (food_id, meal_id, calories) VALUES (?1, ?2, ?3)")
-        Entry addFoodEntry(Long food_id, Long meal_id, Integer calories);
+        Integer addFoodEntry(Long food_id, Long meal_id, Integer calories);
 
         @Modifying
         @Query("DELETE FROM Entry WHERE id = ?1")
-        Entry removeFoodEntry(Long id);
+        Integer removeFoodEntry(Long id);
 
         @Query("SELECT SUM(calories) FROM Entry f WHERE f.meal_id = ?1")
         Integer findCaloriesByMeal(Long meal_id);

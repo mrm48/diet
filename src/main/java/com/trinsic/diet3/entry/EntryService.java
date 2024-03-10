@@ -4,6 +4,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ch.qos.logback.core.model.conditional.ElseModel;
+
 @Service
 public class EntryService{
 
@@ -23,12 +25,22 @@ public class EntryService{
 
     @Transactional
     public Entry addFood(Entry requestFood){
-            return entryRepository.addFoodEntry(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());  
+        Integer entryStatus = entryRepository.addFoodEntry(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());  
+        if (entryStatus != 0){
+            Optional<Entry> newEntry = entryRepository.findEntryById(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());
+            return newEntry.get();
+        }
+        return null;
     }
 
     @Transactional
     public Entry addFood(Long meal_id, Long food_id, Integer servings, Integer calories){
-        return entryRepository.addFoodEntry(meal_id, food_id, calories);
+        Integer entryStatus = entryRepository.addFoodEntry(meal_id, food_id, calories);
+        if (entryStatus != 0){
+            Optional<Entry> newEntry = entryRepository.findEntryById(meal_id, food_id, calories);
+            return newEntry.get();
+        }
+        return null; 
     }
 
 }
