@@ -37,9 +37,12 @@ public class MealService{
             if (dieter.isPresent() && food.isPresent()) {
                 requestMeal.setDieterId(dieter.get().getId());
                 requestMeal.setDieter(requestDieter);
-                Meal newMeal = mealRepository.addMeal(food.get().getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
-                entryRepository.addFoodEntry(food.get().getID(), newMeal.getId(), food.get().getCalories());
-                return newMeal;
+                Integer newMealStatus = mealRepository.addMeal(food.get().getCalories(), requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter, requestMeal.getFood());
+                if (newMealStatus != 0) {
+                    Optional<Meal> newMeal = mealRepository.findMealByDay(requestMeal.getDay(), dieter.get().getId(), requestMeal.getName());               
+                    entryRepository.addFoodEntry(food.get().getID(), newMeal.get().getId(), food.get().getCalories());
+                    return newMeal.get();
+                }
             }
         }
         return null;
@@ -66,8 +69,12 @@ public class MealService{
                 return meal.get();
             }
             else{
-                Meal newMeal = mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter,requestMeal.getFood());
-                return newMeal;
+                Integer newMealStatus = mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter,requestMeal.getFood());
+                if (newMealStatus != 0) {
+                    Optional<Meal> newMeal = mealRepository.findMealByDay(requestMeal.getDay(), dieter.get().getId(), requestMeal.getName());               
+                    entryRepository.addFoodEntry(food.get().getID(), newMeal.get().getId(), food.get().getCalories());
+                    return newMeal.get();
+                }
             }
         }
         return null;
