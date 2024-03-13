@@ -204,6 +204,14 @@ CREATE DATABASE meal;
 GRANT ALL PRIVILEGES ON DATABASE "meal" TO postgres;
 ```
 
+#### Note: A Nix Flake is available
+
+Add the following before running if you wish to use the flake.
+
+```
+nix develop
+```
+
 #### Run (with just)
 ```
 just run
@@ -214,4 +222,4 @@ just run
 mvn spring-boot:run
 ```
 
-If using the nix flake, add nix develop before the run commands
+
