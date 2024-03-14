@@ -26,6 +26,6 @@ public interface MealRepository
         Integer addFood(Integer cals, Long id, String name,  LocalDate day, Long dieterid, String dieter);
 
         @Modifying
-        @Query("INSERT INTO Meal (calories, name, day, dieterid, dieter, food) VALUES (?1, ?2, ?3, ?4, ?5, ?6)")
+        @Query("INSERT INTO Meal (calories, name, day, dieterid, dieter) VALUES (?1, ?2, ?3, ?4, ?5)")
         Integer addMeal(Integer cals, String name, LocalDate day, Long dieterid, String dieter);
 }
