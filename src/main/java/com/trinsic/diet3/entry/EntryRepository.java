@@ -1,7 +1,6 @@
 package com.trinsic.diet3.entry;
 
 import java.util.Optional;
-import java.time.LocalDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,7 +27,4 @@ public interface EntryRepository
 
         @Query("SELECT SUM(calories) FROM Entry f WHERE f.meal_id = ?1")
         Integer findCaloriesByMeal(Long meal_id);
-
-        //@Query("SELECT SUM(calories) FROM entry f, meal m")
-        //Integer findCaloriesByDieter(String dieter, LocalDate day);
 }
