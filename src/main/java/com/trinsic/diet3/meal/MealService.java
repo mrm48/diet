@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
-import com.trinsic.diet3.entry.Entry;
 import com.trinsic.diet3.entry.EntryRepository;
 import com.trinsic.diet3.dieter.*;
 
