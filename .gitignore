@@ -34,4 +34,4 @@ build/
 README.md.backup
 
 ### Secrets ###
-application.properties
+src/main/resources/application.properties
