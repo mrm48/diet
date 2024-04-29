@@ -57,7 +57,7 @@ public class MealService{
         if (dieter.isPresent() && food.isPresent()){
             Optional<Meal> meal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
             if (meal.isPresent()){
-                entryRepository.addFoodEntry(meal.get().getId(), food.get().getID(), food.get().getCalories());
+                entryRepository.addFoodEntry(food.get().getID(), meal.get().getId(), food.get().getCalories());
                 Integer newCalories = meal.get().getCalories() + food.get().getCalories();
                 mealRepository.addFood(newCalories, meal.get().getId(), requestMealName, LocalDate.now(), dieter.get().getId(), dieter.get().getName());
                 meal.get().setCalories(meal.get().getCalories() + food.get().getCalories());
@@ -66,7 +66,7 @@ public class MealService{
             else{
                 Integer newMealStatus = mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter);
                 if (newMealStatus != 0) {
-                    Optional<Meal> newMeal = mealRepository.findMealByDay(requestMeal.getDay(), dieter.get().getId(), requestMeal.getName());
+                    Optional<Meal> newMeal = mealRepository.findMealByDay(LocalDate.now(), dieter.get().getId(), requestMealName);
                     if (newMeal.isPresent()){               
                         entryRepository.addFoodEntry(food.get().getID(), newMeal.get().getId(), food.get().getCalories());
                         return newMeal.get();
