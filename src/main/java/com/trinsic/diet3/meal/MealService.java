@@ -66,9 +66,11 @@ public class MealService{
             else{
                 Integer newMealStatus = mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter);
                 if (newMealStatus != 0) {
-                    Optional<Meal> newMeal = mealRepository.findMealByDay(requestMeal.getDay(), dieter.get().getId(), requestMeal.getName());               
-                    entryRepository.addFoodEntry(food.get().getID(), newMeal.get().getId(), food.get().getCalories());
-                    return newMeal.get();
+                    Optional<Meal> newMeal = mealRepository.findMealByDay(requestMeal.getDay(), dieter.get().getId(), requestMeal.getName());
+                    if (newMeal.isPresent()){               
+                        entryRepository.addFoodEntry(food.get().getID(), newMeal.get().getId(), food.get().getCalories());
+                        return newMeal.get();
+                    }
                 }
             }
         }
