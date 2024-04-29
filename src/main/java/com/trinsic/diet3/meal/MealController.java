@@ -2,7 +2,7 @@ package com.trinsic.diet3.meal;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trinsic.diet3.food.Food;
+import com.trinsic.diet3.entrycreaterequest.Entrycreaterequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +22,8 @@ public class MealController{
 
     @PostMapping("/food")
     @ResponseBody
-    public Meal addFood(@RequestBody Meal meal, Food food){
-        return mealService.addCalories(meal, food);
+    public Meal addFood(@RequestBody Entrycreaterequest ecr){
+        return mealService.addCalories(ecr.getMeal(), ecr.getFood());
     }
 
     @PostMapping("/")
