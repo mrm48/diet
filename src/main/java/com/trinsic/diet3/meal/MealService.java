@@ -36,7 +36,8 @@ public class MealService{
     }
 
     /*
-     *  Add a new meal for the dieter
+     *  Add a new meal for the dieter, if it doesn't exist
+     *  @param requestMeal A meal object to add to the database
      */
     @Transactional
     public Meal addMeal(Meal requestMeal){
@@ -60,7 +61,10 @@ public class MealService{
     }
 
     /*
-     *  Add a food item to the meal, create the meal if it is not found
+     *  Add a food item to a meal, if it exists
+     *  @param requestMeal The meal object where food is being added 
+     *  @param requestFood A food object to add to the meal
+     *  @return The meal object from the database after the food is added
      */
     @Transactional
     public Meal addCalories(Meal requestMeal, Food requestFood){
@@ -94,7 +98,11 @@ public class MealService{
     }
 
     /*
-     *  Get calories from requested meal
+     *  Check number of calories for a meal
+     *  @param requestMeal The name of the meal for which calories are being checked, as a string
+     *  @param requestDay A LocalDate object when the meal was consumed
+     *  @param requestDieter The name of the dieter who ate the meal, as a string
+     *  @return The number of calories for the meal 
      */
     public Integer getCalories(String requestMeal, LocalDate requestDay, String requestDieter){
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
@@ -108,7 +116,10 @@ public class MealService{
     }
 
     /*
-     *  Get calories for dieter for a requested day
+     *  Get the number of calories consumed by day for a dieter
+     *  @param requestDieter The dieter's name, as a string
+     *  @param requestDay A LocalDate object when the calories were consumed
+     *  @return The number of calories consumed for the day by the dieter
      */
     public Integer getCaloriesByDay(String requestDieter, LocalDate requestDay){
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
@@ -120,7 +131,9 @@ public class MealService{
     }
 
     /*
-     *  Get requested meal from database
+     *  Get a meal object from the database, if it exists.
+     *  @param requestMeal The meal object to retrieve from the database
+     *  @return The meal object from the database or null if not found
      */
     public Meal getMeal(Meal requestMeal){
         String requestDieter = requestMeal.getDieter();
