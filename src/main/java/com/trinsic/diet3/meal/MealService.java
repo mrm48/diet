@@ -1,3 +1,13 @@
+/**
+* MealService is intended to take requests from MealController and pass back
+* Meal objects or Integers 
+* 
+* See the {@link com.trinsic.diet3.meal} class for definitions of objects passed
+* back to {@link com.trinsic.diet3.mealController}
+* @author Matt Miller
+* 
+*/
+
 package com.trinsic.diet3.meal;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -25,6 +35,9 @@ public class MealService{
         this.entryRepository = entryRepository;
     }
 
+    /*
+     *  Add a new meal for the dieter
+     */
     @Transactional
     public Meal addMeal(Meal requestMeal){
         String requestDieter;
@@ -46,6 +59,9 @@ public class MealService{
         return null;
     }
 
+    /*
+     *  Add a food item to the meal, create the meal if it is not found
+     */
     @Transactional
     public Meal addCalories(Meal requestMeal, Food requestFood){
        String requestDieter;
@@ -77,6 +93,9 @@ public class MealService{
         return null;
     }
 
+    /*
+     *  Get calories from requested meal
+     */
     public Integer getCalories(String requestMeal, LocalDate requestDay, String requestDieter){
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
         if (dieter.isPresent()){
@@ -88,6 +107,9 @@ public class MealService{
         return 0;
     }
 
+    /*
+     *  Get calories for dieter for a requested day
+     */
     public Integer getCaloriesByDay(String requestDieter, LocalDate requestDay){
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
         if (dieter.isPresent()){
@@ -97,6 +119,9 @@ public class MealService{
         return 0;
     }
 
+    /*
+     *  Get requested meal from database
+     */
     public Meal getMeal(Meal requestMeal){
         String requestDieter = requestMeal.getDieter();
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
