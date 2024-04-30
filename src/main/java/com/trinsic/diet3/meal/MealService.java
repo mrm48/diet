@@ -1,12 +1,3 @@
-/**
-* MealService is intended to take requests from MealController and pass back
-* Meal objects or Integers 
-* 
-* See the {@link com.trinsic.diet3.meal} class for definitions of objects passed
-* back to {@link com.trinsic.diet3.mealController}
-* @author Matt Miller
-* 
-*/
 
 package com.trinsic.diet3.meal;
 import java.time.LocalDate;
@@ -21,13 +12,44 @@ import com.trinsic.diet3.entry.EntryRepository;
 import com.trinsic.diet3.dieter.*;
 
 @Service
+/**
+* MealService is intended to take requests from MealController and pass back
+* Meal objects or Integers 
+* 
+* See the {@link com.trinsic.diet3.meal} class for definitions of objects passed
+* back to {@link com.trinsic.diet3.mealController}
+* @author Matt Miller
+* 
+*/
 public class MealService{
 
+    /**
+     * A MealRepository object to interact with the meal table
+     */
     private final MealRepository mealRepository;
+
+    /**
+     * A DieterRepository object to interact with the dieter table
+     */
     private final DieterRepository dieterRepository;
+    
+    /**
+     * A FoodRepository object to interact with the food table
+     */
     private final FoodRepository foodRepository;
+
+    /**
+     * An EntryRepository object to interact with the entry table
+     */
     private final EntryRepository entryRepository;
 
+    /**
+     *  MealService constructor accepting fields for each repository type 
+     *  @param mealRepository A MealRepository object to interact with the meal table
+     *  @param dieterRepository A DieterRepository object to interact with the dieter table
+     *  @param foodRepository A FoodRepository object to interact with the food table
+     *  @param entryRepository An EntryRepository object to interact with the entry table
+     */
     public MealService(MealRepository mealRepository, DieterRepository dieterRepository, FoodRepository foodRepository, EntryRepository entryRepository){
         this.mealRepository = mealRepository;
         this.dieterRepository = dieterRepository;
@@ -35,7 +57,7 @@ public class MealService{
         this.entryRepository = entryRepository;
     }
 
-    /*
+    /**
      *  Add a new meal for the dieter, if it doesn't exist
      *  @param requestMeal A meal object to add to the database
      */
@@ -60,7 +82,7 @@ public class MealService{
         return null;
     }
 
-    /*
+    /**
      *  Add a food item to a meal, if it exists
      *  @param requestMeal The meal object where food is being added 
      *  @param requestFood A food object to add to the meal
@@ -97,7 +119,7 @@ public class MealService{
         return null;
     }
 
-    /*
+    /**
      *  Check number of calories for a meal
      *  @param requestMeal The name of the meal for which calories are being checked, as a string
      *  @param requestDay A LocalDate object when the meal was consumed
@@ -115,7 +137,7 @@ public class MealService{
         return 0;
     }
 
-    /*
+    /**
      *  Get the number of calories consumed by day for a dieter
      *  @param requestDieter The dieter's name, as a string
      *  @param requestDay A LocalDate object when the calories were consumed
@@ -130,7 +152,7 @@ public class MealService{
         return 0;
     }
 
-    /*
+    /**
      *  Get a meal object from the database, if it exists.
      *  @param requestMeal The meal object to retrieve from the database
      *  @return The meal object from the database or null if not found
