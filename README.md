@@ -90,11 +90,17 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 			- /food - add a food to the latest meal by user
 				- Example request:
 				```
-				{
-    					"name": "Lunch",
-    					"dieter": "Matt",
-    					"food": ["Cheerios"]
-				}
+	            {
+                    "meal": {
+                        "name": "Breakfast",
+                        "dieter": "Matt"
+                    },
+                    "food": {
+                        "name": "Cheerios",
+                        "calories": 250,
+                        "units": 1
+                    }
+                }
 				```
 	3. Dieter
 		- GET
