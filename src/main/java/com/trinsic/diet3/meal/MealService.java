@@ -2,6 +2,7 @@
 package com.trinsic.diet3.meal;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.food.FoodRepository;
 import com.trinsic.diet3.entry.EntryRepository;
+import com.trinsic.diet3.entry.Entry;
 import com.trinsic.diet3.dieter.*;
 
 @Service
@@ -113,6 +115,34 @@ public class MealService{
                         entryRepository.addFoodEntry(food.get().getID(), newMeal.get().getId(), food.get().getCalories());
                         return newMeal.get();
                     }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     *  Remove a food item from a meal, if it exists
+     *  @param requestMeal The meal object where food is being removed 
+     *  @param requestFood A food object to remove from the meal
+     *  @return The meal object from the database after the food is removed 
+     */
+    @Transactional
+    public Meal removeCalories(Meal requestMeal, Food requestFood){
+       String requestDieter;
+       String requestMealName;
+       requestDieter = requestMeal.getDieter();
+       requestMealName = requestMeal.getName();
+       Optional<Food> food = foodRepository.findFoodByName(requestFood.getName());
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
+        if (dieter.isPresent() && food.isPresent()){
+            Optional<Meal> meal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
+            if (meal.isPresent()){
+                List<Entry> entry = entryRepository.findEntryById(meal.get().getId(), food.get().getID(), food.get().getCalories());
+                if (!entry.isEmpty()){
+                    entryRepository.removeFoodEntry(entry.get(0).getID());
+                    meal.get().setCalories(meal.get().getCalories() - food.get().getCalories());
+                    return meal.get();
                 }
             }
         }

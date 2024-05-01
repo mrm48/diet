@@ -1,5 +1,6 @@
 package com.trinsic.diet3.entry;
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +26,8 @@ public class EntryService{
     public Entry addFood(Entry requestFood){
         Integer entryStatus = entryRepository.addFoodEntry(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());  
         if (entryStatus != 0){
-            Optional<Entry> newEntry = entryRepository.findEntryById(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());
-            return newEntry.get();
+            List<Entry> newEntry = entryRepository.findEntryById(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());
+            return newEntry.get(0);
         }
         return null;
     }
@@ -35,8 +36,10 @@ public class EntryService{
     public Entry addFood(Long meal_id, Long food_id, Integer servings, Integer calories){
         Integer entryStatus = entryRepository.addFoodEntry(meal_id, food_id, calories);
         if (entryStatus != 0){
-            Optional<Entry> newEntry = entryRepository.findEntryById(meal_id, food_id, calories);
-            return newEntry.get();
+            List<Entry> newEntry = entryRepository.findEntryById(meal_id, food_id, calories);
+            if (!newEntry.isEmpty()){
+                return newEntry.get(0);
+            }
         }
         return null; 
     }

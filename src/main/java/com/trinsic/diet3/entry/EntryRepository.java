@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 
 @Repository
 public interface EntryRepository 
@@ -15,7 +16,7 @@ public interface EntryRepository
         Optional<Entry> findEntryByMeal(Long meal_id);
 
         @Query("Select f FROM Entry f WHERE f.meal_id = ?1 AND f.food_id = ?2 AND f.calories = ?3")
-        Optional<Entry> findEntryById(Long meal_id, Long food_id, Integer calories);
+        List<Entry> findEntryById(Long meal_id, Long food_id, Integer calories);
 
         @Modifying
         @Query("INSERT INTO Entry (food_id, meal_id, calories) VALUES (?1, ?2, ?3)")
