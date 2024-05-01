@@ -68,11 +68,6 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				    "day": "2024-02-11",
 				    "calories": 500,
 				    "dieter": "Matt",
-				    "food": [
- 				       "Cheerios",
-				        "Cheerios",
-				        null
-				    ],
 				    "dieterId": 1
 				}
 				```
@@ -102,6 +97,24 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
                     }
                 }
 				```
+        - DELETE
+
+			- /food - remove food from the meal by user with name requested
+				- Example request:
+				```
+	            {
+                    "meal": {
+                        "name": "Breakfast",
+                        "dieter": "Matt"
+                    },
+                    "food": {
+                        "name": "Cheerios",
+                        "calories": 250,
+                        "units": 1
+                    }
+                }
+				```
+
 	3. Dieter
 		- GET
 			- / - get information on a user
