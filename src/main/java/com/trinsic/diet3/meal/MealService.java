@@ -16,10 +16,11 @@ import com.trinsic.diet3.dieter.*;
 @Service
 /**
 * MealService is intended to take requests from MealController and pass back
-* Meal objects or Integers 
+* Meal objects or Integers. 
 * 
-* See the {@link com.trinsic.diet3.meal} class for definitions of objects passed
-* back to {@link com.trinsic.diet3.mealController}
+* See the {@link com.trinsic.diet3.meal.Meal} class for definitions of objects 
+* passed
+* back to {@link com.trinsic.diet3.meal.MealController}
 * @author Matt Miller
 * 
 */
