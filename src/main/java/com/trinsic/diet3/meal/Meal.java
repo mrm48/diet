@@ -11,6 +11,17 @@ import java.time.LocalDate;
 
 @Entity
 @Table
+/**
+* Meal is an entity for storing date, dieter, description and number of calories
+* for a given meal on a day.
+* 
+* See the {@link com.trinsic.diet3.meal.MealService} class for definitions of  
+* interactions with the table, see {@link com.trinsic.diet3.meal.MealController} 
+* for the REST API enpoints, see {@link com.trinsic.diet3.meal.MealRepository}
+* for queries run on the Postgresql database.
+* @author Matt Miller
+* 
+*/
 public class Meal {
     @Id
     @SequenceGenerator(
