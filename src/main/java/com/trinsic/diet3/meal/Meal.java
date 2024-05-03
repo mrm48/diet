@@ -68,10 +68,10 @@ public class Meal {
         this.dieter = dieter;
     }
 
-    public Meal(String name, String dieter, String[] food){
-        this.name = name;
-        this.dieter = dieter; 
-    }
+    /**
+     *  Meal constructor expecting only the name, calories and dieter name
+     *  @param name The name of the meal: Breakfast, Lunch, Dinner etc. 
+     *  @param calories The number of calories consumed during the meal
 
     public Meal(String name, Integer calories, String dieter){
         this.name = name;
