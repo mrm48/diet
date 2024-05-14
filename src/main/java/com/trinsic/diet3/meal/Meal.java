@@ -9,19 +9,19 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 
+/**
+ * Meal is an entity for storing date, dieter, description and number of calories
+ * for a given meal on a day.
+ *
+ * See the {@link com.trinsic.diet3.meal.MealService} class for definitions of
+ * interactions with the table, see {@link com.trinsic.diet3.meal.MealController}
+ * for the REST API enpoints, see {@link com.trinsic.diet3.meal.MealRepository}
+ * for queries run on the Postgresql database.
+ * @author Matt Miller
+ *
+ */
 @Entity
 @Table
-/**
-* Meal is an entity for storing date, dieter, description and number of calories
-* for a given meal on a day.
-* 
-* See the {@link com.trinsic.diet3.meal.MealService} class for definitions of  
-* interactions with the table, see {@link com.trinsic.diet3.meal.MealController} 
-* for the REST API enpoints, see {@link com.trinsic.diet3.meal.MealRepository}
-* for queries run on the Postgresql database.
-* @author Matt Miller
-* 
-*/
 public class Meal {
     @Id
     @SequenceGenerator(
@@ -33,11 +33,9 @@ public class Meal {
         strategy = GenerationType.SEQUENCE,
         generator = "meal_sequence"
     )
-    
-    /**
-     * The primary key.
-     */
+
     private Long id;
+
     /**
      * The name of the meal: Breakfast, Lunch, Dinner etc.
      */
@@ -72,7 +70,6 @@ public class Meal {
      *  @param calories The number of calories consumed during the meal
      *  @param dieterid The primary key representing the dieter in the dieter table
      *  @param dieter The name of the dieter
-     *  @return A Meal object initialized with the parameters passed. 
      */
     public Meal(String name, LocalDate day, Integer calories, Long dieterid, String dieter) {
         this.name = name;
@@ -90,7 +87,6 @@ public class Meal {
      *  @param calories The number of calories consumed during the meal
      *  @param dieterid The primary key representing the dieter in the dieter table
      *  @param dieter The name of the dieter
-     *  @return A Meal object initialized with the parameters passed. 
      */
     public Meal(Long id, String name, LocalDate day, Integer calories, Long dieterid, String dieter) {
         this.id = id;
@@ -107,7 +103,6 @@ public class Meal {
      *  @param calories The number of calories consumed during the meal
      *  @param dieterid The primary key representing the dieter in the dieter table
      *  @param dieter The name of the dieter
-     *  @return A Meal object initialized with the parameters passed. 
      */
     public Meal(String name, Integer calories, Long dieterid, String dieter) {
         this.name = name;
@@ -122,7 +117,6 @@ public class Meal {
      *  @param name The name of the meal: Breakfast, Lunch, Dinner etc. 
      *  @param calories The number of calories consumed during the meal
      *  @param dieter The name of the dieter
-     *  @return A Meal object initialized with the parameters passed. 
      */
     public Meal(String name, Integer calories, String dieter){
         this.name = name;

@@ -8,69 +8,69 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
 /**
-* MealRepository is an interface that interacts with the postgresql database storing meal information
-* 
-* @author Matt Miller
-* 
-*/
+ * MealRepository is an interface that interacts with the postgresql database storing meal information
+ *
+ * @author Matt Miller
+ *
+ */
+@Repository
 public interface MealRepository 
         extends JpaRepository<Meal, Long>{
-        
-        @Query("SELECT m FROM Meal m WHERE m.name = ?1 AND m.day = ?2 AND m.dieterid = ?3")
-    	/**
-     	*  Find a meal with the name provided on the provided day with the provided dieterid
-     	*  @param name A meal name provided by the user when adding the meal, if it exists
-	*  @param day A LocalDate object representing the day when the meal was entered
-	*  @param dieterid The Long primary key for the dieter in the dieter table
-	*  @return An Optional<Meal> that only isPresent if a meal with the parameters provided is found
-     	*/
-        Optional<Meal> findMealByName(String name, LocalDate day, Long dieterid);
 
-        @Query("SELECT SUM(calories) from Meal m WHERE m.dieter = ?1 AND m.day = ?2")
-    	/**
-     	*  Find the number of calories consumed during a day by a dieter 
-     	*  @param name A dieter name
-	*  @param day A LocalDate object representing the day when the meal was entered
-	*  @return Integer representing the number of calories. 
-     	*/
-        Integer findCaloriesByDay(String name, LocalDate day);
-        
-        @Query("SELECT m FROM Meal m WHERE m.day = ?1 AND m.dieterid = ?2 AND m.name = ?3")
-    	/**
-     	*  Find a meal with the name provided on the provided day with the provided dieterid
-     	*  @param name A meal name provided by the user when adding the meal, if it exists
-	*  @param day A LocalDate object representing the day when the meal was entered
-	*  @param dieterid The Long primary key for the dieter in the dieter table
-	*  @return An Optional<Meal> that only isPresent if a meal with the parameters provided is found
-     	*/
-        Optional<Meal> findMealByDay(LocalDate day, Long dieterid, String mealname);
+	/**
+	 *  Find a meal with the name provided on the provided day with the provided dieterid
+	 *  @param name A meal name provided by the user when adding the meal, if it exists
+	 *  @param day A LocalDate object representing the day when the meal was entered
+	 *  @param dieterid The Long primary key for the dieter in the dieter table
+	 *  @return An Optional meal that only isPresent if a meal with the parameters provided is found
+	 */
+	@Query("SELECT m FROM Meal m WHERE m.name = ?1 AND m.day = ?2 AND m.dieterid = ?3")
+	Optional<Meal> findMealByName(String name, LocalDate day, Long dieterid);
 
-        @Modifying
-        @Query("UPDATE Meal m SET m.calories = ?1 WHERE m.id = ?2 AND m.name = ?3 AND m.day = ?4 AND m.dieterid = ?5 AND m.dieter = ?6")
-    	/**
-     	*  Add calories from a food to the meal specified.
-     	*  @param cals The number of calories to add
-     	*  @param id The meal primary key
-	*  @param name A meal name provided by the user when adding the meal, if it exists
-	*  @param day A LocalDate object representing the day when the meal was entered
-	*  @param dieterid The Long primary key for the dieter in the dieter table
-	*  @param dieter The String dieter name
-	*  @return An Integer representing the status of the update command (updated number of calories)
-     	*/
-        Integer addFood(Integer cals, Long id, String name,  LocalDate day, Long dieterid, String dieter);
+	/**
+	 *  Find the number of calories consumed during a day by a dieter
+	 *  @param name A dieter name
+	 *  @param day A LocalDate object representing the day when the meal was entered
+	 *  @return Integer representing the number of calories.
+	 */
+	@Query("SELECT SUM(calories) from Meal m WHERE m.dieter = ?1 AND m.day = ?2")
+	Integer findCaloriesByDay(String name, LocalDate day);
 
-        @Modifying
-        @Query("INSERT INTO Meal (calories, name, day, dieterid, dieter) VALUES (?1, ?2, ?3, ?4, ?5)")
-    	/**
-     	*  Add a new meal into the meal table
-     	*  @param cals The number of calories to add
-	*  @param name A meal name provided by the user when adding the meal, if it exists
-	*  @param day A LocalDate object representing the day when the meal was entered
-	*  @param dieterid The Long primary key for the dieter in the dieter table
-	*  @param dieter The String dieter name
-	*  @return An Integer representing the status of the insert command
-     	*/
-        Integer addMeal(Integer cals, String name, LocalDate day, Long dieterid, String dieter);
+	/**
+	 *  Find a meal with the name provided on the provided day with the provided dieterid
+	 *  @param day A LocalDate object representing the day when the meal was entered
+	 *  @param dieterid The Long primary key for the dieter in the dieter table
+	 *  @param mealname A meal name provided by the user when adding the meal, if it exists
+	 *  @return An Optional meal that only isPresent if a meal with the parameters provided is found
+	 */
+	@Query("SELECT m FROM Meal m WHERE m.day = ?1 AND m.dieterid = ?2 AND m.name = ?3")
+	Optional<Meal> findMealByDay(LocalDate day, Long dieterid, String mealname);
+
+	/**
+	 *  Add calories from a food to the meal specified.
+	 *  @param cals The number of calories to add
+	 *  @param id The meal primary key
+	 *  @param name A meal name provided by the user when adding the meal, if it exists
+	 *  @param day A LocalDate object representing the day when the meal was entered
+	 *  @param dieterid The Long primary key for the dieter in the dieter table
+	 *  @param dieter The String dieter name
+	 *  @return An Integer representing the status of the update command (updated number of calories)
+	 */
+	@Modifying
+	@Query("UPDATE Meal m SET m.calories = ?1 WHERE m.id = ?2 AND m.name = ?3 AND m.day = ?4 AND m.dieterid = ?5 AND m.dieter = ?6")
+	Integer addFood(Integer cals, Long id, String name,  LocalDate day, Long dieterid, String dieter);
+
+	/**
+	 *  Add a new meal into the meal table
+	 *  @param cals The number of calories to add
+	 *  @param name A meal name provided by the user when adding the meal, if it exists
+	 *  @param day A LocalDate object representing the day when the meal was entered
+	 *  @param dieterid The Long primary key for the dieter in the dieter table
+	 *  @param dieter The String dieter name
+	 *  @return An Integer representing the status of the insert command
+	 */
+	@Modifying
+	@Query("INSERT INTO Meal (calories, name, day, dieterid, dieter) VALUES (?1, ?2, ?3, ?4, ?5)")
+	Integer addMeal(Integer cals, String name, LocalDate day, Long dieterid, String dieter);
 }

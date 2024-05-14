@@ -13,17 +13,16 @@ import com.trinsic.diet3.entry.EntryRepository;
 import com.trinsic.diet3.entry.Entry;
 import com.trinsic.diet3.dieter.*;
 
-@Service
 /**
-* MealService is intended to take requests from MealController and pass back
-* Meal objects or Integers. 
-* 
-* See the {@link com.trinsic.diet3.meal.Meal} class for definitions of objects 
-* passed
-* back to {@link com.trinsic.diet3.meal.MealController}
-* @author Matt Miller
-* 
-*/
+ * MealService is intended to take requests from MealController and pass back
+ * Meal objects or Integers.
+ * See the {@link com.trinsic.diet3.meal.Meal} class for definitions of objects
+ * passed
+ * back to {@link com.trinsic.diet3.meal.MealController}
+ * @author Matt Miller
+ *
+ */
+@Service
 public class MealService{
 
     /**
@@ -63,6 +62,7 @@ public class MealService{
     /**
      *  Add a new meal for the dieter, if it doesn't exist
      *  @param requestMeal A meal object to add to the database
+     *  @return The meal object added to the database.
      */
     @Transactional
     public Meal addMeal(Meal requestMeal){
