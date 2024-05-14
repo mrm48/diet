@@ -18,6 +18,9 @@ public class Entrycreaterequest {
      */
     private Meal meal;
 
+    /**
+     * Default constructor setting no fields
+     */
     public Entrycreaterequest() {
     }
 
