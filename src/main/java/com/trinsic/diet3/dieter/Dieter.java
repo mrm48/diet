@@ -34,6 +34,9 @@ public class Dieter {
      */
     private Integer calories;
 
+    /**
+     * Default constructor, no fields set.
+     */
     public Dieter() {
     }
 

@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Specifies interactions with the dieter table
+ * @author Matt Miller
+ */
 @Repository
 public interface DieterRepository 
         extends JpaRepository<Dieter, Long>{
