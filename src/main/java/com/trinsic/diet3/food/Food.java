@@ -7,18 +7,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
+/**
+ * Food is an Entity for storing calorie and quantity information for a food.
+ *
+ * See the {@link com.trinsic.diet3.food.FoodService} class for definitions of
+ * interactions with the table, see {@link com.trinsic.diet3.food.FoodController}
+ * for the REST API enpoints, see {@link com.trinsic.diet3.food.FoodRepository}
+ * for queries run on the Postgresql database.
+ * @author Matt Miller
+ *
+ */
 @Entity
 @Table
-/**
-* Food is an Entity for storing calorie and quantity information for a food. 
-* 
-* See the {@link com.trinsic.diet3.food.FoodService} class for definitions of  
-* interactions with the table, see {@link com.trinsic.diet3.food.FoodController} 
-* for the REST API enpoints, see {@link com.trinsic.diet3.food.FoodRepository}
-* for queries run on the Postgresql database.
-* @author Matt Miller
-* 
-*/
 public class Food {
     @Id
     @SequenceGenerator(
@@ -30,9 +30,7 @@ public class Food {
         strategy = GenerationType.SEQUENCE,
         generator = "food_sequence"
     )
-    /**
-     * The primary key.
-     */
+
     private Long id;
     /**
      * The name of the food.
@@ -47,6 +45,9 @@ public class Food {
      */
     private Integer calories;
 
+    /**
+     * Default constructor that does not initialize any fields
+     */
     public Food() {
     }
 
@@ -56,7 +57,6 @@ public class Food {
      *  @param name The name of the Food: Cheerios, Toast, Pizza etc. 
      *  @param units The quantity of the food to be consumed for the number of calories logged.
      *  @param calories The number of calories consumed when eating the item.
-     *  @return A new Food object initialized with the parameters passed. 
      */
     public Food(Long id, String name, Integer units, Integer calories) {
         this.id = id;
@@ -70,7 +70,6 @@ public class Food {
      *  @param name The name of the Food: Cheerios, Toast, Pizza etc. 
      *  @param units The quantity of the food to be consumed for the number of calories logged.
      *  @param calories The number of calories consumed when eating the item.
-     *  @return A new Food object initialized with the parameters passed. 
      */
     public Food(String name, Integer units, Integer calories) {
         this.name = name;
