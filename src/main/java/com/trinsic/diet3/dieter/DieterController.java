@@ -80,7 +80,7 @@ public class DieterController{
      * @return Dieter object with the remaining number of calories before hitting the target
      */
     @GetMapping("/calories")
-    public Dieter getremainingcalories(@RequestBody Dieter dieter){
+    public Dieter getRemainingCalories(@RequestBody Dieter dieter){
         return dieterService.getRemainingCalories(dieter);
     }
 
