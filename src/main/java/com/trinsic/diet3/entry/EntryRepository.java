@@ -55,6 +55,15 @@ public interface EntryRepository
         Integer removeFoodEntry(Long id);
 
         /**
+         * Remove all entries for a meal, by meal id
+         * @param id The primary key of the meal from the meal table
+         * @return The status returned by Postgres when removing the entry
+         */
+        @Modifying
+        @Query("DELETE FROM Entry WHERE meal_id = ?1")
+        Integer removeFoodFromMeal(Long id);
+
+        /**
          * Find the number of calories consumed by meal by summing all entries for that meal id
          * @param meal_id The primary key of the meal in the meal table
          * @return The number of calories consumed

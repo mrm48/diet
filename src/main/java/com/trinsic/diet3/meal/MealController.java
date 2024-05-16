@@ -87,4 +87,14 @@ public class MealController{
         return mealService.getMeal(meal);
     }
 
+    /**
+     *
+     * @param meal The meal to delete, must have the name, dietername and day set.
+     */
+    @DeleteMapping("/")
+    @ResponseBody
+    public Meal removeMeal(@RequestBody Meal meal){
+        return mealService.removeMeal(meal);
+    }
+
 }

@@ -40,12 +40,12 @@ public interface MealRepository
 	/**
 	 *  Find a meal with the name provided on the provided day with the provided dieterid
 	 *  @param day A LocalDate object representing the day when the meal was entered
-	 *  @param dieterid The Long primary key for the dieter in the dieter table
+	 *  @param dietername The String name for the dieter in the dieter table
 	 *  @param mealname A meal name provided by the user when adding the meal, if it exists
 	 *  @return An Optional meal that only isPresent if a meal with the parameters provided is found
 	 */
-	@Query("SELECT m FROM Meal m WHERE m.day = ?1 AND m.dieterid = ?2 AND m.name = ?3")
-	Optional<Meal> findMealByDay(LocalDate day, Long dieterid, String mealname);
+	@Query("SELECT m FROM Meal m WHERE m.day = ?1 AND m.dieter = ?2 AND m.name = ?3")
+	Optional<Meal> findMealByDieter(String mealname, LocalDate day, String dietername);
 
 	/**
 	 *  Add calories from a food to the meal specified.
@@ -73,4 +73,13 @@ public interface MealRepository
 	@Modifying
 	@Query("INSERT INTO Meal (calories, name, day, dieterid, dieter) VALUES (?1, ?2, ?3, ?4, ?5)")
 	Integer addMeal(Integer cals, String name, LocalDate day, Long dieterid, String dieter);
+
+	/**
+	 * Delete a meal from the database.
+	 * @param id Meal primary key from the meal table
+	 * @return Integer reporting the status of the delete command from postgres
+	 */
+	@Modifying
+	@Query("DELETE FROM Meal WHERE id = ?1")
+	Integer deleteMealById(Long id);
 }

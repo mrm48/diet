@@ -77,8 +77,10 @@ public class MealService{
                 requestMeal.setDieter(requestDieter);
                 Integer newMealStatus = mealRepository.addMeal(0, requestMeal.getName(), requestMeal.getDay(), dieter.get().getId(), requestDieter);
                 if (newMealStatus != 0) {
-                    Optional<Meal> newMeal = mealRepository.findMealByDay(requestMeal.getDay(), dieter.get().getId(), requestMeal.getName());               
-                    return newMeal.get();
+                    Optional<Meal> newMeal = mealRepository.findMealByName(requestMeal.getName(), requestMeal.getDay(), dieter.get().getId());
+                    if (newMeal.isPresent()) {
+                        return newMeal.get();
+                    }
                 }
             }
         }
@@ -111,7 +113,7 @@ public class MealService{
             else{
                 Integer newMealStatus = mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter);
                 if (newMealStatus != 0) {
-                    Optional<Meal> newMeal = mealRepository.findMealByDay(LocalDate.now(), dieter.get().getId(), requestMealName);
+                    Optional<Meal> newMeal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
                     if (newMeal.isPresent()){               
                         entryRepository.addFoodEntry(food.get().getID(), newMeal.get().getId(), food.get().getCalories());
                         return newMeal.get();
@@ -192,12 +194,27 @@ public class MealService{
         String requestDieter = requestMeal.getDieter();
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
         if (dieter.isPresent()){
-            Optional<Meal> meal = mealRepository.findMealByDay(LocalDate.now(), dieter.get().getId(), requestMeal.getName());
+            Optional<Meal> meal = mealRepository.findMealByName(requestMeal.getName(), LocalDate.now(), dieter.get().getId());
             if (meal.isPresent()){
                 return meal.get();
             }
         }
         return null;
+    }
+
+    /**
+     * Remove a meal from the database (requires meal name, day and dietername set correctly).
+     * @param requestMeal The meal to be deleted
+     * @return The meal that was deleted, null if the meal was not found.
+     */
+    public Meal removeMeal(Meal requestMeal){
+       Optional<Meal> meal = mealRepository.findMealByDieter(requestMeal.getName(), requestMeal.getDay(), requestMeal.getDieter());
+       if (meal.isPresent()){
+           entryRepository.removeFoodFromMeal(meal.get().getId());
+           mealRepository.deleteMealById(meal.get().getId());
+           return meal.get();
+       }
+       return null;
     }
 
 }
