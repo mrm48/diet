@@ -34,7 +34,7 @@ public interface MealRepository
 	 *  @param day A LocalDate object representing the day when the meal was entered
 	 *  @return Integer representing the number of calories.
 	 */
-	@Query("SELECT SUM(calories) from Meal m WHERE m.dieter = ?1 AND m.day = ?2")
+	@Query("SELECT SUM(m.calories) from Meal m WHERE m.dieter = ?1 AND m.day = ?2")
 	Integer findCaloriesByDay(String name, LocalDate day);
 
 	/**
