@@ -68,6 +68,6 @@ public interface EntryRepository
          * @param meal_id The primary key of the meal in the meal table
          * @return The number of calories consumed
          */
-        @Query("SELECT SUM(calories) FROM Entry f WHERE f.meal_id = ?1")
+        @Query("SELECT SUM(f.calories) FROM Entry f WHERE f.meal_id = ?1")
         Integer findCaloriesByMeal(Long meal_id);
 }
