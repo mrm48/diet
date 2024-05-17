@@ -88,8 +88,9 @@ public class MealController{
     }
 
     /**
-     *
+     * Removes the meal specified by name and dieter name.
      * @param meal The meal to delete, must have the name, dietername and day set.
+     * @return Meal removed or null if no meal found
      */
     @DeleteMapping("/")
     @ResponseBody
