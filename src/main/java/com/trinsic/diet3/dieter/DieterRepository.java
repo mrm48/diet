@@ -51,4 +51,12 @@ public interface DieterRepository
     @Query("UPDATE Dieter SET calories = ?2 WHERE name = ?1")
     Integer addTotalCalories(String name, Integer cals);
 
+    /**
+     * Delete the dieter with the name provided
+     * @param name String name for the dieter to be deleted from the table.
+     * @return The Integer status of the command run on the database to delete the dieter.
+     */
+    @Modifying
+    @Query("DELETE FROM Dieter WHERE name = ?1")
+    Integer deleteDieterByName(String name);
 }

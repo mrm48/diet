@@ -142,6 +142,20 @@ public class DieterService{
         }
         return null;
     }
+
+    /**
+     * Delete the dieter by name if the dieter exists in the database
+     * @param requestDieter The dieter to be removed.
+     * @return The dieter that has been removed or null if the dieter was not found
+     */
+    public Dieter removeDieterByName(Dieter requestDieter){
+        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
+        if (dieter.isPresent()){
+            dieterRepository.deleteDieterByName(dieter.get().getName());
+            return dieter.get();
+        }
+        return null;
+    }
     
 
 }

@@ -88,4 +88,14 @@ public class DieterController{
     public Dieter getCaloriesByDay(@RequestBody Dieter dieter){
         return dieterService.getCaloriesByDay(dieter, LocalDate.now());
     }
+
+    /**
+     * Remove the dieter by name that has been sent in the body of the request
+     * @param dieter Dieter with at least the name field specified
+     * @return The dieter that was deleted from the database or null if the dieter was not found
+     */
+    @DeleteMapping("/")
+    public Dieter delete(@RequestBody Dieter dieter){
+        return dieterService.removeDieterByName(dieter);
+    }
 }
