@@ -75,4 +75,15 @@ public class FoodController {
         return foodService.addFood(food);
     }
 
+    /**
+     * Removes food by name of food provided in the body of the request
+     * @param food Food object specified in the body of the request
+     * @return The food object removed from the database or null if the food was not found.
+     */
+    @DeleteMapping("/")
+    @ResponseBody
+    public Food removeFood(@RequestBody Food food){
+        return foodService.removeFood(food);
+    }
+
 }

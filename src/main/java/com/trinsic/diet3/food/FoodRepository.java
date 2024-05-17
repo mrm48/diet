@@ -43,4 +43,13 @@ public interface FoodRepository
         @Modifying
         @Query("INSERT INTO Food (calories, units, name) VALUES (?3, ?2, ?1)")
         Integer addFood(String name, Integer units, Integer cals);
+
+        /**
+         * Remove food from the database with the name provided.
+         * @param name Name provided for the food that will be deleted.
+         * @return Integer representing the status returned when DELETE command is run on the database.
+         */
+        @Modifying
+        @Query("DELETE FROM Food WHERE name = ?1")
+        Integer removeFoodByName(String name);
 }

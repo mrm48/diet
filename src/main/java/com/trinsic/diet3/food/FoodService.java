@@ -88,4 +88,19 @@ public class FoodService{
         return null;
     }
 
+    /**
+     * Remove the food where the name matches the food provided
+     * @param requestFood Food to remove (must have name field defined)
+     * @return The food removed or null if it was not found.
+     */
+    @Transactional
+    public Food removeFood(Food requestFood){
+        Optional<Food> food = foodRepository.findFoodByName(requestFood.getName());
+        if (food.isPresent()){
+            foodRepository.removeFoodByName(requestFood.getName());
+            return food.get();
+        }
+        return null;
+    }
+
 }
