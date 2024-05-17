@@ -199,8 +199,8 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 
 ### Dependencies
 ```
-	PostgresQL 15.4
-	openJDK 17
+	PostgresQL 14.11
+	openJDK 21
 	Maven 3.9.1
 ```
 
