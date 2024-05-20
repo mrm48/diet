@@ -1,5 +1,6 @@
 package com.trinsic.diet3.dieter;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -77,19 +78,13 @@ public class DieterService{
      */
     public Dieter getCaloriesByDay(Dieter requestDieter, LocalDate requestDay){
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
-        Dieter foundDieter = null; 
         if(dieter.isPresent()){
-            foundDieter = dieter.get();
+            Dieter foundDieter = dieter.get();
             Integer currentCalories = mealRepository.findCaloriesByDay(foundDieter.getName(), requestDay);
-            if (currentCalories != null) {
-                foundDieter.setCalories(currentCalories);
-            }
-            else {
-                foundDieter.setCalories(0);
-            }
+            foundDieter.setCalories(Objects.requireNonNullElse(currentCalories, 0));
             return foundDieter;
         }
-        return foundDieter;
+        return null;
     }
 
     /**
@@ -101,11 +96,11 @@ public class DieterService{
         LocalDate day = LocalDate.now();
         String dieterName = requestDieter.getName();
         Optional<Dieter> dieter = dieterRepository.findDieterByName(dieterName);
-        Integer totalCalories = dieter.get().getCalories();
-        Dieter responseDieter = new Dieter();
+        Dieter responseDieter;
         responseDieter = getCaloriesByDay(requestDieter, day);
         if(dieter.isPresent()){
             responseDieter.setName(dieterName);
+            Integer totalCalories = dieter.get().getCalories();
             if(responseDieter.getCalories() != null){
                 responseDieter.setCalories(totalCalories - responseDieter.getCalories());
             }
@@ -124,10 +119,7 @@ public class DieterService{
      */
     public Dieter getID(Dieter requestDieter){
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
-        if (dieter.isPresent()){
-            return dieter.get();
-        }
-        return null;
+        return dieter.orElse(null);
     }
 
     /**
@@ -137,10 +129,7 @@ public class DieterService{
      */
     public Dieter getDieterByName(Dieter requestDieter){
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter.getName());
-        if (dieter.isPresent()){
-            return dieter.get();
-        }
-        return null;
+        return dieter.orElse(null);
     }
 
     /**
