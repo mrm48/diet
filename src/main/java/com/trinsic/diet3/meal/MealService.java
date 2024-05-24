@@ -153,39 +153,6 @@ public class MealService{
     }
 
     /**
-     *  Check number of calories for a meal
-     *  @param requestMeal The name of the meal for which calories are being checked, as a string
-     *  @param requestDay A LocalDate object when the meal was consumed
-     *  @param requestDieter The name of the dieter who ate the meal, as a string
-     *  @return The number of calories for the meal 
-     */
-    public Integer getCalories(String requestMeal, LocalDate requestDay, String requestDieter){
-        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
-        if (dieter.isPresent()){
-            Optional<Meal> meal = mealRepository.findMealByName(requestMeal, requestDay, dieter.get().getId());
-            if (meal.isPresent()){
-                return entryRepository.findCaloriesByMeal(meal.get().getId());
-            }
-        }
-        return 0;
-    }
-
-    /**
-     *  Get the number of calories consumed by day for a dieter
-     *  @param requestDieter The dieter's name, as a string
-     *  @param requestDay A LocalDate object when the calories were consumed
-     *  @return The number of calories consumed for the day by the dieter
-     */
-    public Integer getCaloriesByDay(String requestDieter, LocalDate requestDay){
-        Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
-        if (dieter.isPresent()){
-            Integer meal = mealRepository.findCaloriesByDay(requestDieter, requestDay);
-            return meal;
-        }
-        return 0;
-    }
-
-    /**
      *  Get a meal object from the database, if it exists.
      *  @param requestMeal The meal object to retrieve from the database
      *  @return The meal object from the database or null if not found
