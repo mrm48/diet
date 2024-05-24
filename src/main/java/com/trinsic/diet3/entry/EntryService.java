@@ -48,7 +48,7 @@ public class EntryService{
         Integer entryStatus = entryRepository.addFoodEntry(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());  
         if (entryStatus != 0){
             List<Entry> newEntry = entryRepository.findEntryById(requestFood.getMeal_Id(), requestFood.getFood_Id(), requestFood.getCalories());
-            return newEntry.get(0);
+            return newEntry.getFirst();
         }
         return null;
     }
@@ -67,7 +67,7 @@ public class EntryService{
         if (entryStatus != 0){
             List<Entry> newEntry = entryRepository.findEntryById(meal_id, food_id, calories);
             if (!newEntry.isEmpty()){
-                return newEntry.get(0);
+                return newEntry.getFirst();
             }
         }
         return null; 
