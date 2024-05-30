@@ -49,6 +49,16 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
     					"units": 1
 				}
 				```
+        - DELETE
+            - / - remove a food from the database
+            - Example request:
+            ```
+			{
+    			"name": "Beef and Bean Burritos",
+    			"calories": 290,
+    			"units": 1
+			}
+			```
 	2. Meal
 		- GET
 			- / - retrieve the most recent meal by user
@@ -98,7 +108,14 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
                 }
 				```
         - DELETE
-
+            - / - remove a meal from the database
+                - Example request: 
+                ```
+                {
+                    "name": "Breakfast",
+                    "dieter": "Matt"
+                }
+                ```
 			- /food - remove food from the meal by user with name requested
 				- Example request:
 				```
@@ -194,6 +211,15 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 				    "calories": 1500
 				}
 				```
+        - DELETE
+            - / - delete a user
+            - Example request:
+            ```
+            {
+                "name": "Matt",
+                "calories": 1500
+            }
+            ```
 
 ## Setup
 
