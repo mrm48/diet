@@ -54,7 +54,7 @@ public class FoodController {
     }
 
     /**
-     * Set the number of caloires by name
+     * Set the number of calories by name
      * @param food Food to update
      * @return The food after the change to the number of calories has been made
      */
