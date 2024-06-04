@@ -104,11 +104,7 @@ public class MealService{
         if (dieter.isPresent() && food.isPresent()){
             Optional<Meal> meal = mealRepository.findMealByName(requestMealName, LocalDate.now(), dieter.get().getId());
             if (meal.isPresent()){
-                entryRepository.addFoodEntry(food.get().getID(), meal.get().getId(), food.get().getCalories());
-                Integer newCalories = meal.get().getCalories() + food.get().getCalories();
-                mealRepository.addFood(newCalories, meal.get().getId(), requestMealName, LocalDate.now(), dieter.get().getId(), dieter.get().getName());
-                meal.get().setCalories(meal.get().getCalories() + food.get().getCalories());
-                return meal.get();
+                return addEntry(meal.get(), food.get(), requestMealName, dieter.get());
             }
             else{
                 Integer newMealStatus = mealRepository.addMeal(food.get().getCalories(),requestMealName,LocalDate.now(),dieter.get().getId(),requestDieter);
@@ -122,6 +118,21 @@ public class MealService{
             }
         }
         return null;
+    }
+
+    /**
+     *  Add a food item to a meal, if it exists
+     *  @param meal The meal object where food is being added 
+     *  @param food A food object to add to the meal
+     *  @return The meal object from the database after the food is added
+     */
+    @Transactional
+    public Meal addEntry(Meal meal, Food food, String requestMealName, Dieter dieter){
+        entryRepository.addFoodEntry(food.getID(), meal.getId(), food.getCalories());
+        Integer newCalories = meal.getCalories() + food.getCalories();
+        mealRepository.addFood(newCalories, meal.getId(), requestMealName, LocalDate.now(), dieter.getId(), dieter.getName());
+        meal.setCalories(meal.getCalories() + food.getCalories());
+        return meal;
     }
 
     /**
