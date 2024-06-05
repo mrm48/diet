@@ -143,9 +143,8 @@ public class MealService{
      */
     @Transactional
     public Meal removeCalories(Meal requestMeal, Food requestFood){
-       String requestDieter;
        String requestMealName;
-       requestDieter = requestMeal.getDieter();
+       String requestDieter = requestMeal.getDieter();
        requestMealName = requestMeal.getName();
        Optional<Food> food = foodRepository.findFoodByName(requestFood.getName());
         Optional<Dieter> dieter = dieterRepository.findDieterByName(requestDieter);
@@ -154,7 +153,7 @@ public class MealService{
             if (meal.isPresent()){
                 List<Entry> entry = entryRepository.findEntryById(meal.get().getId(), food.get().getID(), food.get().getCalories());
                 if (!entry.isEmpty()){
-                    entryRepository.removeFoodEntry(entry.get(0).getID());
+                    entryRepository.removeFoodEntry(entry.getFirst().getID());
                     meal.get().setCalories(meal.get().getCalories() - food.get().getCalories());
                     return meal.get();
                 }
