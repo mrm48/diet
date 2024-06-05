@@ -121,13 +121,15 @@ public class MealService{
     }
 
     /**
-     *  Add a food item to a meal, if it exists
+     *  Add an entry to a meal that has been found in addCalories
      *  @param meal The meal object where food is being added 
      *  @param food A food object to add to the meal
+     *  @param requestMealName Name of the meal as a String
+     *  @oaram dieter Dieter object who is adding the meal
      *  @return The meal object from the database after the food is added
      */
     @Transactional
-    public Meal addEntry(Meal meal, Food food, String requestMealName, Dieter dieter){
+    private Meal addEntry(Meal meal, Food food, String requestMealName, Dieter dieter){
         entryRepository.addFoodEntry(food.getID(), meal.getId(), food.getCalories());
         Integer newCalories = meal.getCalories() + food.getCalories();
         mealRepository.addFood(newCalories, meal.getId(), requestMealName, LocalDate.now(), dieter.getId(), dieter.getName());
