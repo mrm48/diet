@@ -1,4 +1,4 @@
-package com.trinsic.diet3.entrycreaterequest;
+package com.trinsic.diet3.entryrequest;
 
 import com.trinsic.diet3.food.Food;
 import com.trinsic.diet3.meal.Meal;
@@ -7,7 +7,7 @@ import com.trinsic.diet3.meal.Meal;
  * Utility class to specify the meal and food for interacting with the entry table.
  * @author Matt Miller
  */
-public class Entrycreaterequest {
+public class EntryRequest {
 
     /**
      * A food object with at minimum the name field populated
@@ -21,15 +21,15 @@ public class Entrycreaterequest {
     /**
      * Default constructor setting no fields
      */
-    public Entrycreaterequest() {
+    public EntryRequest() {
     }
 
     /**
-     * Create a new Entrycreaterequest object with the specified food and meal objects.
+     * Create a new EntryRequest object with the specified food and meal objects.
      * @param food The food related to the entry
      * @param meal The meal related to the entry
      */
-    public Entrycreaterequest(Food food, Meal meal) {
+    public EntryRequest(Food food, Meal meal) {
         this.food = food;
         this.meal = meal;
     }

@@ -2,7 +2,7 @@ package com.trinsic.diet3.meal;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.trinsic.diet3.entrycreaterequest.Entrycreaterequest;
+import com.trinsic.diet3.entryrequest.EntryRequest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,26 +40,26 @@ public class MealController{
     }
 
     /**
-     *  Add food to the meal with an {@link com.trinsic.diet3.entrycreaterequest} object.
+     *  Add food to the meal with an {@link com.trinsic.diet3.entryrequest.EntryRequest} object.
      *
-     *  @param ecr Entrycreaterequest containing the meal and the food to add.
+     *  @param ecr EntryRequest containing the meal and the food to add.
      *  @return Meal object from the database after the food has been added.
      */
     @PostMapping("/food")
     @ResponseBody
-    public Meal addFood(@RequestBody Entrycreaterequest ecr){
+    public Meal addFood(@RequestBody EntryRequest ecr){
         return mealService.addCalories(ecr.getMeal(), ecr.getFood());
     }
 
     /**
-     *  Remove food from the meal with an {@link com.trinsic.diet3.entrycreaterequest} object.
+     *  Remove food from the meal with an {@link com.trinsic.diet3.entryrequest.EntryRequest} object.
      *
-     *  @param ecr Entrycreaterequest containing the meal and the food to remove.
+     *  @param ecr EntryRequest containing the meal and the food to remove.
      *  @return Meal object from the database after the food has been removed.
      */
     @DeleteMapping("/food")
     @ResponseBody
-    public Meal removeFood(@RequestBody Entrycreaterequest ecr){
+    public Meal removeFood(@RequestBody EntryRequest ecr){
         return mealService.removeCalories(ecr.getMeal(), ecr.getFood());
     }
 
