@@ -232,7 +232,7 @@ A REST API that queries and modifies a PostgresQL database using Spring Boot. Th
 
 ### Optional
 ```
-	just (https://github.com/casey/just)
+	just (https://github.com/casey/just) - use 'just run' instead of 'mvn spring-boot:run'
 	Nix Package Manager (https://nixos.org/download)
 ```
 
