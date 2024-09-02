@@ -5,7 +5,7 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-type dieter struct {
+type Dieter struct {
 
     ID          string `json:"id"`
     Name        string `json:"name"`
@@ -13,7 +13,7 @@ type dieter struct {
 
 }
 
-var dieters = []dieter{
+var dieters = []Dieter{
     
     {ID: "1", Name: "Matt", Calories: 1600},
     {ID: "2", Name: "Jack", Calories: 1600},
@@ -28,21 +28,21 @@ func getDieters(context *gin.Context){
 
 func addDieter(context *gin.Context){
 
-    var newDieter dieter 
+    var n Dieter 
 
-    if err := context.BindJSON(&newDieter); err != nil {
+    if err := context.BindJSON(&n); err != nil {
         return
     }
 
-    dieters = append(dieters, newDieter)
+    dieters = append(dieters, n)
 
-    context.IndentedJSON(http.StatusCreated, newDieter)
+    context.IndentedJSON(http.StatusCreated, n)
 
 }
 
 func getDieter(context *gin.Context){
     
-    var d dieter
+    var d Dieter
 
     r := 0
 
@@ -65,7 +65,7 @@ func getDieter(context *gin.Context){
 
 func setDieterCalories(context *gin.Context){
 
-    var d dieter 
+    var d Dieter 
 
     r := 0
 
