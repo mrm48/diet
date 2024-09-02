@@ -7,21 +7,10 @@ import (
 
 type dieter struct {
 
-    ID string `json:"id"`
-    Name string `json:"name"`
-    Calories int `json:"calories"`
+    ID          string `json:"id"`
+    Name        string `json:"name"`
+    Calories    int `json:"calories"`
 
-}
-
-type ndieter struct {
-
-    Name string `json:"name"`
-
-}
-
-type cdieter struct {
-    Name string `json:"name"`
-    Calories int `json:"calories"`
 }
 
 var dieters = []dieter{
@@ -53,7 +42,7 @@ func addDieter(context *gin.Context){
 
 func getDieter(context *gin.Context){
     
-    var d ndieter
+    var d dieter
 
     r := 0
 
@@ -76,7 +65,7 @@ func getDieter(context *gin.Context){
 
 func setDieterCalories(context *gin.Context){
 
-    var d cdieter 
+    var d dieter 
 
     r := 0
 
