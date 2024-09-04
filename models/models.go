@@ -40,56 +40,9 @@ type Meal struct {
     Dieter      string      `json:"dieter"`
 
 }
-func GetDieter(context *gin.Context){
-    
-    var d Dieter
 
-    r := 0
+var Dieters []Dieter
+var Entries []Entry
+var Foods   []Food
+var Meals   []Meal
 
-    if err := context.BindJSON(&d); err != nil {
-        return
-    }
-
-    for _,v := range Dieters {
-        if v.Name == d.Name {
-            context.IndentedJSON(http.StatusOK, v)
-            r = 1
-        }
-    }
-
-    if r == 0 {
-        context.IndentedJSON(http.StatusNotFound, d)
-    }
-
-}
-
-func SetDieterCalories(context *gin.Context){
-
-    var d Dieter 
-
-    r := 0
-
-    if err := context.BindJSON(&d); err != nil {
-        return
-    }
-
-    for k,v := range Dieters {
-        if v.Name == d.Name {
-            SetCalories(k, d.Calories)
-            v.Calories = d.Calories
-            r = 1
-            context.IndentedJSON(http.StatusOK, v)
-        }
-    }
-
-    if r == 0 {
-        context.IndentedJSON(http.StatusNotFound, d)
-    }
-
-}
-
-func SetCalories(k int, c int) {
-
-    Dieters[k].Calories = c
-
-}
