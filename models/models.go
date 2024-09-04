@@ -13,33 +13,33 @@ type Dieter struct {
 
 }
 
-var Dieters = []Dieter{
-    
-    {ID: "1", Name: "Matt", Calories: 1600},
-    {ID: "2", Name: "Jack", Calories: 1600},
+type Entry struct {
+
+    ID          string      `json:"id"`
+    FoodID      string      `json:"food"`
+    MealID      string      `json:"meal"`
+    Calories    int         `json:"calories"`
 
 }
 
-func GetDieters(context *gin.Context){
+type Food struct {
 
-    context.IndentedJSON(http.StatusOK, Dieters)
-
-}
-
-func AddDieter(context *gin.Context){
-
-    var n Dieter 
-
-    if err := context.BindJSON(&n); err != nil {
-        return
-    }
-
-    Dieters = append(Dieters, n)
-
-    context.IndentedJSON(http.StatusCreated, n)
+    ID          int         `json:"id"`
+    Name        string      `json:"name"`
+    Calories    int         `json:"calories"`
+    Units       int         `json:"units"`
 
 }
 
+type Meal struct {
+
+    ID          int         `json:"id"`
+    Name        string      `json:"name"`
+    Day         time.Time   `json:"day"`
+    Calories    int         `json:"calories"`
+    Dieter      string      `json:"dieter"`
+
+}
 func GetDieter(context *gin.Context){
     
     var d Dieter
