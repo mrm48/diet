@@ -1,15 +1,14 @@
 package models
 
 import (
-    "net/http"
-    "github.com/gin-gonic/gin"
+	"time"
 )
 
 type Dieter struct {
 
-    ID          string `json:"id"`
-    Name        string `json:"name"`
-    Calories    int `json:"calories"`
+    ID          string      `json:"id"`
+    Name        string      `json:"name"`
+    Calories    int         `json:"calories"`
 
 }
 
