@@ -1,7 +1,7 @@
 package router
 
 import (
-	"diet/models"
+	"mauit/models"
 
 	"github.com/gin-gonic/gin"
 )

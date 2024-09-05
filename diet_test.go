@@ -2,8 +2,8 @@ package main
 
 import (
     "fmt"
-    "diet/models"
-    "diet/router"
+    "mauit/models"
+    "mauit/router"
     "github.com/gin-gonic/gin"
 )
 

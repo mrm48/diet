@@ -1,7 +1,7 @@
 package main
 
 import (
-	"diet/router"
+	"mauit/router"
 
 	"github.com/gin-gonic/gin"
 )

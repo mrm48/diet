@@ -1,4 +1,4 @@
-module diet
+module mauit
 
 go 1.22.6
 
