@@ -6,7 +6,7 @@ import (
 
 type Dieter struct {
 
-    ID          string      `json:"id"`
+    ID          int64       `json:"id"`
     Name        string      `json:"name"`
     Calories    int         `json:"calories"`
 
@@ -14,16 +14,16 @@ type Dieter struct {
 
 type Entry struct {
 
-    ID          string      `json:"id"`
-    FoodID      string      `json:"food"`
-    MealID      string      `json:"meal"`
+    ID          int64       `json:"id"`
+    FoodID      int64       `json:"food"`
+    MealID      int64       `json:"meal"`
     Calories    int         `json:"calories"`
 
 }
 
 type Food struct {
 
-    ID          int         `json:"id"`
+    ID          int64       `json:"id"`
     Name        string      `json:"name"`
     Calories    int         `json:"calories"`
     Units       int         `json:"units"`
@@ -32,7 +32,7 @@ type Food struct {
 
 type Meal struct {
 
-    ID          int         `json:"id"`
+    ID          int64       `json:"id"`
     Name        string      `json:"name"`
     Day         time.Time   `json:"day"`
     Calories    int         `json:"calories"`
