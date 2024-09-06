@@ -9,7 +9,7 @@ import (
 func SetRoutes(Router *gin.Engine) {
 
     // all dieters
-    Router.POST("/dieters/all", models.GetDieters)
+    Router.GET("/dieters/all", models.GetDieters)
     Router.POST("/dieters/add", models.AddDieter)
 
     // single dieter
