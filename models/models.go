@@ -4,6 +4,23 @@ import (
 	"time"
 )
 
+type Record interface {
+
+    GetID()             int64
+    SetID(int64)  
+
+}
+
+type Named interface {
+
+    GetID()                     int64
+    GetName()                   string
+    SetName(string)
+    GetCalories()               int
+    SetCalories(int)
+
+}
+
 type Dieter struct {
 
     ID          int64       `json:"id"`
