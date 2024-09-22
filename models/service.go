@@ -29,8 +29,6 @@ func GetDieter(context *gin.Context){
     
     var d Dieter
 
-    r := 0
-
     if err := context.BindJSON(&d); err != nil {
         return
     }
@@ -38,13 +36,11 @@ func GetDieter(context *gin.Context){
     for _,v := range Dieters {
         if v.Name == d.Name {
             context.IndentedJSON(http.StatusOK, v)
-            r = 1
+            return
         }
     }
 
-    if r == 0 {
-        context.IndentedJSON(http.StatusNotFound, nil)
-    }
+    context.IndentedJSON(http.StatusNotFound, nil)
 
 }
 
@@ -52,29 +48,63 @@ func SetDieterCalories(context *gin.Context){
 
     var d Dieter 
 
-    r := 0
-
     if err := context.BindJSON(&d); err != nil {
         return
     }
 
-    for k,v := range Dieters {
+    for _,v := range Dieters {
         if v.Name == d.Name {
-            SetCalories(k, d.Calories)
+            SetCalories(v, d.Calories)
             v.Calories = d.Calories
-            r = 1
             context.IndentedJSON(http.StatusOK, v)
+            return
         }
     }
 
-    if r == 0 {
-        context.IndentedJSON(http.StatusNotFound, nil)
+    context.IndentedJSON(http.StatusNotFound, nil)
+
+}
+
+func SetCalories(d Dieter, c int) {
+
+    for k, v := range Entries {
+        if v.ID == GetID(d) {
+            Dieters[k].Calories = c 
+        }
     }
 
 }
 
-func SetCalories(k int, c int) {
+func GetCalories(d Dieter) int {
 
-    Dieters[k].Calories = c
+    for _, v := range Dieters {
+        if v.ID == d.ID {
+            return v.Calories
+        }
+    }
+
+    return 0
+
+}
+
+func GetID(d Dieter) int64 {
+
+    for _, v := range Dieters {
+        if v.Name == d.Name {
+            return v.ID
+        }
+    }
+
+    return 0
+
+}
+
+func SetID(d Dieter) {
+
+    for k,v := range Dieters { 
+        if v.Name == d.Name {
+            Dieters[k].ID = d.ID
+        }
+    }
 
 }
