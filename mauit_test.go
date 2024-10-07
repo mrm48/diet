@@ -8,11 +8,13 @@ import (
 	"testing"
 )
 
-var Dieters     []models.Dieter
-var Entries     []models.Entry
-var newDieters  []models.Dieter
-var newDieter   models.Dieter
+var Dieters         []models.Dieter
+var Entries         []models.Entry
+var newDieters      []models.Dieter
+var newDieter       models.Dieter
 
+var singleEntry     models.Entry
+var newEntry        models.Entry
 
 func AddDieters() {
 
@@ -101,3 +103,39 @@ func TestQuery(t *testing.T) {
     } 
 }
 
+func AddEntry(n models.Entry) {
+    Entries = append(Entries, n)
+}
+
+func TestEntry(t *testing.T) {
+    var gotWanted bool
+    gotWanted = false
+
+    singleEntry = models.Entry {
+        ID : 4,
+        Calories : 150,
+        FoodID : 3,
+        MealID : 2,
+    }
+
+   AddEntry(singleEntry)
+
+
+   got := Entries 
+   want := singleEntry
+        
+    if got == nil {
+        t.Errorf("got %v, wanted an entry", got)
+    } else {
+    
+         for _, v := range got {
+             if v.ID == want.ID && v.FoodID == want.FoodID && v.MealID == want.MealID && v.Calories == want.Calories {
+                 gotWanted = true
+             }
+         }
+    
+    }
+    if !gotWanted {
+        t.Errorf("did not receive an entry: wanted %v, %v, %v, %v", want.ID, want.FoodID, want.MealID, want.Calories)          
+    }
+}
