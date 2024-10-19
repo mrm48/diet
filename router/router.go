@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Add endpoints to the API, noun verb object pathing
 func SetRoutes(Router *gin.Engine) {
 
     // all dieters
