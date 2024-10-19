@@ -11,6 +11,7 @@ func GetDieters(context *gin.Context){
 
 }
 
+// Add specifically a dieter
 func AddDieter(context *gin.Context){
 
     var n Dieter 
