@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Describe a record in the database
 type Record interface {
 
     GetID()             int64
@@ -11,9 +12,9 @@ type Record interface {
 
 }
 
+// Create an interface for items that have a calories property
 type Named interface {
 
-    GetID()                     int64
     GetName()                   string
     SetName(string)
     GetCalories()               int
@@ -21,6 +22,7 @@ type Named interface {
 
 }
 
+// User struct, maximum daily calories and name
 type Dieter struct {
 
     ID          int64       `json:"id"`
@@ -29,6 +31,7 @@ type Dieter struct {
 
 }
 
+// Describe an item in the database for multiple food items associated to one meal
 type Entry struct {
 
     ID          int64       `json:"id"`
@@ -38,6 +41,7 @@ type Entry struct {
 
 }
 
+// Describe a food that can be added to a meal by a user
 type Food struct {
 
     ID          int64       `json:"id"`
@@ -47,6 +51,7 @@ type Food struct {
 
 }
 
+// Describe a meal that can be consumed by a user
 type Meal struct {
 
     ID          int64       `json:"id"`
@@ -57,8 +62,8 @@ type Meal struct {
 
 }
 
+// Initialize these from the database when running
 var Dieters []Dieter
 var Entries []Entry
 var Foods   []Food
 var Meals   []Meal
-
