@@ -26,6 +26,7 @@ func AddDieter(context *gin.Context){
 
 }
 
+// Get dieter by name
 func GetDieter(context *gin.Context){
     
     var d Dieter
@@ -45,6 +46,7 @@ func GetDieter(context *gin.Context){
 
 }
 
+// Set the calories available for a dieter
 func SetDieterCalories(context *gin.Context){
 
     var d Dieter 
@@ -66,6 +68,7 @@ func SetDieterCalories(context *gin.Context){
 
 }
 
+// Set the saved dieter's number of maximum calories
 func SetCalories(d Dieter, c int) {
 
     for k, v := range Entries {
@@ -76,6 +79,7 @@ func SetCalories(d Dieter, c int) {
 
 }
 
+// Get maximum number of calories for a dieter
 func GetCalories(d Dieter) int {
 
     for _, v := range Dieters {
@@ -88,6 +92,7 @@ func GetCalories(d Dieter) int {
 
 }
 
+// Get the unique ID for the dieter by name
 func GetID(d Dieter) int64 {
 
     for _, v := range Dieters {
@@ -100,6 +105,7 @@ func GetID(d Dieter) int64 {
 
 }
 
+// Set the unique ID for a dieter by name
 func SetID(d Dieter) {
 
     for k,v := range Dieters { 
