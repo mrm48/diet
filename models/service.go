@@ -30,17 +30,31 @@ func GetDieters(ctxt *gin.Context) {
 }
 
 // Add specifically a dieter
-func AddDieter(context *gin.Context) {
+func AddDieter(ctxt *gin.Context) {
 
 	var n Dieter
 
-	if err := context.BindJSON(&n); err != nil {
+	if err := ctxt.BindJSON(&n); err != nil {
 		return
 	}
 
 	Dieters = append(Dieters, n)
 
-	context.IndentedJSON(http.StatusCreated, n)
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	query := "INSERT INTO dieter values (1600, 'Jack')"
+
+	_, err = db.Exec(context.Background(), query)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctxt.IndentedJSON(http.StatusCreated, n)
 
 }
 
