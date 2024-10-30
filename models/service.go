@@ -25,10 +25,6 @@ func GetDieters(ctxt *gin.Context) {
 
 	defer rows.Close()
 
-	for rows.Next() {
-		err = rows.Scan()
-	}
-
 	ctxt.IndentedJSON(http.StatusOK, Dieters)
 
 }
