@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"log"
@@ -22,10 +21,6 @@ func GetDieters(ctxt *gin.Context) {
 
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	for _, dieter := range Dieters {
-		fmt.Println(dieter.ID)
 	}
 
 	defer rows.Close()
