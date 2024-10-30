@@ -1,58 +1,47 @@
 package main
 
 import (
-    "context"
-	"database/sql"
+	"context"
+	"fmt"
 	"log"
+	"mauit/models"
 	"mauit/router"
 
+	"github.com/jackc/pgx/v5"
+
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx"
 )
 
 func main() {
 
-    var psqlConn pgx.ConnConfig
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
-    psqlConn.Host = "localhost"
-    psqlConn.Port = 5432
-    psqlConn.User = "postgres"
-    psqlConn.Database = "meal"
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	rows, err := db.Query(context.Background(), "Select * FROM meal")
+	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
-    db, err := pgx.Connect(psqlConn)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	for _, meal := range meals {
+		fmt.Println(meal.ID)
+	}
 
-    var rows *sql.Rows
+	defer rows.Close()
 
-    err = db.QueryRow("Select * FROM meal")
+	for rows.Next() {
+		err = rows.Scan()
+	}
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	r := gin.Default()
 
-    defer rows.Close()
+	router.SetRoutes(r)
 
-    for rows.Next() {
-        var (
-            id int64
-            calories int64
-        )
-
-        if err := rows.Scan(&id, &calories); err != nil {
-            log.Fatal(err)
-        }
-
-    }
-
-    r := gin.Default()
-
-    router.SetRoutes(r)
-
-    // start server
-    r.Run("localhost:9090")
+	// start server
+	r.Run("localhost:9090")
 
 }
