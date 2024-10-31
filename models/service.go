@@ -32,14 +32,14 @@ func GetDieters(ctxt *gin.Context) {
 // Add specifically a dieter
 func AddDieter(ctxt *gin.Context) {
 
-	var n Dieter
+	var dieter Dieter
 
-	if err := ctxt.BindJSON(&n); err != nil {
+	if err := ctxt.BindJSON(&dieter); err != nil {
 		log.Fatal(err)
 		return
 	}
 
-	Dieters = append(Dieters, n)
+	Dieters = append(Dieters, dieter)
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
@@ -47,24 +47,24 @@ func AddDieter(ctxt *gin.Context) {
 		log.Fatal(err)
 	}
 
-	//query := "INSERT INTO dieter values (" + strconv.FormatInt(n.ID, 10) + "," + strconv.Itoa(n.Calories) + "," + "'" + n.Name + "'" + ")"
+	//query := "INSERT INTO dieter values (" + strconv.FormatInt(dieter.ID, 10) + "," + strconv.Itoa(dieter.Calories) + "," + "'" + dieter.Name + "'" + ")"
 
-	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", n.ID, n.Calories, n.Name)
+	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", dieter.ID, dieter.Calories, dieter.Name)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ctxt.IndentedJSON(http.StatusCreated, n)
+	ctxt.IndentedJSON(http.StatusCreated, dieter)
 
 }
 
 // Get dieter by name
 func GetDieter(ctxt *gin.Context) {
 
-	var d Dieter
+	var dieter Dieter
 
-	if err := ctxt.BindJSON(&d); err != nil {
+	if err := ctxt.BindJSON(&dieter); err != nil {
 		return
 	}
 
@@ -74,7 +74,7 @@ func GetDieter(ctxt *gin.Context) {
 		log.Fatal(err)
 	}
 
-	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", d.Name)
+	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", dieter.Name)
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if err != nil {
@@ -84,7 +84,7 @@ func GetDieter(ctxt *gin.Context) {
 	defer rows.Close()
 
 	for _, v := range Dieters {
-		if v.Name == d.Name {
+		if v.Name == dieter.Name {
 			ctxt.IndentedJSON(http.StatusOK, v)
 			return
 		}
@@ -95,24 +95,24 @@ func GetDieter(ctxt *gin.Context) {
 }
 
 // Set the calories available for a dieter
-func SetDieterCalories(context *gin.Context) {
+func SetDieterCalories(ctxt *gin.Context) {
 
-	var d Dieter
+	var dieter Dieter
 
-	if err := context.BindJSON(&d); err != nil {
+	if err := ctxt.BindJSON(&dieter); err != nil {
 		return
 	}
 
 	for _, v := range Dieters {
-		if v.Name == d.Name {
-			SetCalories(v, d.Calories)
-			v.Calories = d.Calories
-			context.IndentedJSON(http.StatusOK, v)
+		if v.Name == dieter.Name {
+			SetCalories(v, dieter.Calories)
+			v.Calories = dieter.Calories
+			ctxt.IndentedJSON(http.StatusOK, v)
 			return
 		}
 	}
 
-	context.IndentedJSON(http.StatusNotFound, nil)
+	ctxt.IndentedJSON(http.StatusNotFound, nil)
 
 }
 
