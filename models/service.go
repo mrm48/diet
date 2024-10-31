@@ -61,22 +61,37 @@ func AddDieter(ctxt *gin.Context) {
 }
 
 // Get dieter by name
-func GetDieter(context *gin.Context) {
+func GetDieter(ctxt *gin.Context) {
 
 	var d Dieter
 
-	if err := context.BindJSON(&d); err != nil {
+	if err := ctxt.BindJSON(&d); err != nil {
 		return
 	}
 
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", d.Name)
+	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+
 	for _, v := range Dieters {
 		if v.Name == d.Name {
-			context.IndentedJSON(http.StatusOK, v)
+			ctxt.IndentedJSON(http.StatusOK, v)
 			return
 		}
 	}
 
-	context.IndentedJSON(http.StatusNotFound, nil)
+	ctxt.IndentedJSON(http.StatusNotFound, nil)
 
 }
 
