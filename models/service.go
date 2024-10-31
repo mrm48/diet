@@ -6,7 +6,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 func GetDieters(ctxt *gin.Context) {
@@ -48,9 +47,9 @@ func AddDieter(ctxt *gin.Context) {
 		log.Fatal(err)
 	}
 
-	query := "INSERT INTO dieter values (" + strconv.FormatInt(n.ID, 10) + "," + strconv.Itoa(n.Calories) + "," + "'" + n.Name + "'" + ")"
+	//query := "INSERT INTO dieter values (" + strconv.FormatInt(n.ID, 10) + "," + strconv.Itoa(n.Calories) + "," + "'" + n.Name + "'" + ")"
 
-	_, err = db.Exec(context.Background(), query)
+	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", n.ID, n.Calories, n.Name)
 
 	if err != nil {
 		log.Fatal(err)
