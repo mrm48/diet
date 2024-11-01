@@ -13,7 +13,10 @@ func GetDieters(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Cannot connect to the database")
+		log.Println(err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	rows, err := db.Query(context.Background(), "Select * FROM dieter")
@@ -35,7 +38,9 @@ func AddDieter(ctxt *gin.Context) {
 	var dieter Dieter
 
 	if err := ctxt.BindJSON(&dieter); err != nil {
-		log.Fatal(err)
+		log.Println("Cannot parse JSON input into a dieter")
+		log.Println(err)
+		ctxt.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
 
@@ -44,7 +49,10 @@ func AddDieter(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Cannot connect to the database")
+		log.Println(err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	//query := "INSERT INTO dieter values (" + strconv.FormatInt(dieter.ID, 10) + "," + strconv.Itoa(dieter.Calories) + "," + "'" + dieter.Name + "'" + ")"
@@ -71,7 +79,10 @@ func GetDieter(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Cannot connect to the database")
+		log.Println(err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", dieter.Name)
@@ -106,7 +117,10 @@ func SetDieterCalories(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Cannot connect to the database")
+		log.Println(err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	rows, err := db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
@@ -133,6 +147,7 @@ func GetDieterCalories(ctxt *gin.Context) {
 
 	if err != nil {
 		log.Println("Cannot connect to the database")
+		log.Println(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
