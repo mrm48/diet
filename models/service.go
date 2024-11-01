@@ -103,17 +103,48 @@ func SetDieterCalories(ctxt *gin.Context) {
 		return
 	}
 
-	for _, v := range Dieters {
-		if v.Name == dieter.Name {
-			SetCalories(v, dieter.Calories)
-			v.Calories = dieter.Calories
-			ctxt.IndentedJSON(http.StatusOK, v)
-			return
-		}
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	rows, err := db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
+
+	if rows != nil {
+		SetCalories(dieter, dieter.Calories)
+		ctxt.IndentedJSON(http.StatusOK, dieter)
+		return
 	}
 
 	ctxt.IndentedJSON(http.StatusNotFound, nil)
 
+}
+
+func GetDieterCalories(ctxt *gin.Context) {
+
+	var dieter Dieter
+
+	if err := ctxt.BindJSON(&dieter); err != nil {
+		log.Fatal("Could not read dieter object from query")
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		log.Println("Cannot connect to the database")
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE Name = $1", dieter.Name)
+	Dieters, err = pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if len(Dieters) != 0 {
+		ctxt.IndentedJSON(http.StatusOK, Dieters[0].Calories)
+	} else {
+		ctxt.IndentedJSON(http.StatusNotFound, nil)
+	}
 }
 
 // Set the saved dieter's number of maximum calories
@@ -124,19 +155,6 @@ func SetCalories(d Dieter, c int) {
 			Dieters[k].Calories = c
 		}
 	}
-
-}
-
-// Get maximum number of calories for a dieter
-func GetCalories(d Dieter) int {
-
-	for _, v := range Dieters {
-		if v.ID == d.ID {
-			return v.Calories
-		}
-	}
-
-	return 0
 
 }
 
