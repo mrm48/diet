@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"log"
@@ -13,8 +14,7 @@ func GetDieters(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Println("Cannot connect to the database")
-		log.Println(err)
+		logConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -30,6 +30,8 @@ func GetDieters(ctxt *gin.Context) {
 
 	ctxt.IndentedJSON(http.StatusOK, Dieters)
 
+	logMessage("Dieters retrieved and sent to user")
+
 }
 
 // Add specifically a dieter
@@ -38,8 +40,8 @@ func AddDieter(ctxt *gin.Context) {
 	var dieter Dieter
 
 	if err := ctxt.BindJSON(&dieter); err != nil {
-		log.Println("Cannot parse JSON input into a dieter")
-		log.Println(err)
+		slog := fmt.Sprintf("Cannot parse JSON input into a dieter: %v", err)
+		log.Output(1, slog)
 		ctxt.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
@@ -49,8 +51,7 @@ func AddDieter(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Println("Cannot connect to the database")
-		log.Println(err)
+		logConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -79,8 +80,7 @@ func GetDieter(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Println("Cannot connect to the database")
-		log.Println(err)
+		logConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -117,8 +117,7 @@ func SetDieterCalories(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Println("Cannot connect to the database")
-		log.Println(err)
+		logConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -128,6 +127,10 @@ func SetDieterCalories(ctxt *gin.Context) {
 	if rows != nil {
 		SetCalories(dieter, dieter.Calories)
 		ctxt.IndentedJSON(http.StatusOK, dieter)
+		return
+	} else if err != nil {
+		logApplicationError("Cannot set dieter calories", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -146,8 +149,7 @@ func GetDieterCalories(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		log.Println("Cannot connect to the database")
-		log.Println(err)
+		logConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -158,6 +160,7 @@ func GetDieterCalories(ctxt *gin.Context) {
 	if len(Dieters) != 0 {
 		ctxt.IndentedJSON(http.StatusOK, Dieters[0].Calories)
 	} else {
+		logApplicationError("Cannot find Dieter requested", nil)
 		ctxt.IndentedJSON(http.StatusNotFound, nil)
 	}
 }
@@ -194,5 +197,25 @@ func SetID(d Dieter) {
 			Dieters[k].ID = d.ID
 		}
 	}
+
+}
+
+func logConnectionError(err error) {
+
+	slog := fmt.Sprintf("Cannot connect to the database: %v", err)
+	log.Output(1, slog)
+
+}
+
+func logApplicationError(message string, err error) {
+
+	slog := fmt.Sprintf("Application error: %v : %v", message, err)
+	log.Output(2, slog)
+
+}
+
+func logMessage(message string) {
+
+	log.Output(1, message)
 
 }

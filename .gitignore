@@ -27,3 +27,6 @@ go.work.sum
 
 # GoLand configuration
 .idea/
+
+# Application Logging
+*.log
