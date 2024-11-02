@@ -8,13 +8,13 @@ import (
 	"net/http"
 )
 
-func GetDieters(ctxt *gin.Context) {
+func GetDieters(req *gin.Context) {
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
 		mutils.LogConnectionError(err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -22,33 +22,33 @@ func GetDieters(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter rows from database", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create list of dieters from rows returned", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
 	defer rows.Close()
 
-	ctxt.IndentedJSON(http.StatusOK, Dieters)
+	req.IndentedJSON(http.StatusOK, Dieters)
 
 	mutils.LogMessage("Request", "Dieters retrieved and sent to user")
 
 }
 
 // Add specifically a dieter
-func AddDieter(ctxt *gin.Context) {
+func AddDieter(req *gin.Context) {
 
 	var dieter Dieter
 
-	if err := ctxt.BindJSON(&dieter); err != nil {
+	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		ctxt.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
 
@@ -58,7 +58,7 @@ func AddDieter(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogConnectionError(err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -66,24 +66,24 @@ func AddDieter(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot store new dieter", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
-	ctxt.IndentedJSON(http.StatusCreated, dieter)
+	req.IndentedJSON(http.StatusCreated, dieter)
 
     mutils.LogMessage("Request", "Dieter added")
 
 }
 
 // Get dieter by name
-func GetDieter(ctxt *gin.Context) {
+func GetDieter(req *gin.Context) {
 
 	var dieter Dieter
 
-	if err := ctxt.BindJSON(&dieter); err != nil {
+	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		ctxt.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
 
@@ -91,7 +91,7 @@ func GetDieter(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogConnectionError(err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -99,7 +99,7 @@ func GetDieter(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot get dieter information", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -107,7 +107,7 @@ func GetDieter(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -115,24 +115,24 @@ func GetDieter(ctxt *gin.Context) {
 
 	for _, v := range Dieters {
 		if v.Name == dieter.Name {
-			ctxt.IndentedJSON(http.StatusOK, v)
+			req.IndentedJSON(http.StatusOK, v)
             mutils.LogMessage("Request", "Dieter information sent back to user")
 			return
 		}
 	}
 
-	ctxt.IndentedJSON(http.StatusNotFound, nil)
+	req.IndentedJSON(http.StatusNotFound, nil)
 
 }
 
 // Set the calories available for a dieter
-func SetDieterCalories(ctxt *gin.Context) {
+func SetDieterCalories(req *gin.Context) {
 
 	var dieter Dieter
 
-	if err := ctxt.BindJSON(&dieter); err != nil {
+	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter calories object from JSON provided", err)
-		ctxt.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
 
@@ -140,7 +140,7 @@ func SetDieterCalories(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogConnectionError(err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -148,26 +148,26 @@ func SetDieterCalories(ctxt *gin.Context) {
 
 	if rows != nil {
 		SetCalories(dieter, dieter.Calories)
-		ctxt.IndentedJSON(http.StatusOK, dieter)
+		req.IndentedJSON(http.StatusOK, dieter)
         mutils.LogMessage("Request", "Calories updated for dieter")
 		return
 	} else if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
-	ctxt.IndentedJSON(http.StatusNotFound, nil)
+	req.IndentedJSON(http.StatusNotFound, nil)
 
 }
 
-func GetDieterCalories(ctxt *gin.Context) {
+func GetDieterCalories(req *gin.Context) {
 
 	var dieter Dieter
 
-	if err := ctxt.BindJSON(&dieter); err != nil {
+	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		ctxt.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
 
@@ -175,7 +175,7 @@ func GetDieterCalories(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogConnectionError(err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
@@ -183,42 +183,42 @@ func GetDieterCalories(ctxt *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 	Dieters, err = pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
-		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
 	if len(Dieters) != 0 {
-		ctxt.IndentedJSON(http.StatusOK, Dieters[0].Calories)
+		req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find Dieter requested", nil)
-		ctxt.IndentedJSON(http.StatusNotFound, nil)
+		req.IndentedJSON(http.StatusNotFound, nil)
 	}
 }
 
-func GetMeal(ctxt *gin.Context){
-    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+func GetMeal(req *gin.Context){
+    req.IndentedJSON(http.StatusServiceUnavailable, nil)
     return
 }
 
-func GetEntry(ctxt *gin.Context){
-    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+func GetEntry(req *gin.Context){
+    req.IndentedJSON(http.StatusServiceUnavailable, nil)
     return
 }
 
-func AddEntry(ctxt *gin.Context){
-    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+func AddEntry(req *gin.Context){
+    req.IndentedJSON(http.StatusServiceUnavailable, nil)
     return
 }
 
-func AddEntryToMeal(ctxt *gin.Context){
-    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+func AddEntryToMeal(req *gin.Context){
+    req.IndentedJSON(http.StatusServiceUnavailable, nil)
     return
 }
 
