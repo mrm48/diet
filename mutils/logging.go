@@ -19,8 +19,9 @@ func LogApplicationError(ltype string, message string, err error) {
 
 }
 
-func LogMessage(message string) {
+func LogMessage(ltype string, message string) {
 
-	log.Output(1, message)
+	slog := fmt.Sprintf("%v: %v", ltype, message)
+	log.Output(1, slog)
 
 }

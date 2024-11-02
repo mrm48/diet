@@ -1,27 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"mauit/router"
+    "mauit/mutils"
 	"os"
 )
 
 func main() {
+
 	f, err := os.OpenFile("mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		fmt.Printf("error opening log file: %v\n", err)
+        log.Fatal(err)
 		return
 	}
 	defer f.Close()
 	log.SetOutput(f)
-	log.Output(1, "Initializing")
+    mutils.LogMessage("Server Startup", "Initializing")
 	r := gin.Default()
 
 	router.SetRoutes(r)
 
+    mutils.LogMessage("Server Startup", "Routes set: Starting server")
+
 	// start server
 	r.Run("localhost:9090")
+
 
 }

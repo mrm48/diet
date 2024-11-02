@@ -37,7 +37,7 @@ func GetDieters(ctxt *gin.Context) {
 
 	ctxt.IndentedJSON(http.StatusOK, Dieters)
 
-	mutils.LogMessage("Dieters retrieved and sent to user")
+	mutils.LogMessage("Request", "Dieters retrieved and sent to user")
 
 }
 
@@ -71,6 +71,8 @@ func AddDieter(ctxt *gin.Context) {
 	}
 
 	ctxt.IndentedJSON(http.StatusCreated, dieter)
+
+    mutils.LogMessage("Request", "Dieter added")
 
 }
 
@@ -114,6 +116,7 @@ func GetDieter(ctxt *gin.Context) {
 	for _, v := range Dieters {
 		if v.Name == dieter.Name {
 			ctxt.IndentedJSON(http.StatusOK, v)
+            mutils.LogMessage("Request", "Dieter information sent back to user")
 			return
 		}
 	}
@@ -146,6 +149,7 @@ func SetDieterCalories(ctxt *gin.Context) {
 	if rows != nil {
 		SetCalories(dieter, dieter.Calories)
 		ctxt.IndentedJSON(http.StatusOK, dieter)
+        mutils.LogMessage("Request", "Calories updated for dieter")
 		return
 	} else if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
