@@ -198,6 +198,26 @@ func GetDieterCalories(ctxt *gin.Context) {
 	}
 }
 
+func GetMeal(ctxt *gin.Context){
+    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+    return
+}
+
+func GetEntry(ctxt *gin.Context){
+    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+    return
+}
+
+func AddEntry(ctxt *gin.Context){
+    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+    return
+}
+
+func AddEntryToMeal(ctxt *gin.Context){
+    ctxt.IndentedJSON(http.StatusServiceUnavailable, nil)
+    return
+}
+
 // Set the saved dieter's number of maximum calories
 func SetCalories(d Dieter, c int) {
 
