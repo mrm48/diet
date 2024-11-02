@@ -14,23 +14,31 @@ func GetDieters(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		logConnectionError(err)
+		LogConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
 	rows, err := db.Query(context.Background(), "Select * FROM dieter")
+
+	if err != nil {
+		LogApplicationError("Database Error", "Cannot retrieve dieter rows from database", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if err != nil {
-		log.Fatal(err)
+		LogApplicationError("Application Error", "Cannot create list of dieters from rows returned", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	defer rows.Close()
 
 	ctxt.IndentedJSON(http.StatusOK, Dieters)
 
-	logMessage("Dieters retrieved and sent to user")
+	LogMessage("Dieters retrieved and sent to user")
 
 }
 
@@ -40,8 +48,7 @@ func AddDieter(ctxt *gin.Context) {
 	var dieter Dieter
 
 	if err := ctxt.BindJSON(&dieter); err != nil {
-		slog := fmt.Sprintf("Cannot parse JSON input into a dieter: %v", err)
-		log.Output(1, slog)
+		LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
 		ctxt.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
@@ -51,17 +58,17 @@ func AddDieter(ctxt *gin.Context) {
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		logConnectionError(err)
+		LogConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
-	//query := "INSERT INTO dieter values (" + strconv.FormatInt(dieter.ID, 10) + "," + strconv.Itoa(dieter.Calories) + "," + "'" + dieter.Name + "'" + ")"
-
 	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", dieter.ID, dieter.Calories, dieter.Name)
 
 	if err != nil {
-		log.Fatal(err)
+		LogApplicationError("Database Error", "Cannot store new dieter", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	ctxt.IndentedJSON(http.StatusCreated, dieter)
@@ -74,22 +81,33 @@ func GetDieter(ctxt *gin.Context) {
 	var dieter Dieter
 
 	if err := ctxt.BindJSON(&dieter); err != nil {
+		LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
+		ctxt.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		logConnectionError(err)
+		LogConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
 	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", dieter.Name)
+
+	if err != nil {
+		LogApplicationError("Database Error", "Cannot get dieter information", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if err != nil {
-		log.Fatal(err)
+		LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
 	}
 
 	defer rows.Close()
@@ -111,13 +129,15 @@ func SetDieterCalories(ctxt *gin.Context) {
 	var dieter Dieter
 
 	if err := ctxt.BindJSON(&dieter); err != nil {
+		LogApplicationError("Application Error", "Cannot create dieter calories object from JSON provided", err)
+		ctxt.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		logConnectionError(err)
+		LogConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -129,7 +149,7 @@ func SetDieterCalories(ctxt *gin.Context) {
 		ctxt.IndentedJSON(http.StatusOK, dieter)
 		return
 	} else if err != nil {
-		logApplicationError("Cannot set dieter calories", err)
+		LogApplicationError("Database Error", "Cannot set dieter calories", err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -143,24 +163,38 @@ func GetDieterCalories(ctxt *gin.Context) {
 	var dieter Dieter
 
 	if err := ctxt.BindJSON(&dieter); err != nil {
-		log.Fatal("Could not read dieter object from query")
+		LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
+		ctxt.IndentedJSON(http.StatusBadRequest, nil)
+		return
 	}
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
-		logConnectionError(err)
+		LogConnectionError(err)
 		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
 	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE Name = $1", dieter.Name)
+
+	if err != nil {
+		LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 	Dieters, err = pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if err != nil {
+		LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
+		ctxt.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	if len(Dieters) != 0 {
 		ctxt.IndentedJSON(http.StatusOK, Dieters[0].Calories)
 	} else {
-		logApplicationError("Cannot find Dieter requested", nil)
+		LogApplicationError("Database Error", "Cannot find Dieter requested", nil)
 		ctxt.IndentedJSON(http.StatusNotFound, nil)
 	}
 }
@@ -200,21 +234,21 @@ func SetID(d Dieter) {
 
 }
 
-func logConnectionError(err error) {
+func LogConnectionError(err error) {
 
 	slog := fmt.Sprintf("Cannot connect to the database: %v", err)
 	log.Output(1, slog)
 
 }
 
-func logApplicationError(message string, err error) {
+func LogApplicationError(ltype string, message string, err error) {
 
-	slog := fmt.Sprintf("Application error: %v : %v", message, err)
+	slog := fmt.Sprintf("%v: %v : %v", ltype, message, err)
 	log.Output(2, slog)
 
 }
 
-func logMessage(message string) {
+func LogMessage(message string) {
 
 	log.Output(1, message)
 
