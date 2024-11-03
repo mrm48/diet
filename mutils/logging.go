@@ -5,17 +5,17 @@ import (
 	"log"
 )
 
-// Logging should be easily filtered, split type of message from the message 
+// LogConnectionError Logging should be easily filtered, split type of message from the message
 // using : separator
 // This is a connection error log message format for the log file
 func LogConnectionError(err error) {
 
-    slog := fmt.Sprintf("Database Connection Error: Could not connect to the database: %v", err)
+	slog := fmt.Sprintf("Database Connection Error: Could not connect to the database: %v", err)
 	log.Output(1, slog)
 
 }
 
-// This is for application errors, errors where there are no upstream issues
+// LogApplicationError This is for application errors, errors where there are no upstream issues
 func LogApplicationError(ltype string, message string, err error) {
 
 	slog := fmt.Sprintf("%v: %v : %v", ltype, message, err)
@@ -23,7 +23,7 @@ func LogApplicationError(ltype string, message string, err error) {
 
 }
 
-// This is a standard log message for application messages
+// LogMessage This is a standard log message for application messages
 func LogMessage(ltype string, message string) {
 
 	slog := fmt.Sprintf("%v: %v", ltype, message)
