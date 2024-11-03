@@ -52,8 +52,6 @@ func AddDieter(req *gin.Context) {
 		return
 	}
 
-	Dieters = append(Dieters, dieter)
-
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
@@ -185,7 +183,7 @@ func GetDieterCalories(req *gin.Context) {
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
-	Dieters, err = pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+    Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
@@ -193,30 +191,60 @@ func GetDieterCalories(req *gin.Context) {
 		return
 	}
 
-	if len(Dieters) != 0 {
+	if len(Dieters) != 0 && len(Dieters) == 1 {
 		req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
 	} else {
-		mutils.LogApplicationError("Database Error", "Cannot find Dieter requested", nil)
+		mutils.LogApplicationError("Database Error", "Cannot find unique Dieter requested", nil)
 		req.IndentedJSON(http.StatusNotFound, nil)
 	}
 }
 
 func GetMeal(req *gin.Context){
-    req.IndentedJSON(http.StatusServiceUnavailable, nil)
-    return
+
+    var meal Meal
+
+    if err := req.BindJSON(&meal); err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
+        req.IndentedJSON(http.StatusBadRequest, nil)
+        return
+    }
+
+    db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+    if err != nil {
+        mutils.LogConnectionError(err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
+	rows, err := db.Query(context.Background(), "Select * FROM meal WHERE name=$1 AND dieter=$2 AND day=$3", meal.Name, meal.Dieter, meal.Day)
+
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot query meal from database", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
+    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+
+    if meals != nil {
+        mutils.LogMessage("Success","Responded with the meal requested")
+        req.IndentedJSON(http.StatusOK, meals)
+        return
+    }
+
+    req.IndentedJSON(http.StatusNotFound, nil)
+
 }
 
 func GetEntry(req *gin.Context){
     req.IndentedJSON(http.StatusServiceUnavailable, nil)
-    return
 }
 
 func AddEntry(req *gin.Context){
     req.IndentedJSON(http.StatusServiceUnavailable, nil)
-    return
 }
 
 func AddEntryToMeal(req *gin.Context){
     req.IndentedJSON(http.StatusServiceUnavailable, nil)
-    return
 }
