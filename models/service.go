@@ -337,3 +337,37 @@ func AddFood(req *gin.Context) {
     mutils.LogMessage("Request", "Added food to the database")
 
 }
+
+func EditFood(req *gin.Context) {
+
+	var food Food
+
+	if err := req.BindJSON(&food); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create food calories object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	rows, err := db.Query(context.Background(), "UPDATE food SET Calories = $1 WHERE Name = $2", food.Calories, food.Name)
+
+	if rows != nil {
+		req.IndentedJSON(http.StatusOK, food)
+		mutils.LogMessage("Request", "Calories updated for food")
+		return
+	} else if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot set food calories", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	req.IndentedJSON(http.StatusNotFound, nil)
+
+}
