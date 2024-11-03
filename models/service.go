@@ -147,7 +147,6 @@ func SetDieterCalories(req *gin.Context) {
 	rows, err := db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
 
 	if rows != nil {
-		SetCalories(dieter, dieter.Calories)
 		req.IndentedJSON(http.StatusOK, dieter)
         mutils.LogMessage("Request", "Calories updated for dieter")
 		return
@@ -220,39 +219,4 @@ func AddEntry(req *gin.Context){
 func AddEntryToMeal(req *gin.Context){
     req.IndentedJSON(http.StatusServiceUnavailable, nil)
     return
-}
-
-// Set the saved dieter's number of maximum calories
-func SetCalories(d Dieter, c int) {
-
-	for k, v := range Entries {
-		if v.ID == GetID(d) {
-			Dieters[k].Calories = c
-		}
-	}
-
-}
-
-// Get the unique ID for the dieter by name
-func GetID(d Dieter) int64 {
-
-	for _, v := range Dieters {
-		if v.Name == d.Name {
-			return v.ID
-		}
-	}
-
-	return 0
-
-}
-
-// Set the unique ID for a dieter by name
-func SetID(d Dieter) {
-
-	for k, v := range Dieters {
-		if v.Name == d.Name {
-			Dieters[k].ID = d.ID
-		}
-	}
-
 }
