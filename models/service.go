@@ -228,7 +228,7 @@ func GetMeal(req *gin.Context) {
 	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
 
 	if meals != nil {
-		mutils.LogMessage("Success", "Responded with the meal requested")
+		mutils.LogMessage("Request", "Responded with the meal requested")
 		req.IndentedJSON(http.StatusOK, meals)
 		return
 	}
@@ -266,7 +266,7 @@ func GetEntry(req *gin.Context) {
 	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[Entry])
 
 	if entries != nil {
-		mutils.LogMessage("Success", "Responded with the entry requested")
+		mutils.LogMessage("Request", "Responded with the entry requested")
 		req.IndentedJSON(http.StatusOK, entries)
 		return
 	}
