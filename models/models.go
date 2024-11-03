@@ -50,9 +50,3 @@ type Meal struct {
 	Dieterid int64     `json:"dieterid"`
 	Dieter   string    `json:"dieter"`
 }
-
-// Initialize these from the database when running
-var Dieters []Dieter
-var Entries []Entry
-var Foods []Food
-var Meals []Meal
