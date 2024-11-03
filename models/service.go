@@ -308,3 +308,32 @@ func AddEntry(req *gin.Context) {
 func AddEntryToMeal(req *gin.Context) {
 	req.IndentedJSON(http.StatusServiceUnavailable, nil)
 }
+
+func AddFood(req *gin.Context) {
+
+    var food Food
+
+    if err := req.BindJSON(&food); err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
+    }
+
+    db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+    if err != nil {
+        mutils.LogConnectionError(err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
+    _, err = db.Query(context.Background(), "INSERT INTO food values ($1, $2, $3)", food.Name, food.Calories, food.Units)
+
+    if err != nil {
+        mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
+    req.IndentedJSON(http.StatusCreated, food)
+    mutils.LogMessage("Request", "Added food to the database")
+
+}
