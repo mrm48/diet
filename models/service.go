@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"mauit/mutils"
 	"net/http"
+	"time"
 )
 
 func GetDieters(req *gin.Context) {
@@ -191,12 +192,57 @@ func GetDieterCalories(req *gin.Context) {
 		return
 	}
 
-	if len(Dieters) != 0 && len(Dieters) == 1 {
+	if len(Dieters) == 1 {
 		req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
+		return
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find unique Dieter requested", nil)
 		req.IndentedJSON(http.StatusNotFound, nil)
+		return
 	}
+}
+
+func GetRemainingDieterCalories(req *gin.Context) {
+
+	var dieter Dieter
+
+	if err := req.BindJSON(&dieter); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	rows, err := db.Query(context.Background(), "Select * from dieter WHERE Name = $1", dieter.Name)
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if Dieter != nil {
+		rows, err := db.Query(context.Background(), "Select * from meal WHERE dieter_id=$1 AND day=$2", dieter.ID, time.DateOnly)
+		if err != nil {
+			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
+			return
+		} else {
+		}
+	} else {
+		mutils.LogApplicationError("Database Error", "Cannot find remaining dieter calories requested", nil)
+		req.IndentedJSON(http.StatusNotFound, nil)
+		return
+	}
+	req.IndentedJSON(http.StatusNotFound, nil)
 }
 
 func GetMeal(req *gin.Context) {
@@ -311,30 +357,30 @@ func AddEntryToMeal(req *gin.Context) {
 
 func AddFood(req *gin.Context) {
 
-    var food Food
+	var food Food
 
-    if err := req.BindJSON(&food); err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
-    }
+	if err := req.BindJSON(&food); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
+	}
 
-    db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
-    if err != nil {
-        mutils.LogConnectionError(err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
-    _, err = db.Query(context.Background(), "INSERT INTO food values ($1, $2, $3)", food.Name, food.Calories, food.Units)
+	_, err = db.Query(context.Background(), "INSERT INTO food values ($1, $2, $3)", food.Name, food.Calories, food.Units)
 
-    if err != nil {
-        mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
-    req.IndentedJSON(http.StatusCreated, food)
-    mutils.LogMessage("Request", "Added food to the database")
+	req.IndentedJSON(http.StatusCreated, food)
+	mutils.LogMessage("Request", "Added food to the database")
 
 }
 
