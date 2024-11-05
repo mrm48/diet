@@ -306,26 +306,31 @@ func AddMeal(req *gin.Context) {
 
 	meal.Calories = 0
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+	if meal.Dieterid != 0 {
+		db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
+		if err != nil {
+			mutils.LogConnectionError(err)
+			req.IndentedJSON(http.StatusInternalServerError, nil)
+			return
+		}
+
+		_, err = db.Exec(context.Background(), "INSERT INTO meal values ($1, $2, $3, $4, $5)", meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
+
+		if err != nil {
+			mutils.LogApplicationError("Database Error", "Cannot store new meal", err)
+			req.IndentedJSON(http.StatusInternalServerError, nil)
+			return
+		}
+
+		req.IndentedJSON(http.StatusCreated, meal)
+
+		mutils.LogMessage("Request", "Meal added")
+	} else {
+		mutils.LogApplicationError("Database Error", "Cannot find dieter id", nil)
+		req.IndentedJSON(http.StatusNotFound, nil)
 		return
 	}
-
-	_, err = db.Exec(context.Background(), "INSERT INTO meal values ($1, $2, $3, $4, $5)", meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot store new meal", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	req.IndentedJSON(http.StatusCreated, meal)
-
-	mutils.LogMessage("Request", "Meal added")
-
 }
 
 func getDieterIDByName(name string) int64 {
