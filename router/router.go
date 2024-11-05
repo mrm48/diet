@@ -22,6 +22,7 @@ func SetRoutes(Router *gin.Engine) {
 	// meal
 	Router.GET("/meal/search", models.GetMeal)
 	Router.POST("/meal/entry", models.AddEntryToMeal)
+	Router.POST("/meal", models.AddMeal)
 
 	// entry
 	Router.GET("/entry/search", models.GetEntry)

@@ -286,6 +286,37 @@ func GetMeal(req *gin.Context) {
 
 }
 
+func AddMeal(req *gin.Context) {
+	var meal Meal
+
+	if err := req.BindJSON(&meal); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	_, err = db.Exec(context.Background(), "INSERT INTO meal values ($1, $2, $3, $4, $5)", meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot store new meal", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	req.IndentedJSON(http.StatusCreated, meal)
+
+	mutils.LogMessage("Request", "Meal added")
+
+}
+
 func GetEntry(req *gin.Context) {
 
 	var entry Entry
