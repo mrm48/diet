@@ -1,9 +1,5 @@
 package models
 
-import (
-	"time"
-)
-
 // Describe a record in the database
 type Record interface {
 	GetID() int64
@@ -43,10 +39,10 @@ type Food struct {
 
 // Describe a meal that can be consumed by a user
 type Meal struct {
-	ID       int64     `json:"id"`
-	Name     string    `json:"name"`
-	Day      time.Time `json:"day"`
-	Calories int       `json:"calories"`
-	Dieterid int64     `json:"dieterid"`
-	Dieter   string    `json:"dieter"`
+	ID       int64  `json:"id"`
+	Name     string `json:"name"`
+	Day      string `json:"day"`
+	Calories int    `json:"calories"`
+	Dieterid int64  `json:"dieterid"`
+	Dieter   string `json:"dieter"`
 }

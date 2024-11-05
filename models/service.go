@@ -295,6 +295,17 @@ func AddMeal(req *gin.Context) {
 		return
 	}
 
+	// add in any missing fields to meal object (don't need day, dieterid or calories)
+	if meal.Day == "" {
+		meal.Day = time.DateOnly
+	}
+
+	if meal.Dieterid == 0 {
+		meal.Dieterid = getDieterIDByName(meal.Dieter)
+	}
+
+	meal.Calories = 0
+
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
@@ -315,6 +326,27 @@ func AddMeal(req *gin.Context) {
 
 	mutils.LogMessage("Request", "Meal added")
 
+}
+
+func getDieterIDByName(name string) int64 {
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+	if err != nil {
+		mutils.LogConnectionError(err)
+		return 0
+	}
+	rows, err := db.Query(context.Background(), "SELECT * FROM dieter WHERE NAME=$1", name)
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query dieter from database", err)
+		return 0
+	}
+
+	dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if dieter != nil {
+		return dieter[0].ID
+	}
+
+	return 0
 }
 
 func GetEntry(req *gin.Context) {
