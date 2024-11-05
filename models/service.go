@@ -231,11 +231,14 @@ func GetRemainingDieterCalories(req *gin.Context) {
 	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if Dieter != nil {
-		rows, err := db.Query(context.Background(), "Select * from meal WHERE dieter_id=$1 AND day=$2", dieter.ID, time.DateOnly)
+		rows, err := db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieter_id=$1 AND day=$2", dieter.ID, time.DateOnly)
 		if err != nil {
 			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
 			return
 		} else {
+			rows.Scan(&dieter.Calories)
+			req.IndentedJSON(http.StatusOK, Dieter[1].Calories-dieter.Calories)
+			return
 		}
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find remaining dieter calories requested", nil)
