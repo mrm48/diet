@@ -236,16 +236,22 @@ func GetRemainingDieterCalories(req *gin.Context) {
 			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
 			return
 		} else {
-			rows.Scan(&dieter.Calories)
-			req.IndentedJSON(http.StatusOK, Dieter[1].Calories-dieter.Calories)
-			return
+			if rows.Next() == true {
+				err = rows.Scan(&dieter.Calories)
+				if err != nil {
+					mutils.LogApplicationError("Request", "Cannot parse sum of calories for this dieter", err)
+					return
+				} else {
+					req.IndentedJSON(http.StatusOK, Dieter[1].Calories-dieter.Calories)
+					return
+				}
+			}
 		}
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find remaining dieter calories requested", nil)
 		req.IndentedJSON(http.StatusNotFound, nil)
 		return
 	}
-	req.IndentedJSON(http.StatusNotFound, nil)
 }
 
 func GetMeal(req *gin.Context) {
