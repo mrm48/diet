@@ -400,6 +400,27 @@ func getDieterIDByName(name string) int64 {
 	return 0
 }
 
+func getMealCalories(id int64) int64 {
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+	if err != nil {
+		mutils.LogConnectionError(err)
+		return 0
+	}
+	rows, err := db.Query(context.Background(), "SUM(Calories) FROM entry WHERE MEAL_ID=$1", id)
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query entries from database", err)
+		return 0
+	}
+
+	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[Entry])
+
+	if entries != nil {
+		return entries[0].ID
+	}
+
+	return 0
+}
+
 func GetEntry(req *gin.Context) {
 
 	var entry Entry
