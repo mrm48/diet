@@ -292,6 +292,46 @@ func GetMeal(req *gin.Context) {
 
 }
 
+func GetMealCalories(req *gin.Context) {
+
+	var meal Meal
+
+	if err := req.BindJSON(&meal); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	rows, err := db.Query(context.Background(), "Select SUM(Calories) from meal WHERE name=$1 AND day=$2 AND dieter=3", meal.Name, meal.Day, meal.Dieter)
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot query meal from database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+
+	meal.Calories = meals[0].Calories
+
+	if meals != nil {
+		mutils.LogMessage("Request", "Responded with the meal calories requested")
+		req.IndentedJSON(http.StatusOK, meal)
+		return
+	}
+
+	req.IndentedJSON(http.StatusNotFound, nil)
+
+}
+
 func AddMeal(req *gin.Context) {
 	var meal Meal
 
