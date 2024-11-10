@@ -552,7 +552,7 @@ func AddFood(req *gin.Context) {
 		return
 	}
 
-	_, err = db.Query(context.Background(), "INSERT INTO food values ($1, $2, $3)", food.Name, food.Calories, food.Units)
+	_, err = db.Query(context.Background(), "INSERT INTO food (Calories, Units, Name) values ($1, $2, $3)", food.Calories, food.Units, food.Name)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
@@ -613,7 +613,7 @@ func GetAllFood(req *gin.Context) {
 	rows, err := db.Query(context.Background(), "SELECT * FROM food")
 
 	if rows != nil {
-		food, err := pgx.CollectRows(rows, pgx.RowToStructByName[food])
+		food, err = pgx.CollectRows(rows, pgx.RowToStructByName[Food])
 		if err != nil {
 			mutils.LogApplicationError("Application Error", "Cannot make a list of food from rows returned from database", err)
 			req.IndentedJSON(http.StatusInternalServerError, nil)

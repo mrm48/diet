@@ -30,6 +30,7 @@ func SetRoutes(Router *gin.Engine) {
 	Router.POST("/entry/add", models.AddEntry)
 
 	// food
+	Router.POST("/food", models.AddFood)
 	Router.POST("/food/set/calories", models.EditFood)
 	Router.GET("/food/all", models.GetAllFood)
 
