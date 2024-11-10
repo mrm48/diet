@@ -540,6 +540,8 @@ func AddFood(req *gin.Context) {
 
 	var food Food
 
+	var count int64
+
 	if err := req.BindJSON(&food); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
 	}
@@ -552,7 +554,19 @@ func AddFood(req *gin.Context) {
 		return
 	}
 
-	_, err = db.Query(context.Background(), "INSERT INTO food (Calories, Units, Name) values ($1, $2, $3)", food.Calories, food.Units, food.Name)
+	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from food").Scan(&count)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query food count from database", err)
+	}
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot get food count from database row returned", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	_, err = db.Query(context.Background(), "INSERT INTO food (id, calories, units, name) values ($1, $2, $3, $4)", count+1, food.Calories, food.Units, food.Name)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
