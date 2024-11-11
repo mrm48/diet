@@ -29,4 +29,4 @@ go.work.sum
 .idea/
 
 # Application Logging
-*.log
+logs/
