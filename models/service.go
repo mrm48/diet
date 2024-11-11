@@ -613,6 +613,36 @@ func EditFood(req *gin.Context) {
 
 }
 
+func DeleteFood(req *gin.Context) {
+
+	var food Food
+
+	if err := req.BindJSON(&food); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	_, err = db.Query(context.Background(), "DELETE FROM food WHERE Name = $1", food.Name)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot delete food from database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	req.IndentedJSON(http.StatusOK, nil)
+
+}
+
 func GetAllFood(req *gin.Context) {
 	var food []Food
 
