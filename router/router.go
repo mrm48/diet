@@ -17,7 +17,7 @@ func SetRoutes(Router *gin.Engine) {
 	Router.GET("/dieter/name", models.GetDieter)
 	Router.POST("/dieter/calories", models.SetDieterCalories)
 	Router.GET("/dieter/calories", models.GetDieterCalories)
-	Router.GET("/dieter/caloriesremaining", models.GetRemainingDieterCalories)
+	Router.GET("/dieter/remaining", models.GetRemainingDieterCalories)
 
 	// meal
 	Router.GET("/meal", models.GetMeal)
