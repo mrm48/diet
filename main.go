@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	f, err := os.OpenFile("mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile("logs/mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	if err != nil {
 		log.Fatal(err)
