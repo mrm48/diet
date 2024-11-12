@@ -688,7 +688,8 @@ func DeleteMeal(req *gin.Context) {
 		return
 	}
 
-	rows, err := db.Query(context.Background(), "SELECT * FROM meal WHERE Name = $1 AND Dieter = $2 AND Day = $3", meal.Name, meal.Dieter, meal.Day)
+	var dbMeal Meal
+	err = db.QueryRow(context.Background(), "SELECT ID FROM meal WHERE Name = $1 AND Dieter = $2 AND Day = $3", meal.Name, meal.Dieter, meal.Day).Scan(&dbMeal.ID)
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot find meal in database", err)
@@ -696,21 +697,7 @@ func DeleteMeal(req *gin.Context) {
 		return
 	}
 
-	dbMeal, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create meal object from row in database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	if dbMeal == nil {
-		mutils.LogApplicationError("Database Error", "Cannot find meal in database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	meal.ID = dbMeal[0].ID
+	meal.ID = dbMeal.ID
 
 	deleteEntriesByMeal(meal.ID, req)
 
@@ -788,4 +775,14 @@ func GetAllFood(req *gin.Context) {
 		req.IndentedJSON(http.StatusNotFound, nil)
 	}
 
+}
+
+func DeleteDieter(req *gin.Context) {
+    req.IndentedJSON(http.StatusNotImplemented, nil)
+    return
+}
+
+func DeleteEntry(req *gin.Context) {
+    req.IndentedJSON(http.StatusNotImplemented, nil)
+    return
 }
