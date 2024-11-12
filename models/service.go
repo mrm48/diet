@@ -670,6 +670,77 @@ func DeleteFood(req *gin.Context) {
 
 }
 
+func DeleteMeal(req *gin.Context) {
+
+	var meal Meal
+
+	if err := req.BindJSON(&meal); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	rows, err := db.Query(context.Background(), "SELECT * FROM meal WHERE Name = $1 AND Dieter = $2 AND Day = $3", meal.Name, meal.Dieter, meal.Day)
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot find meal in database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	dbMeal, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create meal object from row in database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	if dbMeal == nil {
+		mutils.LogApplicationError("Database Error", "Cannot find meal in database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	meal.ID = dbMeal[0].ID
+
+	deleteEntriesByMeal(meal.ID, req)
+
+	_, err = db.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", meal.ID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot meal food from database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	req.IndentedJSON(http.StatusOK, nil)
+
+}
+
+func deleteEntriesByMeal(mealID int64, req *gin.Context) {
+
+	meal, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	_, err = meal.Query(context.Background(), "DELETE FROM entry WHERE MEALID = $1", mealID)
+
+	return
+}
+
 func GetAllFood(req *gin.Context) {
 	var food []Food
 
