@@ -736,7 +736,22 @@ func deleteEntriesByMeal(mealID int64, req *gin.Context) {
 		return
 	}
 
-	_, err = meal.Query(context.Background(), "DELETE FROM entry WHERE MEALID = $1", mealID)
+	_, err = meal.Query(context.Background(), "DELETE FROM entry WHERE MEAL_ID=$1", mealID)
+
+	return
+}
+
+func deleteMealsByDieter(dieterID int64, req *gin.Context) {
+
+    meal, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	_, err = meal.Query(context.Background(), "DELETE FROM meal WHERE DIETER=$1", dieterID)
 
 	return
 }
