@@ -741,6 +741,7 @@ func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 		if err != nil {
 			mutils.LogApplicationError("Application Error", "Cannot get meal ID from returned rows", err)
 		}
+		meals = append(meals, index)
 	}
 
 	for _, m := range meals {
