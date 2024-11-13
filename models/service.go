@@ -715,38 +715,46 @@ func DeleteMeal(req *gin.Context) {
 
 func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 
-    meal, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+	meal, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
-    if err != nil {
-        mutils.LogConnectionError(err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    rows, err := meal.Query(context.Background(), "SELECT FROM meal WHERE dieter=$1", dieterID)
+	rows, err := meal.Query(context.Background(), "SELECT ID FROM meal WHERE dieterID=$1", dieterID)
 
-    var meals []Meal
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot find meals by dieter from database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
-	meals, err = pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+	defer rows.Close()
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot create a list of meals from returned rows for dieter", err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
+	var meals []int64
 
-    for _, m := range meals {
-        deleteEntriesByMeal(m.ID, req)
-        _, err = meal.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", m.ID)
-        if err != nil {
-            mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
-            req.IndentedJSON(http.StatusInternalServerError, nil)
-            return
-        }
-    }
+	for rows.Next() {
+		var index int64
+		err = rows.Scan(&index)
+		if err != nil {
+			mutils.LogApplicationError("Application Error", "Cannot get meal ID from returned rows", err)
+		}
+	}
 
-    req.IndentedJSON(http.StatusOK, nil)
-    return
+	for _, m := range meals {
+		deleteEntriesByMeal(m, req)
+		_, err = meal.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", m)
+		if err != nil {
+			mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
+			req.IndentedJSON(http.StatusInternalServerError, nil)
+			return
+		}
+	}
+
+	req.IndentedJSON(http.StatusOK, nil)
+	return
 
 }
 
@@ -762,22 +770,12 @@ func deleteEntriesByMeal(mealID int64, req *gin.Context) {
 
 	_, err = meal.Query(context.Background(), "DELETE FROM entry WHERE MEAL_ID=$1", mealID)
 
-	return
-}
-
-func deleteMealsByDieter(dieterID int64, req *gin.Context) {
-
-    meal, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
 	if err != nil {
-		mutils.LogConnectionError(err)
+		mutils.LogApplicationError("Database Error", "Cannot delete entries for meal from database", err)
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
-	_, err = meal.Query(context.Background(), "DELETE FROM meal WHERE DIETER=$1", dieterID)
-
-	return
 }
 
 func GetAllFood(req *gin.Context) {
@@ -816,12 +814,13 @@ func GetAllFood(req *gin.Context) {
 
 func DeleteDieter(req *gin.Context) {
 
-    var dieter Dieter
+	var dieter Dieter
 
-    db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
 	if err != nil {
 		mutils.LogConnectionError(err)
+		mutils.LogApplicationError("Application Error", "Cannot connect to database to delete dieter", err)
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -832,28 +831,28 @@ func DeleteDieter(req *gin.Context) {
 		return
 	}
 
-	err = db.QueryRow(context.Background(), "SELECT * from dieter WHERE Name=$1", dieter.Name).Scan(&dieter)
+	err = db.QueryRow(context.Background(), "SELECT * from dieter WHERE Name=$1", dieter.Name).Scan(&dieter.ID, &dieter.Calories, &dieter.Name)
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot retrieve dieter with name provided", err)
-        req.IndentedJSON(http.StatusNotFound, nil)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot retrieve dieter with name provided", err)
+		req.IndentedJSON(http.StatusNotFound, nil)
+		return
+	}
 
-    deleteMealsByDieter(dieter.ID, req)
+	deleteMealsForDieter(dieter.ID, req)
 
-    _, err = db.Query(context.Background(), "DELETE from dieter WHERE ID=$1", dieter.ID)
+	_, err = db.Query(context.Background(), "DELETE from dieter WHERE ID=$1", dieter.ID)
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot delete dieter retrieved by ID", err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot delete dieter retrieved by ID", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
-    return
+	return
 }
 
 func DeleteEntry(req *gin.Context) {
-    req.IndentedJSON(http.StatusNotImplemented, nil)
-    return
+	req.IndentedJSON(http.StatusNotImplemented, nil)
+	return
 }
