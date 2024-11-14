@@ -859,6 +859,31 @@ func DeleteDieter(req *gin.Context) {
 }
 
 func DeleteEntry(req *gin.Context) {
-	req.IndentedJSON(http.StatusNotImplemented, nil)
+
+	var entry Entry
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	if err := req.BindJSON(&entry); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create entry object from JSON provided", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	_, err = db.Query(context.Background(), "DELETE from ENTRY where ID = $1", entry.ID)
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot delete entry by ID", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	req.IndentedJSON(http.StatusOK, nil)
 	return
 }
