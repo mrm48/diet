@@ -6,7 +6,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"mauit/mutils"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -750,7 +749,6 @@ func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 			req.IndentedJSON(http.StatusInternalServerError, nil)
 			return
 		}
-		mutils.LogMessage("Request", "Deleting "+"|"+strconv.FormatInt(index, 10)+"|")
 		_, err = conn.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", index)
 		if err != nil {
 			mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
