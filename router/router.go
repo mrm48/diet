@@ -16,9 +16,9 @@ func SetRoutes(Router *gin.Engine) {
 
 	// single dieter
 	Router.GET("/dieter/name", models.GetDieter)
-	Router.POST("/dieter/calories", models.SetDieterCalories)
 	Router.GET("/dieter/calories", models.GetDieterCalories)
 	Router.GET("/dieter/remaining", models.GetRemainingDieterCalories)
+    Router.POST("/dieter/calories", models.SetDieterCalories)
 
 	// meal
 	Router.GET("/meal", models.GetMeal)
@@ -34,9 +34,9 @@ func SetRoutes(Router *gin.Engine) {
 	Router.DELETE("/entry/", models.DeleteEntry)
 
 	// food
+    Router.GET("/food/all", models.GetAllFood)
 	Router.POST("/food/", models.AddFood)
 	Router.POST("/food/calories", models.EditFood)
-	Router.GET("/food/all", models.GetAllFood)
 	Router.DELETE("/food", models.DeleteFood)
 
 }
