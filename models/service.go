@@ -372,6 +372,12 @@ func GetMealEntries(req *gin.Context) {
 
 	entries, err = pgx.CollectRows(rows, pgx.RowToStructByName[Entry])
 
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot populate list of entries from rows returned", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
     req.IndentedJSON(http.StatusOK, entries)
     return
 }
