@@ -341,6 +341,10 @@ func GetMealCalories(req *gin.Context) {
 
 }
 
+func GetMealEntries(req *gin.Context) {
+	req.IndentedJSON(http.StatusNotImplemented, nil)
+}
+
 func AddMeal(req *gin.Context) {
 	var meal Meal
 	var newID int64

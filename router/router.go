@@ -22,9 +22,10 @@ func SetRoutes(Router *gin.Engine) {
 
 	// meal
 	Router.GET("/meal", models.GetMeal)
+	Router.GET("/meal/calories", models.GetMealCalories)
+	Router.GET("/meal/entries", models.GetMealEntries)
 	Router.POST("/meal/entry", models.AddEntryToMeal)
 	Router.POST("/meal", models.AddMeal)
-	Router.GET("/meal/calories", models.GetMealCalories)
 	Router.DELETE("/meal", models.DeleteMeal)
 
 	// entry
