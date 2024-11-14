@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"mauit/mutils"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -733,20 +734,24 @@ func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 
 	defer rows.Close()
 
-	var meals []int64
+	var index int64
 
 	for rows.Next() {
-		var index int64
 		err = rows.Scan(&index)
 		if err != nil {
 			mutils.LogApplicationError("Application Error", "Cannot get meal ID from returned rows", err)
+			return
 		}
-		meals = append(meals, index)
-	}
+		deleteEntriesByMeal(index, req)
 
-	for _, m := range meals {
-		deleteEntriesByMeal(m, req)
-		_, err = meal.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", m)
+		conn, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+		if err != nil {
+			mutils.LogConnectionError(err)
+			req.IndentedJSON(http.StatusInternalServerError, nil)
+			return
+		}
+		mutils.LogMessage("Request", "Deleting "+"|"+strconv.FormatInt(index, 10)+"|")
+		_, err = conn.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", index)
 		if err != nil {
 			mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
 			req.IndentedJSON(http.StatusInternalServerError, nil)
