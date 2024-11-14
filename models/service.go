@@ -2,11 +2,13 @@ package models
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
 	"mauit/mutils"
 	"net/http"
+	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 )
 
 func GetDieters(req *gin.Context) {
@@ -342,7 +344,36 @@ func GetMealCalories(req *gin.Context) {
 }
 
 func GetMealEntries(req *gin.Context) {
-	req.IndentedJSON(http.StatusNotImplemented, nil)
+
+    var meal Meal
+    var entries []Entry
+
+    if err := req.BindJSON(&meal); err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
+    db, err := pgx.Connect(context.Background(), "postgres://postgres@localhost:5432/meal")
+
+    if err != nil {
+        mutils.LogConnectionError(err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
+    rows, err := db.Query(context.Background(), "Select * from entry where MEAL_ID = $1", strconv.FormatInt(meal.ID, 10))
+
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot find entries for provided meal ID", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
+
+	entries, err = pgx.CollectRows(rows, pgx.RowToStructByName[Entry])
+
+    req.IndentedJSON(http.StatusOK, entries)
+    return
 }
 
 func AddMeal(req *gin.Context) {
