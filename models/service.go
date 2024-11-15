@@ -217,6 +217,13 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 	var dieter Dieter
 
+    date := time.Now()
+    year := strconv.Itoa(date.Year())
+    month := date.Month().String()
+    day := strconv.Itoa(date.Day())
+
+    day = year + "-" + month + "-" + day
+
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
 		req.IndentedJSON(http.StatusBadRequest, nil)
@@ -242,7 +249,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if Dieter != nil {
-		rows, err := db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieter_id=$1 AND day=$2", dieter.ID, time.DateOnly)
+		rows, err := db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
 		if err != nil {
 			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
 			return
