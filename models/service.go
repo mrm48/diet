@@ -215,7 +215,7 @@ func GetDieterCalories(req *gin.Context) {
 
 func GetRemainingDieterCalories(req *gin.Context) {
 
-	var dieter Dieter
+    var dieter Dieter
 
     date := time.Now()
     year := strconv.Itoa(date.Year())
@@ -249,22 +249,33 @@ func GetRemainingDieterCalories(req *gin.Context) {
 	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
 
 	if Dieter != nil {
-		rows, err := db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
-		if err != nil {
-			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
-			return
-		} else {
-			if rows.Next() == true {
-				err = rows.Scan(&dieter.Calories)
-				if err != nil {
-					mutils.LogApplicationError("Request", "Cannot parse sum of calories for this dieter", err)
-					return
-				} else {
-					req.IndentedJSON(http.StatusOK, Dieter[1].Calories-dieter.Calories)
-					return
-				}
-			}
-		}
+
+        rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2,", dieter.ID, day)
+        
+	    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+
+        if len(meals) > 0 {
+
+    		rows, err = db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
+    		if err != nil {
+    			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
+    			return
+    		} else {
+    			if rows.Next() == true {
+    				err = rows.Scan(&dieter.Calories)
+    				if err != nil {
+    					mutils.LogApplicationError("Request", "Cannot parse sum of calories for this dieter", err)
+    					return
+    				} else {
+    					req.IndentedJSON(http.StatusOK, Dieter[0].Calories-dieter.Calories)
+    					return
+    				}
+    			}
+    		}
+        } else {
+            req.IndentedJSON(http.StatusOK, Dieter[0].Calories)
+            return
+        }
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find remaining dieter calories requested", nil)
 		req.IndentedJSON(http.StatusNotFound, nil)
