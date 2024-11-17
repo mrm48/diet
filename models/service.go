@@ -213,6 +213,70 @@ func GetDieterCalories(req *gin.Context) {
 	}
 }
 
+func GetDieterMealsToday(req *gin.Context) {
+
+    var dieter Dieter
+
+    date := time.Now()
+    year := strconv.Itoa(date.Year())
+    month := date.Month().String()
+    day := strconv.Itoa(date.Day())
+
+    day = year + "-" + month + "-" + day
+
+	if err := req.BindJSON(&dieter); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	rows, err := db.Query(context.Background(), "Select * from dieter WHERE Name = $1", dieter.Name)
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if Dieter != nil {
+
+        rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2,", dieter.ID, day)
+        
+        if err != nil {
+            mutils.LogApplicationError("Database Error", "Cannot retrieve meals by day for dieter from database", err)
+            req.IndentedJSON(http.StatusInternalServerError, nil)
+            return
+        }
+
+	    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+
+        if err != nil {
+            mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
+            req.IndentedJSON(http.StatusInternalServerError, nil)
+            return
+        }
+
+        if len(meals) > 0 {
+            req.IndentedJSON(http.StatusOK, meals)
+            return
+        } 
+	} else {
+		mutils.LogApplicationError("Database Error", "Cannot find dieter requested", nil)
+		req.IndentedJSON(http.StatusNotFound, nil)
+		return
+	}
+}
+
 func GetRemainingDieterCalories(req *gin.Context) {
 
     var dieter Dieter
