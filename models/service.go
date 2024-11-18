@@ -219,7 +219,7 @@ func GetDieterMealsToday(req *gin.Context) {
 
     date := time.Now()
     year := strconv.Itoa(date.Year())
-    month := date.Month().String()
+    month := strconv.Itoa(int(date.Month()))
     day := strconv.Itoa(date.Day())
 
     day = year + "-" + month + "-" + day
@@ -238,43 +238,29 @@ func GetDieterMealsToday(req *gin.Context) {
 		return
 	}
 
-	rows, err := db.Query(context.Background(), "Select * from dieter WHERE Name = $1", dieter.Name)
+    rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieter=$1 AND day=$2", dieter.Name, day)
+    
+    if err != nil {
+        mutils.LogApplicationError("Database Error", "Cannot retrieve meals by day for dieter from database", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
+    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
 
-	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
 
-	if Dieter != nil {
+    if len(meals) > 0 {
+        req.IndentedJSON(http.StatusOK, meals)
+        return
+    } 
 
-        rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2,", dieter.ID, day)
-        
-        if err != nil {
-            mutils.LogApplicationError("Database Error", "Cannot retrieve meals by day for dieter from database", err)
-            req.IndentedJSON(http.StatusInternalServerError, nil)
-            return
-        }
+    req.IndentedJSON(http.StatusOK, nil)
 
-	    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
-
-        if err != nil {
-            mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
-            req.IndentedJSON(http.StatusInternalServerError, nil)
-            return
-        }
-
-        if len(meals) > 0 {
-            req.IndentedJSON(http.StatusOK, meals)
-            return
-        } 
-	} else {
-		mutils.LogApplicationError("Database Error", "Cannot find dieter requested", nil)
-		req.IndentedJSON(http.StatusNotFound, nil)
-		return
-	}
 }
 
 func GetRemainingDieterCalories(req *gin.Context) {
