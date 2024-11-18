@@ -217,12 +217,11 @@ func GetDieterMealsToday(req *gin.Context) {
 
     var dieter Dieter
 
-    date := time.Now()
-    year := strconv.Itoa(date.Year())
-    month := strconv.Itoa(int(date.Month()))
-    day := strconv.Itoa(date.Day())
+    day := time.Now().Format("2006-01-02T15:04:05 -070000")
 
-    day = year + "-" + month + "-" + day
+    day = day[:10]
+
+    mutils.LogMessage("debug", day)
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
