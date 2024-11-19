@@ -753,6 +753,58 @@ func AddFood(req *gin.Context) {
 
 }
 
+func getFood(food Food) Food {
+	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		return nil
+	}
+
+	rows, err := db.Query(context.Background(), "Select * FROM Food WHERE name=$1", food.Name)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot get food information", err)
+		return nil
+	}
+
+	items, err := pgx.CollectRows(rows, pgx.RowToStructByName[Food])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create a list of food from search", err)
+		return nil
+	}
+
+	defer rows.Close()
+
+	for _, v := range items {
+		if v.Name == food.Name {
+			mutils.LogMessage("Request", "food information sent back to user")
+			return v
+		}
+	}
+}
+
+func GetFood(req *gin.Context) {
+
+	var food Food
+
+	if err := req.BindJSON(&food); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, nil)
+		return
+	}
+
+    food = getFood(food)
+
+    if food != nil {
+        req.IndentedJSON(http.StatusOK, food)
+    } else {
+	    req.IndentedJSON(http.StatusNotFound, nil)
+    }
+
+}
+
 func EditFood(req *gin.Context) {
 
 	var food Food

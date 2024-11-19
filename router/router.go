@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Add endpoints to the API, noun object pathing
+// Add endpoints to the API, noun [verb] object pathing
 func SetRoutes(Router *gin.Engine) {
 
 	// all dieters
@@ -37,6 +37,7 @@ func SetRoutes(Router *gin.Engine) {
 
 	// food
     Router.GET("/food/all", models.GetAllFood)
+    Router.GET("/food", models.GetFood)
 	Router.POST("/food", models.AddFood)
 	Router.POST("/food/calories", models.EditFood)
 	Router.DELETE("/food", models.DeleteFood)
