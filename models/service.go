@@ -753,43 +753,6 @@ func AddFood(req *gin.Context) {
 
 }
 
-func getFood(food Food) Food {
-
-    var errorFood Food
-    errorFood.Name = "nil"
-
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		return errorFood
-	}
-
-	rows, err := db.Query(context.Background(), "Select * FROM Food WHERE name=$1", food.Name)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot get food information", err)
-		return errorFood
-	}
-
-	items, err := pgx.CollectRows(rows, pgx.RowToStructByName[Food])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create a list of food from search", err)
-		return errorFood
-	}
-
-	defer rows.Close()
-
-	for _, v := range items {
-		if v.Name == food.Name {
-			mutils.LogMessage("Request", "food information sent back to user")
-			return v
-		}
-	}
-
-    return errorFood
-}
 
 func GetFood(req *gin.Context) {
 
@@ -801,12 +764,15 @@ func GetFood(req *gin.Context) {
 		return
 	}
 
-    food = getFood(food)
+    food, err := GetFoodRow(food)
+
+    if err != nil {
+        req.IndentedJSON(http.StatusNotFound, nil)
+        return
+    }
 
     if food.Name != "nil" {
         req.IndentedJSON(http.StatusOK, food)
-    } else {
-	    req.IndentedJSON(http.StatusNotFound, nil)
     }
 
 }
@@ -821,27 +787,17 @@ func EditFood(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    err := UpdateFood(food)
 
 	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	rows, err := db.Query(context.Background(), "UPDATE food SET Calories = $1 WHERE Name = $2", food.Calories, food.Name)
-
-	if rows != nil {
-		req.IndentedJSON(http.StatusOK, food)
-		mutils.LogMessage("Request", "Calories updated for food")
-		return
-	} else if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set food calories", err)
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
-	}
-
-	req.IndentedJSON(http.StatusNotFound, nil)
+	} else {
+		req.IndentedJSON(http.StatusOK, food)
+		mutils.LogMessage("Request", "Calories updated for food")
+		return
+    }
 
 }
 
@@ -855,15 +811,7 @@ func DeleteFood(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	_, err = db.Query(context.Background(), "DELETE FROM food WHERE Name = $1", food.Name)
+    err := DeleteFoodRow(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot delete food from database", err)
