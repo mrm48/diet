@@ -52,6 +52,27 @@ func GetFoodRow(food Food) (Food, error) {
     return errorFood, err
 }
 
+func AddFoodRow(food Food) error {
+
+	db, err := getConnection()
+
+    if err != nil {
+        return err
+    }
+
+	var count int64
+
+	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from food").Scan(&count)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query food count from database", err)
+        return err
+	}
+
+	_, err = db.Query(context.Background(), "INSERT INTO food (id, calories, units, name) values ($1, $2, $3, $4)", count+1, food.Calories, food.Units, food.Name)
+    return err
+}
+
 func UpdateFood(food Food) error {
 
     db, err := getConnection()

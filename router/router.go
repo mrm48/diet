@@ -1,7 +1,7 @@
 package router
 
 import (
-	"mauit/models"
+	"mauit/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,36 +10,36 @@ import (
 func SetRoutes(Router *gin.Engine) {
 
 	// all dieters
-	Router.GET("/dieters/all", models.GetDieters)
-	Router.POST("/dieters", models.AddDieter)
-	Router.DELETE("/dieters", models.DeleteDieter)
+	Router.GET("/dieters/all", service.GetDieters)
+	Router.POST("/dieters", service.AddDieter)
+	Router.DELETE("/dieters", service.DeleteDieter)
 
 	// single dieter
-	Router.GET("/dieter/name", models.GetDieter)
-	Router.GET("/dieter/calories", models.GetDieterCalories)
-	Router.GET("/dieter/remaining", models.GetRemainingDieterCalories)
-    Router.GET("/dieter/meals", models.GetDieterMeals)
-    Router.GET("/dieter/mealstoday", models.GetDieterMealsToday)
-    Router.POST("/dieter/calories", models.SetDieterCalories)
+	Router.GET("/dieter/name", service.GetDieter)
+	Router.GET("/dieter/calories", service.GetDieterCalories)
+	Router.GET("/dieter/remaining", service.GetRemainingDieterCalories)
+    Router.GET("/dieter/meals", service.GetDieterMeals)
+    Router.GET("/dieter/mealstoday", service.GetDieterMealsToday)
+    Router.POST("/dieter/calories", service.SetDieterCalories)
 
 	// meal
-	Router.GET("/meal", models.GetMeal)
-	Router.GET("/meal/calories", models.GetMealCalories)
-	Router.GET("/meal/entries", models.GetMealEntries)
-	Router.POST("/meal/entry", models.AddEntryToMeal)
-	Router.POST("/meal", models.AddMeal)
-	Router.DELETE("/meal", models.DeleteMeal)
+	Router.GET("/meal", service.GetMeal)
+	Router.GET("/meal/calories", service.GetMealCalories)
+	Router.GET("/meal/entries", service.GetMealEntries)
+	Router.POST("/meal/entry", service.AddEntryToMeal)
+	Router.POST("/meal", service.AddMeal)
+	Router.DELETE("/meal", service.DeleteMeal)
 
 	// entry
-	Router.GET("/entry", models.GetEntry)
-	Router.POST("/entry/add", models.AddEntry)
-	Router.DELETE("/entry", models.DeleteEntry)
+	Router.GET("/entry", service.GetEntry)
+	Router.POST("/entry/add", service.AddEntry)
+	Router.DELETE("/entry", service.DeleteEntry)
 
 	// food
-    Router.GET("/food/all", models.GetAllFood)
-    Router.GET("/food", models.GetFood)
-	Router.POST("/food", models.AddFood)
-	Router.POST("/food/calories", models.EditFood)
-	Router.DELETE("/food", models.DeleteFood)
+    Router.GET("/food/all", service.GetAllFood)
+    Router.GET("/food", service.GetFood)
+	Router.POST("/food", service.AddFood)
+	Router.POST("/food/calories", service.EditFood)
+	Router.DELETE("/food", service.DeleteFood)
 
 }

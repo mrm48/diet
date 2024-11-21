@@ -1,8 +1,9 @@
-package models
+package service
 
 import (
 	"context"
 	"mauit/mutils"
+    "mauit/models"  
 	"net/http"
 	"strconv"
 	"time"
@@ -28,7 +29,7 @@ func GetDieters(req *gin.Context) {
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
-	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create list of dieters from rows returned", err)
@@ -47,7 +48,7 @@ func GetDieters(req *gin.Context) {
 // Add specifically a dieter
 func AddDieter(req *gin.Context) {
 
-	var dieter Dieter
+	var dieter models.Dieter
 	var newID int64
 
 	if err := req.BindJSON(&dieter); err != nil {
@@ -89,7 +90,7 @@ func AddDieter(req *gin.Context) {
 // Get dieter by name
 func GetDieter(req *gin.Context) {
 
-	var dieter Dieter
+	var dieter models.Dieter
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
@@ -113,7 +114,7 @@ func GetDieter(req *gin.Context) {
 		return
 	}
 
-	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
@@ -138,7 +139,7 @@ func GetDieter(req *gin.Context) {
 // Set the calories available for a dieter
 func SetDieterCalories(req *gin.Context) {
 
-	var dieter Dieter
+	var dieter models.Dieter
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter calories object from JSON provided", err)
@@ -172,7 +173,7 @@ func SetDieterCalories(req *gin.Context) {
 
 func GetDieterCalories(req *gin.Context) {
 
-	var dieter Dieter
+	var dieter models.Dieter
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
@@ -195,7 +196,7 @@ func GetDieterCalories(req *gin.Context) {
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
-	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
@@ -215,7 +216,7 @@ func GetDieterCalories(req *gin.Context) {
 
 func GetDieterMealsToday(req *gin.Context) {
 
-    var dieter Dieter
+    var dieter models.Dieter
 
     day := time.Now().Format("2006-01-02T15:04:05 -070000")
 
@@ -245,7 +246,7 @@ func GetDieterMealsToday(req *gin.Context) {
         return
     }
 
-    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
     if err != nil {
         mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
@@ -264,7 +265,7 @@ func GetDieterMealsToday(req *gin.Context) {
 
 func GetRemainingDieterCalories(req *gin.Context) {
 
-    var dieter Dieter
+    var dieter models.Dieter
 
     date := time.Now()
     year := strconv.Itoa(date.Year())
@@ -295,13 +296,13 @@ func GetRemainingDieterCalories(req *gin.Context) {
 		return
 	}
 
-	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if Dieter != nil {
 
         rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2,", dieter.ID, day)
         
-	    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+	    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
         if len(meals) > 0 {
 
@@ -334,7 +335,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 func GetMeal(req *gin.Context) {
 
-	var meal Meal
+	var meal models.Meal
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
@@ -358,7 +359,7 @@ func GetMeal(req *gin.Context) {
 		return
 	}
 
-	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
 	if meals != nil {
 		mutils.LogMessage("Request", "Responded with the meal requested")
@@ -372,7 +373,7 @@ func GetMeal(req *gin.Context) {
 
 func GetMealCalories(req *gin.Context) {
 
-	var meal Meal
+	var meal models.Meal
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
@@ -396,7 +397,7 @@ func GetMealCalories(req *gin.Context) {
 		return
 	}
 
-	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
 	meal.Calories = meals[0].Calories
 
@@ -412,8 +413,8 @@ func GetMealCalories(req *gin.Context) {
 
 func GetMealEntries(req *gin.Context) {
 
-    var meal Meal
-    var entries []Entry
+    var meal models.Meal
+    var entries []models.Entry
 
     if err := req.BindJSON(&meal); err != nil {
         mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
@@ -437,7 +438,7 @@ func GetMealEntries(req *gin.Context) {
         return
     }
 
-	entries, err = pgx.CollectRows(rows, pgx.RowToStructByName[Entry])
+	entries, err = pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
 
     if err != nil {
         mutils.LogApplicationError("Application Error", "Cannot populate list of entries from rows returned", err)
@@ -451,8 +452,8 @@ func GetMealEntries(req *gin.Context) {
 
 func GetDieterMeals(req *gin.Context) {
 
-    var dieter Dieter
-    var meals []Meal
+    var dieter models.Dieter
+    var meals []models.Meal
 
     if err := req.BindJSON(&dieter); err != nil {
         mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
@@ -476,7 +477,7 @@ func GetDieterMeals(req *gin.Context) {
         return
     }
 
-	meals, err = pgx.CollectRows(rows, pgx.RowToStructByName[Meal])
+	meals, err = pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
     if err != nil {
         mutils.LogApplicationError("Application Error", "Cannot populate list of meals from rows returned", err)
@@ -489,7 +490,7 @@ func GetDieterMeals(req *gin.Context) {
 }
 
 func AddMeal(req *gin.Context) {
-	var meal Meal
+	var meal models.Meal
 	var newID int64
 
 	if err := req.BindJSON(&meal); err != nil {
@@ -532,9 +533,9 @@ func AddMeal(req *gin.Context) {
 			mutils.LogApplicationError("Database Error", "Cannot store new meal", err)
 			req.IndentedJSON(http.StatusInternalServerError, nil)
 			return
-		}
+        }
 
-		req.IndentedJSON(http.StatusCreated, meal)
+        req.IndentedJSON(http.StatusCreated, meal)
 
 		mutils.LogMessage("Request", "Meal added")
 	} else {
@@ -556,7 +557,7 @@ func getDieterIDByName(name string) int64 {
 		return 0
 	}
 
-	dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+	dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if dieter != nil {
 		return dieter[0].ID
@@ -577,7 +578,7 @@ func getMealCalories(id int64) int64 {
 		return 0
 	}
 
-	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[Entry])
+	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
 
 	if entries != nil {
 		return entries[0].ID
@@ -588,7 +589,7 @@ func getMealCalories(id int64) int64 {
 
 func GetEntry(req *gin.Context) {
 
-	var entry Entry
+	var entry models.Entry
 
 	if err := req.BindJSON(&entry); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create entry object from JSON provided", err)
@@ -612,7 +613,7 @@ func GetEntry(req *gin.Context) {
 		return
 	}
 
-	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[Entry])
+	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
 
 	if entries != nil {
 		mutils.LogMessage("Request", "Responded with the entry requested")
@@ -625,7 +626,7 @@ func GetEntry(req *gin.Context) {
 
 func AddEntry(req *gin.Context) {
 
-	var entry Entry
+	var entry models.Entry
 	var newID int64
 
 	if err := req.BindJSON(&entry); err != nil {
@@ -665,8 +666,8 @@ func AddEntry(req *gin.Context) {
 
 func AddEntryToMeal(req *gin.Context) {
 
-	var entry Entry
-	var meal []Meal
+	var entry models.Entry
+	var meal []models.Meal
 
 	if err := req.BindJSON(&entry); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create entry object from JSON provided", err)
@@ -690,7 +691,7 @@ func AddEntryToMeal(req *gin.Context) {
 		return
 	}
 
-	meal, err = pgx.CollectRows(meals, pgx.RowToStructByName[Meal])
+	meal, err = pgx.CollectRows(meals, pgx.RowToStructByName[models.Meal])
 
 	if len(meal) != 1 {
 		mutils.LogApplicationError("Application Error", "One and only one meal must match by meal ID", err)
@@ -712,35 +713,13 @@ func AddEntryToMeal(req *gin.Context) {
 
 func AddFood(req *gin.Context) {
 
-	var food Food
-
-	var count int64
+	var food models.Food
 
 	if err := req.BindJSON(&food); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from food").Scan(&count)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query food count from database", err)
-	}
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot get food count from database row returned", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	_, err = db.Query(context.Background(), "INSERT INTO food (id, calories, units, name) values ($1, $2, $3, $4)", count+1, food.Calories, food.Units, food.Name)
+    err := models.AddFoodRow(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
@@ -756,7 +735,7 @@ func AddFood(req *gin.Context) {
 
 func GetFood(req *gin.Context) {
 
-	var food Food
+	var food models.Food
 
 	if err := req.BindJSON(&food); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
@@ -764,7 +743,7 @@ func GetFood(req *gin.Context) {
 		return
 	}
 
-    food, err := GetFoodRow(food)
+    food, err := models.GetFoodRow(food)
 
     if err != nil {
         req.IndentedJSON(http.StatusNotFound, nil)
@@ -779,7 +758,7 @@ func GetFood(req *gin.Context) {
 
 func EditFood(req *gin.Context) {
 
-	var food Food
+	var food models.Food
 
 	if err := req.BindJSON(&food); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create food calories object from JSON provided", err)
@@ -787,7 +766,7 @@ func EditFood(req *gin.Context) {
 		return
 	}
 
-    err := UpdateFood(food)
+    err := models.UpdateFood(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set food calories", err)
@@ -803,7 +782,7 @@ func EditFood(req *gin.Context) {
 
 func DeleteFood(req *gin.Context) {
 
-	var food Food
+	var food models.Food
 
 	if err := req.BindJSON(&food); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
@@ -811,7 +790,7 @@ func DeleteFood(req *gin.Context) {
 		return
 	}
 
-    err := DeleteFoodRow(food)
+    err := models.DeleteFoodRow(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot delete food from database", err)
@@ -825,7 +804,7 @@ func DeleteFood(req *gin.Context) {
 
 func DeleteMeal(req *gin.Context) {
 
-	var meal Meal
+	var meal models.Meal
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
@@ -841,7 +820,7 @@ func DeleteMeal(req *gin.Context) {
 		return
 	}
 
-	var dbMeal Meal
+	var dbMeal models.Meal
 	err = db.QueryRow(context.Background(), "SELECT ID FROM meal WHERE Name = $1 AND Dieter = $2 AND Day = $3", meal.Name, meal.Dieter, meal.Day).Scan(&dbMeal.ID)
 
 	if err != nil {
@@ -936,7 +915,7 @@ func deleteEntriesByMeal(mealID int64, req *gin.Context) {
 }
 
 func GetAllFood(req *gin.Context) {
-	var food []Food
+	var food []models.Food
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
@@ -949,7 +928,7 @@ func GetAllFood(req *gin.Context) {
 	rows, err := db.Query(context.Background(), "SELECT * FROM food")
 
 	if rows != nil {
-		food, err = pgx.CollectRows(rows, pgx.RowToStructByName[Food])
+		food, err = pgx.CollectRows(rows, pgx.RowToStructByName[models.Food])
 		if err != nil {
 			mutils.LogApplicationError("Application Error", "Cannot make a list of food from rows returned from database", err)
 			req.IndentedJSON(http.StatusInternalServerError, nil)
@@ -971,7 +950,7 @@ func GetAllFood(req *gin.Context) {
 
 func DeleteDieter(req *gin.Context) {
 
-	var dieter Dieter
+	var dieter models.Dieter
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
@@ -1011,7 +990,7 @@ func DeleteDieter(req *gin.Context) {
 
 func DeleteEntry(req *gin.Context) {
 
-	var entry Entry
+	var entry models.Entry
 
 	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
 
