@@ -19,6 +19,57 @@ func getConnection() (*pgx.Conn, error) {
     return db, err
 }
 
+func GetAllDieters() ([]Dieter, error) {
+    
+    db, err := getConnection()
+	rows, err := db.Query(context.Background(), "Select * FROM dieter")
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter rows from database", err)
+		return nil, err
+	}
+
+	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create list of dieters from rows returned", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+    return Dieters, err
+
+}
+
+func AddNewDieter(dieter Dieter) (error) {
+
+	var newID int64
+
+	db, err := getConnection()
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		return err
+	}
+
+	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from dieter").Scan(&newID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query dieter count from database", err)
+		return err
+	}
+
+	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", newID+1, dieter.Calories, dieter.Name)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot store new dieter", err)
+		return err
+	}
+
+    return nil
+
+}
+
 func GetFoodRow(food Food) (Food, error) {
 
     var errorFood Food

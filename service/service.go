@@ -14,33 +14,15 @@ import (
 
 func GetDieters(req *gin.Context) {
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    Dieters, err := models.GetAllDieters()
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	rows, err := db.Query(context.Background(), "Select * FROM dieter")
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter rows from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create list of dieters from rows returned", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	defer rows.Close()
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Could not return the list of dieters from the database", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
 
 	req.IndentedJSON(http.StatusOK, Dieters)
-
 	mutils.LogMessage("Request", "Dieters retrieved and sent to user")
 
 }
@@ -49,7 +31,6 @@ func GetDieters(req *gin.Context) {
 func AddDieter(req *gin.Context) {
 
 	var dieter models.Dieter
-	var newID int64
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
@@ -57,29 +38,13 @@ func AddDieter(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    err := models.AddNewDieter(dieter)
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from dieter").Scan(&newID)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query dieter count from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", newID+1, dieter.Calories, dieter.Name)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot store new dieter", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot add user to the database", err)
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }   
 
 	req.IndentedJSON(http.StatusCreated, dieter)
 
