@@ -41,6 +41,39 @@ func GetAllDieters() ([]Dieter, error) {
 
 }
 
+func GetSingleDieter(dieter Dieter) (Dieter, error) {
+
+	db, err := getConnection()
+
+	if err != nil {
+		return dieter, err
+	}
+
+	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", dieter.Name)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot get dieter information", err)
+		return dieter, err
+	}
+
+	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[Dieter])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
+		return dieter, err
+	}
+
+	defer rows.Close()
+
+	for _, v := range Dieters {
+		if v.Name == dieter.Name {
+			return v, nil
+		}
+	}
+
+    return dieter, err
+}
+
 func AddNewDieter(dieter Dieter) (error) {
 
 	var newID int64

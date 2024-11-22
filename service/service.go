@@ -63,41 +63,14 @@ func GetDieter(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    dieter, err := models.GetSingleDieter(dieter)
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
+    if err != nil {
+        req.IndentedJSON(http.StatusNotFound, nil)
+        return
+    }
 
-	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", dieter.Name)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot get dieter information", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	defer rows.Close()
-
-	for _, v := range Dieters {
-		if v.Name == dieter.Name {
-			req.IndentedJSON(http.StatusOK, v)
-			mutils.LogMessage("Request", "Dieter information sent back to user")
-			return
-		}
-	}
-
-	req.IndentedJSON(http.StatusNotFound, nil)
+    req.IndentedJSON(http.StatusOK, dieter)
 
 }
 
