@@ -85,27 +85,13 @@ func SetDieterCalories(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    err := models.UpdateDieterCalories(dieter)
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
+    if err != nil {
+        req.IndentedJSON(http.StatusNotFound, nil)
+    }
 
-	rows, err := db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
-
-	if rows != nil {
-		req.IndentedJSON(http.StatusOK, dieter)
-		mutils.LogMessage("Request", "Calories updated for dieter")
-		return
-	} else if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	req.IndentedJSON(http.StatusNotFound, nil)
+	req.IndentedJSON(http.StatusOK, dieter)
 
 }
 

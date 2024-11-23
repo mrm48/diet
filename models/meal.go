@@ -103,6 +103,28 @@ func AddNewDieter(dieter Dieter) (error) {
 
 }
 
+func UpdateDieterCalories(dieter Dieter) (error) {
+
+	db, err := getConnection()
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		return err
+	}
+
+	rows, err := db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
+
+	if rows != nil {
+		mutils.LogMessage("Request", "Calories updated for dieter")
+		return nil
+	} else if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
+		return err
+	}
+
+    return nil
+}
+
 func GetFoodRow(food Food) (Food, error) {
 
     var errorFood Food
