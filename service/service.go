@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
+	"mauit/models"
 	"mauit/mutils"
-    "mauit/models"  
+	"mauit/repositories"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,7 +15,7 @@ import (
 
 func GetDieters(req *gin.Context) {
 
-    Dieters, err := models.GetAllDieters()
+    Dieters, err := repositories.GetAllDieters()
 
     if err != nil {
         mutils.LogApplicationError("Application Error", "Could not return the list of dieters from the database", err)
@@ -38,7 +39,7 @@ func AddDieter(req *gin.Context) {
 		return
 	}
 
-    err := models.AddNewDieter(dieter)
+    err := repositories.AddNewDieter(dieter)
 
     if err != nil {
         mutils.LogApplicationError("Application Error", "Cannot add user to the database", err)
@@ -63,7 +64,7 @@ func GetDieter(req *gin.Context) {
 		return
 	}
 
-    dieter, err := models.GetSingleDieter(dieter)
+    dieter, err := repositories.GetSingleDieter(dieter)
 
     if err != nil {
         req.IndentedJSON(http.StatusNotFound, nil)
@@ -85,7 +86,7 @@ func SetDieterCalories(req *gin.Context) {
 		return
 	}
 
-    err := models.UpdateDieterCalories(dieter)
+    err := repositories.UpdateDieterCalories(dieter)
 
     if err != nil {
         req.IndentedJSON(http.StatusNotFound, nil)
@@ -105,30 +106,9 @@ func GetDieterCalories(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    Dieters, err := repositories.GetDieterCalories(dieter)
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE Name = $1", dieter.Name)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	if len(Dieters) == 1 {
+	if err == nil {
 		req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
 		return
 	} else {
@@ -142,10 +122,7 @@ func GetDieterMealsToday(req *gin.Context) {
 
     var dieter models.Dieter
 
-    day := time.Now().Format("2006-01-02T15:04:05 -070000")
-
-    day = day[:10]
-
+    day := models.GetCurrentDate()
     mutils.LogMessage("debug", day)
 
 	if err := req.BindJSON(&dieter); err != nil {
@@ -154,36 +131,14 @@ func GetDieterMealsToday(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-    rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieter=$1 AND day=$2", dieter.Name, day)
-    
-    if err != nil {
-        mutils.LogApplicationError("Database Error", "Cannot retrieve meals by day for dieter from database", err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
-
-    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
+    meals, err := repositories.GetDieterMealsToday(dieter, day)
 
     if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
-
-    if len(meals) > 0 {
-        req.IndentedJSON(http.StatusOK, meals)
+        req.IndentedJSON(http.StatusInternalServerError, err)
         return
     } 
 
-    req.IndentedJSON(http.StatusOK, nil)
+    req.IndentedJSON(http.StatusOK, meals)
 
 }
 
@@ -191,12 +146,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
     var dieter models.Dieter
 
-    date := time.Now()
-    year := strconv.Itoa(date.Year())
-    month := date.Month().String()
-    day := strconv.Itoa(date.Day())
-
-    day = year + "-" + month + "-" + day
+    day := models.GetCurrentDate()
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
@@ -204,57 +154,6 @@ func GetRemainingDieterCalories(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	rows, err := db.Query(context.Background(), "Select * from dieter WHERE Name = $1", dieter.Name)
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
-
-	if Dieter != nil {
-
-        rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2,", dieter.ID, day)
-        
-	    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
-
-        if len(meals) > 0 {
-
-    		rows, err = db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
-    		if err != nil {
-    			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
-    			return
-    		} else {
-    			if rows.Next() == true {
-    				err = rows.Scan(&dieter.Calories)
-    				if err != nil {
-    					mutils.LogApplicationError("Request", "Cannot parse sum of calories for this dieter", err)
-    					return
-    				} else {
-    					req.IndentedJSON(http.StatusOK, Dieter[0].Calories-dieter.Calories)
-    					return
-    				}
-    			}
-    		}
-        } else {
-            req.IndentedJSON(http.StatusOK, Dieter[0].Calories)
-            return
-        }
-	} else {
-		mutils.LogApplicationError("Database Error", "Cannot find remaining dieter calories requested", nil)
-		req.IndentedJSON(http.StatusNotFound, nil)
-		return
-	}
 }
 
 func GetMeal(req *gin.Context) {
@@ -643,7 +542,7 @@ func AddFood(req *gin.Context) {
 		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
 	}
 
-    err := models.AddFoodRow(food)
+    err := repositories.AddFoodRow(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
@@ -667,7 +566,7 @@ func GetFood(req *gin.Context) {
 		return
 	}
 
-    food, err := models.GetFoodRow(food)
+    food, err := repositories.GetFoodRow(food)
 
     if err != nil {
         req.IndentedJSON(http.StatusNotFound, nil)
@@ -690,7 +589,7 @@ func EditFood(req *gin.Context) {
 		return
 	}
 
-    err := models.UpdateFood(food)
+    err := repositories.UpdateFood(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set food calories", err)
@@ -714,7 +613,7 @@ func DeleteFood(req *gin.Context) {
 		return
 	}
 
-    err := models.DeleteFoodRow(food)
+    err := repositories.DeleteFoodRow(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot delete food from database", err)

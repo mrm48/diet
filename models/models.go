@@ -1,5 +1,9 @@
 package models
 
+import (
+    "time"
+)
+
 // Describe a record in the database
 type Record interface {
 	GetID() int64
@@ -45,4 +49,12 @@ type Meal struct {
 	Calories int    `json:"calories"`
 	Dieterid int64  `json:"dieterid"`
 	Dieter   string `json:"dieter"`
+}
+
+func GetCurrentDate() string {
+    day := time.Now().Format("2006-01-02T15:04:05 -070000")
+
+    day = day[:10]
+
+    return day
 }
