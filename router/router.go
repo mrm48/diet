@@ -29,6 +29,7 @@ func SetRoutes(Router *gin.Engine) {
 	Router.POST("/meal/entry", service.AddEntryToMeal)
 	Router.POST("/meal", service.AddMeal)
 	Router.DELETE("/meal", service.DeleteMeal)
+    Router.DELETE("/meal/entries", service.DeleteMealEntries)
 
 	// entry
 	Router.GET("/entry", service.GetEntry)
