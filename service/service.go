@@ -687,36 +687,16 @@ func deleteEntriesByMeal(mealID int64, req *gin.Context) error {
 }
 
 func GetAllFood(req *gin.Context) {
-	var food []models.Food
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    food, err := repositories.GetAllFood()
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, err)
-		return
-	}
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot get all food from database", err)
+        req.IndentedJSON(http.StatusInternalServerError, err)
+        return
+    }
 
-	rows, err := db.Query(context.Background(), "SELECT * FROM food")
-
-	if rows != nil {
-		food, err = pgx.CollectRows(rows, pgx.RowToStructByName[models.Food])
-		if err != nil {
-			mutils.LogApplicationError("Application Error", "Cannot make a list of food from rows returned from database", err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
-		}
-		req.IndentedJSON(http.StatusOK, food)
-		mutils.LogMessage("Request", "All food items returned")
-		return
-	} else if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot get all food", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	} else {
-		mutils.LogApplicationError("Application Error", "All food items returned, but the list is empty", nil)
-		req.IndentedJSON(http.StatusNotFound, nil)
-	}
+    req.IndentedJSON(http.StatusOK, food)
 
 }
 

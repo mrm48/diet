@@ -368,6 +368,33 @@ func DeleteMeal(meal models.Meal) error {
     return nil
 }
 
+func GetAllFood() ([]models.Food, error) {
+
+    var food []models.Food
+
+	db, err := getConnection()
+
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Query(context.Background(), "SELECT * FROM food")
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query all food items from database", err)
+		return nil, err
+	}
+
+    food, err = pgx.CollectRows(rows, pgx.RowToStructByName[models.Food])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot make a list of food from rows returned from database", err)
+		return nil, err
+	}
+    return food, nil
+
+}
+
 func AddFoodRow(food models.Food) error {
 
 	db, err := getConnection()
