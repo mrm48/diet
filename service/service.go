@@ -166,25 +166,9 @@ func GetMeal(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    meals, err := repositories.GetMeal(meal)
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	rows, err := db.Query(context.Background(), "Select * FROM meal WHERE name=$1 AND dieter=$2 AND day=$3", meal.Name, meal.Dieter, meal.Day)
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot query meal from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
-
-	if meals != nil {
+	if meals != nil && err == nil {
 		mutils.LogMessage("Request", "Responded with the meal requested")
 		req.IndentedJSON(http.StatusOK, meals)
 		return
@@ -631,36 +615,15 @@ func DeleteMeal(req *gin.Context) {
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, err)
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    err := repositories.DeleteMeal(meal)
 
 	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	var dbMeal models.Meal
-	err = db.QueryRow(context.Background(), "SELECT ID FROM meal WHERE Name = $1 AND Dieter = $2 AND Day = $3", meal.Name, meal.Dieter, meal.Day).Scan(&dbMeal.ID)
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot find meal in database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	meal.ID = dbMeal.ID
-
-	deleteEntriesByMeal(meal.ID, req)
-
-	_, err = db.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", meal.ID)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot meal food from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
+		mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
 		return
 	}
 
@@ -670,70 +633,56 @@ func DeleteMeal(req *gin.Context) {
 
 func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 
-	meal, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    err := repositories.DeleteMealsForDieter(dieterID)
 
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, err)
-		return
-	}
-
-	rows, err := meal.Query(context.Background(), "SELECT ID FROM meal WHERE dieterID=$1", dieterID)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot find meals by dieter from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	defer rows.Close()
-
-	var index int64
-
-	for rows.Next() {
-		err = rows.Scan(&index)
-		if err != nil {
-			mutils.LogApplicationError("Application Error", "Cannot get meal ID from returned rows", err)
-			return
-		}
-		deleteEntriesByMeal(index, req)
-
-		conn, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-		if err != nil {
-			mutils.LogConnectionError(err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
-		}
-		_, err = conn.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", index)
-		if err != nil {
-			mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
-		}
-	}
+    if err != nil {
+        req.IndentedJSON(http.StatusInternalServerError, nil)
+        return
+    }
 
 	req.IndentedJSON(http.StatusOK, nil)
 	return
 
 }
 
-func deleteEntriesByMeal(mealID int64, req *gin.Context) {
+func DeleteMealEntries(req *gin.Context) {
+	var meal models.Meal
 
-	meal, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
+	if err := req.BindJSON(&meal); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
+		req.IndentedJSON(http.StatusBadRequest, err)
 		return
 	}
 
-	_, err = meal.Query(context.Background(), "DELETE FROM entry WHERE MEAL_ID=$1", mealID)
+    meals, err := repositories.GetMeal(meal)
+
+    if err != nil {
+        req.IndentedJSON(http.StatusInternalServerError, err)
+        return
+    }
+
+    err = deleteEntriesByMeal(meals[0].ID, req)
+
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Could not remove meal entries from database", err)
+        req.IndentedJSON(http.StatusInternalServerError, err)
+        return
+    }
+
+    req.IndentedJSON(http.StatusOK, nil)
+
+}
+
+func deleteEntriesByMeal(mealID int64, req *gin.Context) error {
+
+	err := repositories.DeleteEntriesByMeal(mealID)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot delete entries for meal from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return err
 	}
+
+    return nil
 
 }
 
@@ -744,7 +693,7 @@ func GetAllFood(req *gin.Context) {
 
 	if err != nil {
 		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, err)
 		return
 	}
 

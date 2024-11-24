@@ -254,6 +254,120 @@ func GetFoodRow(food models.Food) (models.Food, error) {
     return errorFood, err
 }
 
+func GetMeal (meal models.Meal) ([]models.Meal, error) {
+	db, err := getConnection()
+
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.Query(context.Background(), "Select * FROM meal WHERE name=$1 AND dieter=$2 AND day=$3", meal.Name, meal.Dieter, meal.Day)
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot query meal from database", err)
+		return nil, err
+	}
+
+	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
+
+    return meals, nil
+}
+
+func DeleteMealsForDieter(dieterID int64) error {
+
+	meal, err := getConnection()
+
+	if err != nil {
+		return err
+	}
+
+	rows, err := meal.Query(context.Background(), "SELECT ID FROM meal WHERE dieterID=$1", dieterID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot find meals by dieter from database", err)
+		return err
+	}
+
+	defer rows.Close()
+
+	var index int64
+
+	for rows.Next() {
+		err = rows.Scan(&index)
+		if err != nil {
+			mutils.LogApplicationError("Application Error", "Cannot get meal ID from returned rows", err)
+			return err
+		}
+        err = DeleteEntriesByMeal(index)
+
+        if err != nil {
+            mutils.LogApplicationError("Application Error", "Cannot delete entries for meal", err)
+            return err
+        }
+
+		conn, err := getConnection()
+		if err != nil {
+			return err
+		}
+		_, err = conn.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", index)
+		if err != nil {
+			mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
+			return err
+		}
+	}
+
+	return nil
+
+}
+
+func DeleteEntriesByMeal(mealID int64) error {
+
+	meal, err := getConnection()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = meal.Query(context.Background(), "DELETE FROM entry WHERE MEAL_ID=$1", mealID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot delete entries for meal from database", err)
+		return err
+	}
+
+    return nil
+
+}
+
+func DeleteMeal(meal models.Meal) error {
+	db, err := getConnection() 
+
+	if err != nil {
+		return err
+	}
+
+	var dbMeal models.Meal
+	err = db.QueryRow(context.Background(), "SELECT ID FROM meal WHERE Name = $1 AND Dieter = $2 AND Day = $3", meal.Name, meal.Dieter, meal.Day).Scan(&dbMeal.ID)
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot find meal in database", err)
+		return err
+	}
+
+	meal.ID = dbMeal.ID
+
+	DeleteEntriesByMeal(meal.ID)
+
+	_, err = db.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", meal.ID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot meal food from database", err)
+		return err
+	}
+
+    return nil
+}
+
 func AddFoodRow(food models.Food) error {
 
 	db, err := getConnection()
