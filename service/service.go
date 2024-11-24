@@ -150,9 +150,19 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, err)
 		return
 	}
+
+    calories, err := repositories.GetRemainingCaloriesToday(dieter, day)
+
+    if err != nil {
+        mutils.LogApplicationError("Application Error", "Cannot get remaining calories for dieter", err)
+        req.IndentedJSON(http.StatusInternalServerError, err)
+        return
+    }
+
+    req.IndentedJSON(http.StatusOK, calories)
 
 }
 
