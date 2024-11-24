@@ -259,7 +259,8 @@ func GetDieterMeals(req *gin.Context) {
 
 func AddMeal(req *gin.Context) {
 	var meal models.Meal
-	var newID int64
+
+    //*** moving this function to meal.go ***
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
@@ -272,45 +273,14 @@ func AddMeal(req *gin.Context) {
 		meal.Day = models.GetCurrentDate()
 	}
 
-	if meal.Dieterid == 0 {
-		meal.Dieterid = getDieterIDByName(meal.Dieter)
-	}
+    err := repositories.AddMeal(meal)
 
-	meal.Calories = 0
+    if err != nil {
+        req.IndentedJSON(http.StatusInternalServerError, err)
+        return
+    }
+    req.IndentedJSON(http.StatusCreated, meal)
 
-	if meal.Dieterid != 0 {
-		db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-
-		if err != nil {
-			mutils.LogConnectionError(err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
-		}
-
-		err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from meal").Scan(&newID)
-
-		if err != nil {
-			mutils.LogApplicationError("Database Error", "Cannot query meal count from database", err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
-		}
-
-		_, err = db.Exec(context.Background(), "INSERT INTO meal values ($1, $2, $3, $4, $5, $6)", newID+1, meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
-
-		if err != nil {
-			mutils.LogApplicationError("Database Error", "Cannot store new meal", err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
-        }
-
-        req.IndentedJSON(http.StatusCreated, meal)
-
-		mutils.LogMessage("Request", "Meal added")
-	} else {
-		mutils.LogApplicationError("Database Error", "Cannot find dieter id", nil)
-		req.IndentedJSON(http.StatusNotFound, nil)
-		return
-	}
 }
 
 func getDieterIDByName(name string) int64 {

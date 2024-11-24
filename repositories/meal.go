@@ -2,11 +2,12 @@ package repositories
 
 import (
 	"context"
+    "errors"
+    "strconv"
 
 	"mauit/mutils"
     "mauit/models"
 
-    "strconv"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -479,11 +480,6 @@ func AddMeal(meal models.Meal) (error) {
 	var newID int64
     var dieter models.Dieter
 
-	// add in any missing fields to meal object (don't need day, dieterid or calories)
-	if meal.Day == "" {
-		meal.Day = models.GetCurrentDate()
-	}
-
     dieter.Name = meal.Dieter
 
     GetSingleDieter(dieter)
@@ -491,37 +487,32 @@ func AddMeal(meal models.Meal) (error) {
 	meal.Calories = 0
 
 	if meal.Dieterid != 0 {
-		db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+		db, err := getConnection()
 
 		if err != nil {
 			mutils.LogConnectionError(err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
+			return err
 		}
 
 		err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from meal").Scan(&newID)
 
 		if err != nil {
 			mutils.LogApplicationError("Database Error", "Cannot query meal count from database", err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
+			return err
 		}
 
 		_, err = db.Exec(context.Background(), "INSERT INTO meal values ($1, $2, $3, $4, $5, $6)", newID+1, meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
 
 		if err != nil {
 			mutils.LogApplicationError("Database Error", "Cannot store new meal", err)
-			req.IndentedJSON(http.StatusInternalServerError, nil)
-			return
+			return err
         }
 
-        req.IndentedJSON(http.StatusCreated, meal)
-
 		mutils.LogMessage("Request", "Meal added")
+        return nil
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find dieter id", nil)
-		req.IndentedJSON(http.StatusNotFound, nil)
-		return
+		return errors.New("Cannot find dieter id")
 	}
 }
 
