@@ -308,7 +308,7 @@ func AddMeal(req *gin.Context) {
 
 	// add in any missing fields to meal object (don't need day, dieterid or calories)
 	if meal.Day == "" {
-		meal.Day = time.DateOnly
+		meal.Day = models.GetCurrentDate()
 	}
 
 	if meal.Dieterid == 0 {
