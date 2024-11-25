@@ -516,6 +516,45 @@ func AddMeal(meal models.Meal) (error) {
 	}
 }
 
+func getMealCalories(id int64) int64 {
+	db, err := getConnection()
+	if err != nil {
+		return 0
+	}
+	rows, err := db.Query(context.Background(), "SUM(Calories) FROM entry WHERE MEAL_ID=$1", id)
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query entries from database", err)
+		return 0
+	}
+
+	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
+
+	if entries != nil {
+		return entries[0].ID
+	}
+
+	return 0
+}
+
+func getDieterIDByName(name string) int64 {
+	db, err := getConnection()
+	if err != nil {
+		return 0
+	}
+	rows, err := db.Query(context.Background(), "SELECT * FROM dieter WHERE NAME=$1", name)
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query dieter from database", err)
+		return 0
+	}
+
+	dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
+
+	if dieter != nil {
+		return dieter[0].ID
+	}
+
+	return 0
+}
 
 func GetAllFood() ([]models.Food, error) {
 
@@ -589,6 +628,62 @@ func DeleteFoodRow(food models.Food) error {
 	_, err = db.Query(context.Background(), "DELETE FROM food WHERE Name = $1", food.Name)
 
     return err
+}
+
+func AddEntry(entry models.Entry) (models.Entry, error) {
+
+	var newID int64
+    var newEntry models.Entry
+
+	db, err := getConnection()
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		return newEntry, err
+	}
+
+	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from entry").Scan(&newID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query entry count from database", err)
+		return newEntry, err
+	}
+
+	_, err = db.Query(context.Background(), "INSERT INTO entry values ($1, $2, $3, $4)", newID+1, entry.Calories, entry.FoodID, entry.MealID)
+
+    return entry, nil
+
+}
+
+func AddEntryToMeal(entry models.Entry) error {
+
+	var meal []models.Meal
+
+	db, err := getConnection()
+
+	if err != nil {
+		return err
+	}
+
+	meals, err := db.Query(context.Background(), "SELECT * FROM meal WHERE ID = $1", entry.MealID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query meal from database", err)
+		return err
+	}
+
+	meal, err = pgx.CollectRows(meals, pgx.RowToStructByName[models.Meal])
+
+	newCalories := entry.Calories + meal[0].Calories
+
+	_, err = db.Query(context.Background(), "UPDATE meal SET Calories = $1 WHERE Meal_ID = $2", newCalories, entry.MealID)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot update meal in database", err)
+		return err
+	}
+
+	return nil
 }
 
 func GetEntry(entry models.Entry) (models.Entry, error) {

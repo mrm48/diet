@@ -1,16 +1,12 @@
 package service
 
 import (
-	"context"
 	"mauit/models"
 	"mauit/mutils"
 	"mauit/repositories"
 	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
 )
 
 func GetDieters(req *gin.Context) {
@@ -283,48 +279,6 @@ func AddMeal(req *gin.Context) {
 
 }
 
-func getDieterIDByName(name string) int64 {
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-	if err != nil {
-		mutils.LogConnectionError(err)
-		return 0
-	}
-	rows, err := db.Query(context.Background(), "SELECT * FROM dieter WHERE NAME=$1", name)
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query dieter from database", err)
-		return 0
-	}
-
-	dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
-
-	if dieter != nil {
-		return dieter[0].ID
-	}
-
-	return 0
-}
-
-func getMealCalories(id int64) int64 {
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
-	if err != nil {
-		mutils.LogConnectionError(err)
-		return 0
-	}
-	rows, err := db.Query(context.Background(), "SUM(Calories) FROM entry WHERE MEAL_ID=$1", id)
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query entries from database", err)
-		return 0
-	}
-
-	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
-
-	if entries != nil {
-		return entries[0].ID
-	}
-
-	return 0
-}
-
 func GetEntry(req *gin.Context) {
 
 	var entry models.Entry
@@ -348,7 +302,6 @@ func GetEntry(req *gin.Context) {
 func AddEntry(req *gin.Context) {
 
 	var entry models.Entry
-	var newID int64
 
 	if err := req.BindJSON(&entry); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create entry object from JSON provided", err)
@@ -356,26 +309,10 @@ func AddEntry(req *gin.Context) {
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    entry, err := repositories.AddEntry(entry)
 
 	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from entry").Scan(&newID)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query entry count from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	_, err = db.Query(context.Background(), "INSERT INTO entry values ($1, $2, $3, $4)", newID+1, entry.Calories, entry.FoodID, entry.MealID)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot insert entry into database", err)
+		mutils.LogApplicationError("Application Error", "Cannot add entry into database", err)
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
@@ -388,48 +325,23 @@ func AddEntry(req *gin.Context) {
 func AddEntryToMeal(req *gin.Context) {
 
 	var entry models.Entry
-	var meal []models.Meal
 
 	if err := req.BindJSON(&entry); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create entry object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, err)
 		return
 	}
 
-	db, err := pgx.Connect(context.Background(), "postgresql://postgres@localhost:5432/meal")
+    err := repositories.AddEntryToMeal(entry)
 
 	if err != nil {
-		mutils.LogConnectionError(err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	meals, err := db.Query(context.Background(), "SELECT * FROM meal WHERE ID = $1", entry.MealID)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query meal from database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-
-	meal, err = pgx.CollectRows(meals, pgx.RowToStructByName[models.Meal])
-
-	if len(meal) != 1 {
-		mutils.LogApplicationError("Application Error", "One and only one meal must match by meal ID", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
-		return
-	}
-	newCalories := entry.Calories + meal[0].Calories
-
-	_, err = db.Query(context.Background(), "UPDATE meal SET Calories = $1 WHERE Meal_ID = $2", newCalories, entry.MealID)
-
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot update meal in database", err)
+		mutils.LogApplicationError("Application Error", "Cannot update meal by adding the entry", err)
 		req.IndentedJSON(http.StatusInternalServerError, nil)
 		return
 	}
 
 	req.IndentedJSON(http.StatusOK, entry)
+
 }
 
 func AddFood(req *gin.Context) {
