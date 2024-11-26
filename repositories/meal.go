@@ -8,7 +8,6 @@ import (
 	"mauit/mutils"
     "mauit/models"
 
-
 	"github.com/jackc/pgx/v5"
 )
 
@@ -17,7 +16,7 @@ func getConnection() (*pgx.Conn, error) {
 
     if err != nil {
         mutils.LogConnectionError(err)
-        return nil, err
+        return nil, errors.New("Cannot connect to the database")
     }
 
     return db, err
@@ -26,18 +25,23 @@ func getConnection() (*pgx.Conn, error) {
 func GetAllDieters() ([]models.Dieter, error) {
     
     db, err := getConnection()
+
+    if err != nil {
+        return nil, err
+    }
+
 	rows, err := db.Query(context.Background(), "Select * FROM dieter")
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter rows from database", err)
-		return nil, err
+        return nil, errors.New("Error 101: Cannot get dieter information")
 	}
 
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create list of dieters from rows returned", err)
-		return nil, err
+        return nil, errors.New("Error 102: Cannot get dieter information")
 	}
 
 	defer rows.Close()
