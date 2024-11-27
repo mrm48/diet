@@ -16,10 +16,10 @@ func getConnection() (*pgx.Conn, error) {
 
     if err != nil {
         mutils.LogConnectionError(err)
-        return nil, errors.New("Cannot connect to the database")
+        return nil, errors.New("Error 001: Cannot connect to the database")
     }
 
-    return db, err
+    return db, nil
 }
 
 func GetAllDieters() ([]models.Dieter, error) {
@@ -41,7 +41,7 @@ func GetAllDieters() ([]models.Dieter, error) {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create list of dieters from rows returned", err)
-        return nil, errors.New("Error 102: Cannot get dieter information")
+        return nil, errors.New("Error 201: Cannot get dieter information")
 	}
 
 	defer rows.Close()
@@ -61,14 +61,14 @@ func GetSingleDieter(dieter models.Dieter) (models.Dieter, error) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot get dieter information", err)
-		return dieter, err
+        return dieter, errors.New("Error 101: Cannot get dieter information")
 	}
 
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
-		return dieter, err
+        return dieter, errors.New("Error 201: Cannot create a list of dieters from search")
 	}
 
 	defer rows.Close()
@@ -96,14 +96,14 @@ func AddNewDieter(dieter models.Dieter) (error) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot query dieter count from database", err)
-		return err
+		return errors.New("Error 101: Cannot get dieter count")
 	}
 
 	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", newID+1, dieter.Calories, dieter.Name)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot store new dieter", err)
-		return err
+        return errors.New("Error 102: Cannot store new dieter")
 	}
 
     return nil
@@ -125,7 +125,7 @@ func UpdateDieterCalories(dieter models.Dieter) (error) {
 		return nil
 	} else if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
-		return err
+        return errors.New("Error 102: Cannot update dieter information")
 	}
 
     return nil
