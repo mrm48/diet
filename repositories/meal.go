@@ -142,13 +142,13 @@ func GetDieterCalories (dieter models.Dieter) ([]models.Dieter, error) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
-		return nil, err
+		return nil, errors.New("Cannot get dieter information")
 	}
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
-		return nil, err
+		return nil, errors.New("Cannot create a dieter object to return") 
 	}
 
     return Dieters, nil
@@ -165,14 +165,14 @@ func GetDieterMealsToday(dieter models.Dieter, day string) ([]models.Meal, error
     
     if err != nil {
         mutils.LogApplicationError("Database Error", "Cannot retrieve meals by day for dieter from database", err)
-        return nil, err
+        return nil, errors.New("Cannot retrieve meals from database")
     }
 
     meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
     if err != nil {
         mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
-        return nil, err
+        return nil, errors.New("Cannot create an array of objects to return")
     }
 
     return meals, nil
@@ -189,7 +189,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database error", "Cannot find dieter by name", err)
-		return 0, err
+		return 0, errors.New("Cannot get dieter information")
 	}
 
 	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
@@ -197,6 +197,11 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 	if Dieter != nil {
 
         rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2,", dieter.ID, day)
+
+        if err != nil {
+            mutils.LogApplicationError("Database Error", "Cannot get meals from database for current user on the current day", err)
+            return 0, errors.New("Cannot get meals for the dieter")
+        }
         
 	    meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
