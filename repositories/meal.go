@@ -210,15 +210,15 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
     		rows, err = db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
     		if err != nil {
     			mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
-    			return 0, err
+    			return 0, errors.New("Cannot get today's calories for dieter")
     		} else {
     			if rows.Next() == true {
     				err = rows.Scan(&dieter.Calories)
     				if err != nil {
     					mutils.LogApplicationError("Request", "Cannot parse sum of calories for this dieter", err)
-    					return 0, err
+    					return 0, errors.New("Cannot parse the sum of calories for this dieter")
     				} else {
-    					return Dieter[0].Calories-dieter.Calories, err
+    					return Dieter[0].Calories-dieter.Calories, nil
     				}
     			}
     		}
@@ -227,7 +227,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
         }
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find remaining dieter calories requested", nil)
-		return 0, err
+		return 0, errors.New("Cannot find dieter information")
 	}
 
     return 0, err
@@ -237,14 +237,14 @@ func DeleteDieter(dieter models.Dieter) error {
 	db, err := getConnection()
 
     if err != nil {
-        return err
+        return errors.New("Database connection error")
     }
 
 	err = db.QueryRow(context.Background(), "SELECT * from dieter WHERE Name=$1", dieter.Name).Scan(&dieter.ID, &dieter.Calories, &dieter.Name)
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot retrieve dieter with name provided", err)
-		return err
+		return errors.New("Cannot find dieter")
 	}
 
 	DeleteMealsForDieter(dieter.ID)
@@ -253,7 +253,7 @@ func DeleteDieter(dieter models.Dieter) error {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot delete dieter retrieved by ID", err)
-		return err
+		return errors.New("Cannot delete dieter")
 	}
 
     return nil
