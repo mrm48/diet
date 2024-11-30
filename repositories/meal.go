@@ -158,7 +158,7 @@ func GetDieterMealsToday(dieter models.Dieter, day string) ([]models.Meal, error
 	db, err := getConnection()
 
 	if err != nil {
-		return nil, err
+		return nil, errors.New("Could not connect to the database")
 	}
 
     rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieter=$1 AND day=$2", dieter.Name, day)
@@ -182,7 +182,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 	db, err := getConnection()
 
 	if err != nil {
-		return 0, err
+		return 0, errors.New("Could not get connection to database")
 	}
 
 	rows, err := db.Query(context.Background(), "Select * from dieter WHERE Name = $1", dieter.Name)
@@ -230,7 +230,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 		return 0, errors.New("Cannot find dieter information")
 	}
 
-    return 0, err
+    return 0, errors.New("Error in control flow")
 }
 
 func DeleteDieter(dieter models.Dieter) error {

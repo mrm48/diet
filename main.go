@@ -29,10 +29,9 @@ func main() {
 	r := gin.Default()
 
 	router.SetRoutes(r)
-
 	mutils.LogMessage("Server Startup", "Routes set: Starting server")
-
 	// start server
 	r.Run("localhost:9090")
 
 }
+
