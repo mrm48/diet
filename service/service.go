@@ -158,7 +158,9 @@ func GetRemainingDieterCalories(req *gin.Context) {
         return
     }
 
-    req.IndentedJSON(http.StatusOK, calories)
+    dieter.Calories = calories
+
+    req.IndentedJSON(http.StatusOK, dieter)
 
 }
 
