@@ -15,32 +15,32 @@ func SetRoutes(Router *gin.Engine) {
 	Router.DELETE("/dieters", service.DeleteDieter)
 
 	// single dieter
-	Router.GET("/dieter/name", service.GetDieter)
-	Router.GET("/dieter/calories", service.GetDieterCalories)
-	Router.GET("/dieter/remaining", service.GetRemainingDieterCalories)
-    Router.GET("/dieter/meals", service.GetDieterMeals)
-    Router.GET("/dieter/mealstoday", service.GetDieterMealsToday)
-    Router.POST("/dieter/calories", service.SetDieterCalories)
+	Router.POST("/dieter/calories", service.GetDieterCalories)
+	Router.POST("/dieter/remaining", service.GetRemainingDieterCalories)
+    Router.POST("/dieter/meals", service.GetDieterMeals)
+    Router.POST("/dieter/mealstoday", service.GetDieterMealsToday)
+	Router.POST("/dieter/name", service.GetDieter)
+    Router.PUT("/dieter/calories", service.SetDieterCalories)
 
 	// meal
-	Router.GET("/meal", service.GetMeal)
-	Router.GET("/meal/calories", service.GetMealCalories)
-	Router.GET("/meal/entries", service.GetMealEntries)
+	Router.POST("/meal", service.GetMeal)
+	Router.POST("/meal/calories", service.GetMealCalories)
+	Router.POST("/meal/entries", service.GetMealEntries)
 	Router.POST("/meal/entry", service.AddEntryToMeal)
-	Router.POST("/meal", service.AddMeal)
+	Router.PUT("/meal", service.AddMeal)
 	Router.DELETE("/meal", service.DeleteMeal)
     Router.DELETE("/meal/entries", service.DeleteMealEntries)
 
 	// entry
-	Router.GET("/entry", service.GetEntry)
-	Router.POST("/entry/add", service.AddEntry)
+	Router.POST("/entry", service.GetEntry)
+	Router.PUT("/entry", service.AddEntry)
 	Router.DELETE("/entry", service.DeleteEntry)
 
 	// food
     Router.GET("/food/all", service.GetAllFood)
-    Router.GET("/food", service.GetFood)
-	Router.POST("/food", service.AddFood)
-	Router.POST("/food/calories", service.EditFood)
+    Router.POST("/food", service.GetFood)
+	Router.PUT("/food", service.AddFood)
+	Router.PUT("/food/calories", service.EditFood)
 	Router.DELETE("/food", service.DeleteFood)
 
 }
