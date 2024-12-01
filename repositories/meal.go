@@ -196,7 +196,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 
 	if Dieter != nil {
 
-        rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2,", dieter.ID, day)
+        rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
 
         if err != nil {
             mutils.LogApplicationError("Database Error", "Cannot get meals from database for current user on the current day", err)
