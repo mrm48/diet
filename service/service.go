@@ -119,7 +119,6 @@ func GetDieterMealsToday(req *gin.Context) {
     var dieter models.Dieter
 
     day := models.GetCurrentDate()
-    mutils.LogMessage("debug", day)
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)

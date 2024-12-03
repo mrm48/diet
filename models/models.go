@@ -1,7 +1,7 @@
 package models
 
 import (
-    "time"
+	"time"
 )
 
 // Describe a record in the database
@@ -52,9 +52,9 @@ type Meal struct {
 }
 
 func GetCurrentDate() string {
-    day := time.Now().Format("2006-01-02T15:04:05 -070000")
+	day := time.Now().Format("2006-01-02T15:04:05 -070000")
 
-    day = day[:10]
+	day = day[:10]
 
-    return day
+	return day
 }
