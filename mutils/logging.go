@@ -11,7 +11,11 @@ import (
 func LogConnectionError(err error) {
 
 	slog := fmt.Sprintf("Database Connection Error: Could not connect to the database: %v", err)
-	log.Output(1, slog)
+	logerr := log.Output(1, slog)
+
+	if logerr != nil {
+		fmt.Sprintf("Log error: %v", logerr)
+	}
 
 }
 
@@ -19,7 +23,11 @@ func LogConnectionError(err error) {
 func LogApplicationError(ltype string, message string, err error) {
 
 	slog := fmt.Sprintf("%v: %v : %v", ltype, message, err)
-	log.Output(2, slog)
+	logerr := log.Output(2, slog)
+
+	if logerr != nil {
+		fmt.Sprintf("Log error: %v", logerr)
+	}
 
 }
 
@@ -27,6 +35,10 @@ func LogApplicationError(ltype string, message string, err error) {
 func LogMessage(ltype string, message string) {
 
 	slog := fmt.Sprintf("%v: %v", ltype, message)
-	log.Output(1, slog)
+	logerr := log.Output(1, slog)
+
+	if logerr != nil {
+		fmt.Sprintf("Log error: %v", logerr)
+	}
 
 }
