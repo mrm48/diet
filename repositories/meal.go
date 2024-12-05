@@ -51,31 +51,22 @@ func GetAllDieters() ([]models.Dieter, error) {
 
 func GetSingleDieter(dieter models.Dieter) (models.Dieter, error) {
 
-	db, err := getConnection()
+	rows, err := retrieveDieter(dieter)
 
-	if err != nil {
-		return dieter, err
-	}
+	if err == nil {
+		Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
-	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE name=$1", dieter.Name)
+		if err != nil {
+			mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
+			return dieter, errors.New("error 201: Cannot create a list of dieters from search")
+		}
 
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot get dieter information", err)
-		return dieter, errors.New("error 101: Cannot get dieter information")
-	}
+		defer rows.Close()
 
-	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
-		return dieter, errors.New("error 201: Cannot create a list of dieters from search")
-	}
-
-	defer rows.Close()
-
-	for _, v := range Dieters {
-		if v.Name == dieter.Name {
-			return v, nil
+		for _, v := range Dieters {
+			if v.Name == dieter.Name {
+				return v, nil
+			}
 		}
 	}
 
@@ -132,13 +123,8 @@ func UpdateDieterCalories(dieter models.Dieter) error {
 }
 
 func GetDieterCalories(dieter models.Dieter) ([]models.Dieter, error) {
-	db, err := getConnection()
 
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := db.Query(context.Background(), "Select * FROM dieter WHERE Name = $1", dieter.Name)
+	rows, err := retrieveDieter(dieter)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
@@ -179,13 +165,8 @@ func GetDieterMealsToday(dieter models.Dieter, day string) ([]models.Meal, error
 }
 
 func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
-	db, err := getConnection()
 
-	if err != nil {
-		return 0, errors.New("could not get connection to database")
-	}
-
-	rows, err := db.Query(context.Background(), "Select * from dieter WHERE Name = $1", dieter.Name)
+	rows, err := retrieveDieter(dieter)
 
 	if err != nil {
 		mutils.LogApplicationError("Database error", "Cannot find dieter by name", err)
@@ -198,6 +179,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 
 		dieter.ID = Dieter[0].ID
 
+		db, err := getConnection()
 		rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
 
 		if err != nil {
@@ -757,4 +739,24 @@ func DeleteEntry(entry models.Entry) error {
 	}
 
 	return nil
+}
+
+func retrieveDieter(dieter models.Dieter) (pgx.Rows, error) {
+
+	db, err := getConnection()
+
+	if err != nil {
+		mutils.LogConnectionError(err)
+		return nil, errors.New("cannot connect to database")
+	}
+
+	rows, err := db.Query(context.Background(), "SELECT * FROM dieter WHERE name = $1", dieter.Name)
+
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot query dieter from database", err)
+		return nil, errors.New("cannot query dieter from database")
+	}
+
+	return rows, nil
+
 }
