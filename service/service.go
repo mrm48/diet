@@ -11,13 +11,13 @@ import (
 
 func GetDieters(req *gin.Context) {
 
-    Dieters, err := repositories.GetAllDieters()
+	Dieters, err := repositories.GetAllDieters()
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Could not return the list of dieters from the database", err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Could not return the list of dieters from the database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	req.IndentedJSON(http.StatusOK, Dieters)
 	mutils.LogMessage("Request", "Dieters retrieved and sent to user")
@@ -35,13 +35,13 @@ func AddDieter(req *gin.Context) {
 		return
 	}
 
-    err := repositories.AddNewDieter(dieter)
+	err := repositories.AddNewDieter(dieter)
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot add user to the database", err)
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }   
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot add user to the database", err)
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	req.IndentedJSON(http.StatusCreated, dieter)
 
@@ -60,14 +60,14 @@ func GetDieter(req *gin.Context) {
 		return
 	}
 
-    dieter, err := repositories.GetSingleDieter(dieter)
+	dieter, err := repositories.GetSingleDieter(dieter)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusNotFound, nil)
-        return
-    }
+	if err != nil {
+		req.IndentedJSON(http.StatusNotFound, nil)
+		return
+	}
 
-    req.IndentedJSON(http.StatusOK, dieter)
+	req.IndentedJSON(http.StatusOK, dieter)
 
 }
 
@@ -82,11 +82,11 @@ func SetDieterCalories(req *gin.Context) {
 		return
 	}
 
-    err := repositories.UpdateDieterCalories(dieter)
+	err := repositories.UpdateDieterCalories(dieter)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusNotFound, nil)
-    }
+	if err != nil {
+		req.IndentedJSON(http.StatusNotFound, nil)
+	}
 
 	req.IndentedJSON(http.StatusOK, dieter)
 
@@ -102,7 +102,7 @@ func GetDieterCalories(req *gin.Context) {
 		return
 	}
 
-    Dieters, err := repositories.GetDieterCalories(dieter)
+	Dieters, err := repositories.GetDieterCalories(dieter)
 
 	if err == nil {
 		req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
@@ -116,9 +116,9 @@ func GetDieterCalories(req *gin.Context) {
 
 func GetDieterMealsToday(req *gin.Context) {
 
-    var dieter models.Dieter
+	var dieter models.Dieter
 
-    day := models.GetCurrentDate()
+	day := models.GetCurrentDate()
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
@@ -126,22 +126,22 @@ func GetDieterMealsToday(req *gin.Context) {
 		return
 	}
 
-    meals, err := repositories.GetDieterMealsToday(dieter, day)
+	meals, err := repositories.GetDieterMealsToday(dieter, day)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    } 
+	if err != nil {
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    req.IndentedJSON(http.StatusOK, meals)
+	req.IndentedJSON(http.StatusOK, meals)
 
 }
 
 func GetRemainingDieterCalories(req *gin.Context) {
 
-    var dieter models.Dieter
+	var dieter models.Dieter
 
-    day := models.GetCurrentDate()
+	day := models.GetCurrentDate()
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
@@ -149,17 +149,17 @@ func GetRemainingDieterCalories(req *gin.Context) {
 		return
 	}
 
-    calories, err := repositories.GetRemainingCaloriesToday(dieter, day)
+	calories, err := repositories.GetRemainingCaloriesToday(dieter, day)
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot get remaining calories for dieter", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot get remaining calories for dieter", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    dieter.Calories = calories
+	dieter.Calories = calories
 
-    req.IndentedJSON(http.StatusOK, dieter)
+	req.IndentedJSON(http.StatusOK, dieter)
 
 }
 
@@ -173,7 +173,7 @@ func GetMeal(req *gin.Context) {
 		return
 	}
 
-    meals, err := repositories.GetMeal(meal)
+	meals, err := repositories.GetMeal(meal)
 
 	if meals != nil && err == nil {
 		mutils.LogMessage("Request", "Responded with the meal requested")
@@ -195,13 +195,13 @@ func GetMealCalories(req *gin.Context) {
 		return
 	}
 
-    newCalories, err := repositories.GetMealCalories(meal)
-    meal.Calories = newCalories
+	newCalories, err := repositories.GetMealCalories(meal)
+	meal.Calories = newCalories
 
 	if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot get calories from meal database", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-		return 
+		mutils.LogApplicationError("Application Error", "Cannot get calories from meal database", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
 	}
 
 	mutils.LogMessage("Request", "Responded with the meal calories requested")
@@ -210,54 +210,52 @@ func GetMealCalories(req *gin.Context) {
 
 func GetMealEntries(req *gin.Context) {
 
-    var meal models.Meal
-    var entries []models.Entry
+	var meal models.Meal
+	var entries []models.Entry
 
-    if err := req.BindJSON(&meal); err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err := req.BindJSON(&meal); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    entries, err := repositories.GetMealEntries(meal)
+	entries, err := repositories.GetMealEntries(meal)
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot populate list of entries from rows returned", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot populate list of entries from rows returned", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    req.IndentedJSON(http.StatusOK, entries)
-    return
+	req.IndentedJSON(http.StatusOK, entries)
+	return
 }
 
 func GetDieterMeals(req *gin.Context) {
 
-    var dieter models.Dieter
-    var meals []models.Meal
+	var dieter models.Dieter
+	var meals []models.Meal
 
-    if err := req.BindJSON(&dieter); err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err := req.BindJSON(&dieter); err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    meals, err := repositories.GetDieterMeals(dieter)
+	meals, err := repositories.GetDieterMeals(dieter)
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot populate list of meals from rows returned", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot populate list of meals from rows returned", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    req.IndentedJSON(http.StatusOK, meals)
-    return
+	req.IndentedJSON(http.StatusOK, meals)
+	return
 }
 
 func AddMeal(req *gin.Context) {
 	var meal models.Meal
-
-    //*** moving this function to meal.go ***
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
@@ -270,13 +268,13 @@ func AddMeal(req *gin.Context) {
 		meal.Day = models.GetCurrentDate()
 	}
 
-    err := repositories.AddMeal(meal)
+	err := repositories.AddMeal(meal)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
-    req.IndentedJSON(http.StatusCreated, meal)
+	if err != nil {
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
+	req.IndentedJSON(http.StatusCreated, meal)
 
 }
 
@@ -289,8 +287,8 @@ func GetEntry(req *gin.Context) {
 		req.IndentedJSON(http.StatusBadRequest, nil)
 		return
 	}
-    
-    entry, err := repositories.GetEntry(entry)
+
+	entry, err := repositories.GetEntry(entry)
 
 	if err != nil {
 		req.IndentedJSON(http.StatusInternalServerError, err)
@@ -310,7 +308,7 @@ func AddEntry(req *gin.Context) {
 		return
 	}
 
-    entry, err := repositories.AddEntry(entry)
+	entry, err := repositories.AddEntry(entry)
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot add entry into database", err)
@@ -333,7 +331,7 @@ func AddEntryToMeal(req *gin.Context) {
 		return
 	}
 
-    err := repositories.AddEntryToMeal(entry)
+	err := repositories.AddEntryToMeal(entry)
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot update meal by adding the entry", err)
@@ -353,7 +351,7 @@ func AddFood(req *gin.Context) {
 		mutils.LogApplicationError("Application Error", "Cannot create food object from JSON provided", err)
 	}
 
-    err := repositories.AddFoodRow(food)
+	err := repositories.AddFoodRow(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot insert food into database", err)
@@ -366,7 +364,6 @@ func AddFood(req *gin.Context) {
 
 }
 
-
 func GetFood(req *gin.Context) {
 
 	var food models.Food
@@ -377,16 +374,16 @@ func GetFood(req *gin.Context) {
 		return
 	}
 
-    food, err := repositories.GetFoodRow(food)
+	food, err := repositories.GetFoodRow(food)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusNotFound, nil)
-        return
-    }
+	if err != nil {
+		req.IndentedJSON(http.StatusNotFound, nil)
+		return
+	}
 
-    if food.Name != "nil" {
-        req.IndentedJSON(http.StatusOK, food)
-    }
+	if food.Name != "nil" {
+		req.IndentedJSON(http.StatusOK, food)
+	}
 
 }
 
@@ -400,7 +397,7 @@ func EditFood(req *gin.Context) {
 		return
 	}
 
-    err := repositories.UpdateFood(food)
+	err := repositories.UpdateFood(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set food calories", err)
@@ -410,7 +407,7 @@ func EditFood(req *gin.Context) {
 		req.IndentedJSON(http.StatusOK, food)
 		mutils.LogMessage("Request", "Calories updated for food")
 		return
-    }
+	}
 
 }
 
@@ -424,7 +421,7 @@ func DeleteFood(req *gin.Context) {
 		return
 	}
 
-    err := repositories.DeleteFoodRow(food)
+	err := repositories.DeleteFoodRow(food)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot delete food from database", err)
@@ -446,7 +443,7 @@ func DeleteMeal(req *gin.Context) {
 		return
 	}
 
-    err := repositories.DeleteMeal(meal)
+	err := repositories.DeleteMeal(meal)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
@@ -460,12 +457,12 @@ func DeleteMeal(req *gin.Context) {
 
 func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 
-    err := repositories.DeleteMealsForDieter(dieterID)
+	err := repositories.DeleteMealsForDieter(dieterID)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusInternalServerError, nil)
-        return
-    }
+	if err != nil {
+		req.IndentedJSON(http.StatusInternalServerError, nil)
+		return
+	}
 
 	req.IndentedJSON(http.StatusOK, nil)
 	return
@@ -481,22 +478,22 @@ func DeleteMealEntries(req *gin.Context) {
 		return
 	}
 
-    meals, err := repositories.GetMeal(meal)
+	meals, err := repositories.GetMeal(meal)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err != nil {
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    err = deleteEntriesByMeal(meals[0].ID, req)
+	err = deleteEntriesByMeal(meals[0].ID, req)
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Could not remove meal entries from database", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Could not remove meal entries from database", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    req.IndentedJSON(http.StatusOK, nil)
+	req.IndentedJSON(http.StatusOK, nil)
 
 }
 
@@ -509,21 +506,21 @@ func deleteEntriesByMeal(mealID int64, req *gin.Context) error {
 		return err
 	}
 
-    return nil
+	return nil
 
 }
 
 func GetAllFood(req *gin.Context) {
 
-    food, err := repositories.GetAllFood()
+	food, err := repositories.GetAllFood()
 
-    if err != nil {
-        mutils.LogApplicationError("Application Error", "Cannot get all food from database", err)
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot get all food from database", err)
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
 
-    req.IndentedJSON(http.StatusOK, food)
+	req.IndentedJSON(http.StatusOK, food)
 
 }
 
@@ -537,13 +534,13 @@ func DeleteDieter(req *gin.Context) {
 		return
 	}
 
-    err := repositories.DeleteDieter(dieter)
+	err := repositories.DeleteDieter(dieter)
 
-    if err != nil {
-        req.IndentedJSON(http.StatusInternalServerError, err)
-        return
-    }
-	return 
+	if err != nil {
+		req.IndentedJSON(http.StatusInternalServerError, err)
+		return
+	}
+	return
 }
 
 func DeleteEntry(req *gin.Context) {
@@ -556,7 +553,7 @@ func DeleteEntry(req *gin.Context) {
 		return
 	}
 
-    err := repositories.DeleteEntry(entry)
+	err := repositories.DeleteEntry(entry)
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot delete entry by ID", err)
@@ -565,5 +562,5 @@ func DeleteEntry(req *gin.Context) {
 	}
 
 	req.IndentedJSON(http.StatusOK, nil)
-    return
+	return
 }

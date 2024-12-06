@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Add endpoints to the API, noun [verb] object pathing
+// SetRoutes to add endpoints to the API, noun [verb] object pathing
 func SetRoutes(Router *gin.Engine) {
 
 	// all dieters
@@ -17,10 +17,10 @@ func SetRoutes(Router *gin.Engine) {
 	// single dieter
 	Router.POST("/dieter/calories", service.GetDieterCalories)
 	Router.POST("/dieter/remaining", service.GetRemainingDieterCalories)
-    Router.POST("/dieter/meals", service.GetDieterMeals)
-    Router.POST("/dieter/mealstoday", service.GetDieterMealsToday)
+	Router.POST("/dieter/meals", service.GetDieterMeals)
+	Router.POST("/dieter/mealstoday", service.GetDieterMealsToday)
 	Router.POST("/dieter/name", service.GetDieter)
-    Router.PUT("/dieter/calories", service.SetDieterCalories)
+	Router.PUT("/dieter/calories", service.SetDieterCalories)
 
 	// meal
 	Router.POST("/meal", service.GetMeal)
@@ -29,7 +29,7 @@ func SetRoutes(Router *gin.Engine) {
 	Router.POST("/meal/entry", service.AddEntryToMeal)
 	Router.PUT("/meal", service.AddMeal)
 	Router.DELETE("/meal", service.DeleteMeal)
-    Router.DELETE("/meal/entries", service.DeleteMealEntries)
+	Router.DELETE("/meal/entries", service.DeleteMealEntries)
 
 	// entry
 	Router.POST("/entry", service.GetEntry)
@@ -37,8 +37,8 @@ func SetRoutes(Router *gin.Engine) {
 	Router.DELETE("/entry", service.DeleteEntry)
 
 	// food
-    Router.GET("/food/all", service.GetAllFood)
-    Router.POST("/food", service.GetFood)
+	Router.GET("/food/all", service.GetAllFood)
+	Router.POST("/food", service.GetFood)
 	Router.PUT("/food", service.AddFood)
 	Router.PUT("/food/calories", service.EditFood)
 	Router.DELETE("/food", service.DeleteFood)
