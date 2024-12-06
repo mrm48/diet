@@ -487,7 +487,6 @@ func AddMeal(meal models.Meal) error {
 	var dieter models.Dieter
 
 	dieter.Name = meal.Dieter
-
 	dieter, err := GetSingleDieter(dieter)
 
 	if err != nil {
@@ -496,6 +495,8 @@ func AddMeal(meal models.Meal) error {
 	}
 
 	meal.Calories = 0
+
+	meal.Dieterid = dieter.ID
 
 	if meal.Dieterid != 0 {
 		db, err := getConnection()
