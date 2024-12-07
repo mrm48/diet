@@ -4,6 +4,7 @@ import (
 	"mauit/models"
 	"mauit/mutils"
 	"mauit/repositories"
+    "errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func GetDieters(req *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Could not return the list of dieters from the database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, errors.New("could not return the list of dieters from the database"))
 		return
 	}
 
@@ -31,7 +32,7 @@ func AddDieter(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 		return
 	}
 
@@ -39,7 +40,7 @@ func AddDieter(req *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot add user to the database", err)
-		req.IndentedJSON(http.StatusInternalServerError, nil)
+		req.IndentedJSON(http.StatusInternalServerError, errors.New("cannot add user to the database"))
 		return
 	}
 
@@ -56,14 +57,14 @@ func GetDieter(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("Cannot create dieter object from JSON provided"))
 		return
 	}
 
 	dieter, err := repositories.GetSingleDieter(dieter)
 
 	if err != nil {
-		req.IndentedJSON(http.StatusNotFound, nil)
+		req.IndentedJSON(http.StatusNotFound, errors.New("cannot retrieve dieter just created"))
 		return
 	}
 
@@ -78,14 +79,14 @@ func SetDieterCalories(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter calories object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter calories object from JSON provided"))
 		return
 	}
 
 	err := repositories.UpdateDieterCalories(dieter)
 
 	if err != nil {
-		req.IndentedJSON(http.StatusNotFound, nil)
+		req.IndentedJSON(http.StatusNotFound, errors.New("cannot update calories for dieter"))
 	}
 
 	req.IndentedJSON(http.StatusOK, dieter)
@@ -98,7 +99,7 @@ func GetDieterCalories(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided")) 
 		return
 	}
 
@@ -109,7 +110,7 @@ func GetDieterCalories(req *gin.Context) {
 		return
 	} else {
 		mutils.LogApplicationError("Database Error", "Cannot find unique Dieter requested", nil)
-		req.IndentedJSON(http.StatusNotFound, nil)
+		req.IndentedJSON(http.StatusNotFound, errors.New("cannot find unique Dieter requested"))
 		return
 	}
 }
@@ -122,14 +123,14 @@ func GetDieterMealsToday(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 		return
 	}
 
 	meals, err := repositories.GetDieterMealsToday(dieter, day)
 
 	if err != nil {
-		req.IndentedJSON(http.StatusInternalServerError, err)
+		req.IndentedJSON(http.StatusInternalServerError, errors.New("cannot get list of meals for today"))
 		return
 	}
 
@@ -145,7 +146,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, err)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter from information provided"))
 		return
 	}
 
@@ -153,7 +154,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot get remaining calories for dieter", err)
-		req.IndentedJSON(http.StatusInternalServerError, err)
+		req.IndentedJSON(http.StatusInternalServerError,errors.New("cannot get remaining calories for dieter"))
 		return
 	}
 
@@ -169,7 +170,7 @@ func GetMeal(req *gin.Context) {
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create meal object from JSON provided"))
 		return
 	}
 
@@ -181,7 +182,7 @@ func GetMeal(req *gin.Context) {
 		return
 	}
 
-	req.IndentedJSON(http.StatusNotFound, nil)
+	req.IndentedJSON(http.StatusNotFound, errors.New("control error, contact system administrator"))
 
 }
 
@@ -191,7 +192,7 @@ func GetMealCalories(req *gin.Context) {
 
 	if err := req.BindJSON(&meal); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create meal object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, nil)
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create meal object from JSON provided"))
 		return
 	}
 
@@ -200,7 +201,7 @@ func GetMealCalories(req *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot get calories from meal database", err)
-		req.IndentedJSON(http.StatusInternalServerError, err)
+		req.IndentedJSON(http.StatusInternalServerError, errors.New("cannot get calories from meal database"))
 		return
 	}
 
