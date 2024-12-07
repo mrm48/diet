@@ -45,7 +45,7 @@ func GetAllDieters() ([]models.Dieter, error) {
 	}
 
 	defer rows.Close()
-	return Dieters, err
+	return Dieters, nil
 
 }
 
