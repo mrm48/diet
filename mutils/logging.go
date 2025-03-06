@@ -37,6 +37,7 @@ func LogMessage(ltype string, message string) {
 
 }
 
+// LogError This will log out any error messages when logging application activity
 func LogError(logerr error) {
 	if logerr != nil {
 		res := fmt.Sprintf("Log error: %v", logerr)
