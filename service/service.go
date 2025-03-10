@@ -1,13 +1,12 @@
 package service
 
 import (
+    "errors"
+	"net/http"
+	"github.com/gin-gonic/gin"
 	"mauit/models"
 	"mauit/mutils"
 	"mauit/repositories"
-    "errors"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
 )
 
 func GetDieters(req *gin.Context) {
@@ -229,7 +228,7 @@ func GetMealEntries(req *gin.Context) {
 	}
 
 	req.IndentedJSON(http.StatusOK, entries)
-	return
+	
 }
 
 func GetDieterMeals(req *gin.Context) {
@@ -252,7 +251,7 @@ func GetDieterMeals(req *gin.Context) {
 	}
 
 	req.IndentedJSON(http.StatusOK, meals)
-	return
+	
 }
 
 func AddMeal(req *gin.Context) {
@@ -541,7 +540,7 @@ func DeleteDieter(req *gin.Context) {
 		req.IndentedJSON(http.StatusInternalServerError, err)
 		return
 	}
-	return
+
 }
 
 func DeleteEntry(req *gin.Context) {
@@ -563,5 +562,5 @@ func DeleteEntry(req *gin.Context) {
 	}
 
 	req.IndentedJSON(http.StatusOK, nil)
-	return
+	
 }

@@ -2,7 +2,6 @@ package router
 
 import (
 	"mauit/service"
-
 	"github.com/gin-gonic/gin"
 )
 
