@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+// getConnection returns a connection to the database.
 func getConnection() (*pgx.Conn, error) {
 	db, err := pgx.Connect(context.Background(), "postgres://postgres@localhost:5432/meal")
 
@@ -22,6 +23,7 @@ func getConnection() (*pgx.Conn, error) {
 	return db, nil
 }
 
+// GetAllDieters retrieves all dieters from the database.
 func GetAllDieters() ([]models.Dieter, error) {
 
 	db, err := getConnection()
@@ -49,6 +51,7 @@ func GetAllDieters() ([]models.Dieter, error) {
 
 }
 
+// GetSingleDieter retrieves a single dieter from the database based on the provided dieter model.
 func GetSingleDieter(dieter models.Dieter) (models.Dieter, error) {
 
 	rows, err := retrieveDieter(dieter)
@@ -73,6 +76,7 @@ func GetSingleDieter(dieter models.Dieter) (models.Dieter, error) {
 	return dieter, err
 }
 
+// AddNewDieter adds a new dieter to the database.
 func AddNewDieter(dieter models.Dieter) error {
 
 	var newID int64
@@ -101,6 +105,7 @@ func AddNewDieter(dieter models.Dieter) error {
 
 }
 
+// UpdateDieterCalories updates the calories for a dieter in the database.
 func UpdateDieterCalories(dieter models.Dieter) error {
 
 	db, err := getConnection()
@@ -122,6 +127,7 @@ func UpdateDieterCalories(dieter models.Dieter) error {
 	return nil
 }
 
+// GetDieterCalories retrieves the calories for a dieter from the database.
 func GetDieterCalories(dieter models.Dieter) ([]models.Dieter, error) {
 
 	rows, err := retrieveDieter(dieter)
@@ -140,6 +146,7 @@ func GetDieterCalories(dieter models.Dieter) ([]models.Dieter, error) {
 	return Dieters, nil
 }
 
+// GetDieterMealsToday retrieves all meals for a dieter on a specific day from the database.
 func GetDieterMealsToday(dieter models.Dieter, day string) ([]models.Meal, error) {
 	db, err := getConnection()
 
@@ -164,6 +171,7 @@ func GetDieterMealsToday(dieter models.Dieter, day string) ([]models.Meal, error
 	return meals, nil
 }
 
+// GetRemainingCaloriesToday gets the remaining calories for a 'dieter' on a specified 'day' from the database.
 func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 
 	rows, err := retrieveDieter(dieter)
@@ -217,6 +225,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 	return 0, errors.New("error in control flow")
 }
 
+// DeleteDieter deletes a dieter from the database.
 func DeleteDieter(dieter models.Dieter) error {
 	db, err := getConnection()
 
@@ -248,6 +257,7 @@ func DeleteDieter(dieter models.Dieter) error {
 	return nil
 }
 
+// DeleteMealsForDieter deletes all meals for a dieter from the database.
 func DeleteMealsForDieter(dieterID int64) error {
 
 	meal, err := getConnection()
@@ -295,6 +305,7 @@ func DeleteMealsForDieter(dieterID int64) error {
 
 }
 
+// GetFoodRow retrieves a food item from the database based on the provided food model.
 func GetFoodRow(food models.Food) (models.Food, error) {
 
 	var errorFood models.Food
@@ -332,6 +343,7 @@ func GetFoodRow(food models.Food) (models.Food, error) {
 	return errorFood, errors.New("broken control flow, should not be able to get here")
 }
 
+// GetMeal retrieves a meal from the database, using the provided meal model.
 func GetMeal(meal models.Meal) ([]models.Meal, error) {
 	db, err := getConnection()
 
@@ -351,6 +363,7 @@ func GetMeal(meal models.Meal) ([]models.Meal, error) {
 	return meals, nil
 }
 
+// DeleteEntriesByMeal deletes all entries for a meal from the database.
 func DeleteEntriesByMeal(mealID int64) error {
 
 	meal, err := getConnection()
@@ -370,6 +383,7 @@ func DeleteEntriesByMeal(mealID int64) error {
 
 }
 
+// DeleteMeal deletes a meal from the database.
 func DeleteMeal(meal models.Meal) error {
 	db, err := getConnection()
 
@@ -404,6 +418,7 @@ func DeleteMeal(meal models.Meal) error {
 	return nil
 }
 
+// GetMealCalories retrieves the total calories for a meal from the database.
 func GetMealCalories(meal models.Meal) (int, error) {
 
 	db, err := getConnection()
@@ -430,6 +445,7 @@ func GetMealCalories(meal models.Meal) (int, error) {
 
 }
 
+// GetMealEntries retrieves all entries for a meal from the database.
 func GetMealEntries(meal models.Meal) ([]models.Entry, error) {
 
 	db, err := getConnection()
@@ -455,6 +471,7 @@ func GetMealEntries(meal models.Meal) ([]models.Entry, error) {
 	return entries, nil
 }
 
+// GetDieterMeals retrieves all meals for a dieter from the database.
 func GetDieterMeals(dieter models.Dieter) ([]models.Meal, error) {
 
 	db, err := getConnection()
@@ -482,6 +499,7 @@ func GetDieterMeals(dieter models.Dieter) ([]models.Meal, error) {
 
 }
 
+// AddMeal adds a new meal to the database.
 func AddMeal(meal models.Meal) error {
 	var newID int64
 	var dieter models.Dieter
@@ -528,6 +546,7 @@ func AddMeal(meal models.Meal) error {
 	}
 }
 
+// getMealCalories retrieves the total calories for a meal from the database.
 func getMealCalories(id int64) int64 {
 	db, err := getConnection()
 	if err != nil {
@@ -548,6 +567,7 @@ func getMealCalories(id int64) int64 {
 	return 0
 }
 
+// getDieterIDByName retrieves the ID for a dieter from the database based on the provided dieter name.
 func getDieterIDByName(name string) int64 {
 	db, err := getConnection()
 	if err != nil {
@@ -568,6 +588,7 @@ func getDieterIDByName(name string) int64 {
 	return 0
 }
 
+// GetAllFood retrieves all food items from the database.
 func GetAllFood() ([]models.Food, error) {
 
 	var food []models.Food
@@ -595,6 +616,7 @@ func GetAllFood() ([]models.Food, error) {
 
 }
 
+// AddFoodRow adds a new food item to the database.
 func AddFoodRow(food models.Food) error {
 
 	db, err := getConnection()
@@ -616,6 +638,7 @@ func AddFoodRow(food models.Food) error {
 	return err
 }
 
+// UpdateFood updates the calories for a food item in the database.
 func UpdateFood(food models.Food) error {
 
 	db, err := getConnection()
@@ -629,6 +652,7 @@ func UpdateFood(food models.Food) error {
 	return err
 }
 
+// DeleteFoodRow deletes a food item from the database.
 func DeleteFoodRow(food models.Food) error {
 
 	db, err := getConnection()
@@ -642,6 +666,7 @@ func DeleteFoodRow(food models.Food) error {
 	return err
 }
 
+// AddEntry adds a new entry to the database.
 func AddEntry(entry models.Entry) (models.Entry, error) {
 
 	var newID int64
@@ -667,6 +692,7 @@ func AddEntry(entry models.Entry) (models.Entry, error) {
 
 }
 
+// AddEntryToMeal adds an entry to a meal in the database.
 func AddEntryToMeal(entry models.Entry) error {
 
 	var meal []models.Meal
@@ -698,6 +724,7 @@ func AddEntryToMeal(entry models.Entry) error {
 	return nil
 }
 
+// GetEntry retrieves an entry from the database based on the provided entry model.
 func GetEntry(entry models.Entry) (models.Entry, error) {
 
 	db, err := getConnection()
@@ -724,6 +751,7 @@ func GetEntry(entry models.Entry) (models.Entry, error) {
 
 }
 
+// DeleteEntry deletes an entry from the database based on the provided entry model.
 func DeleteEntry(entry models.Entry) error {
 
 	db, err := getConnection()
@@ -742,6 +770,7 @@ func DeleteEntry(entry models.Entry) error {
 	return nil
 }
 
+// retrieveDieter retrieves a dieter from the database based on the provided dieter model.
 func retrieveDieter(dieter models.Dieter) (pgx.Rows, error) {
 
 	db, err := getConnection()
