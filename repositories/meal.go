@@ -114,12 +114,9 @@ func UpdateDieterCalories(dieter models.Dieter) error {
 		return err
 	}
 
-	rows, err := db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
+	_, err = db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
 
-	if rows != nil {
-		mutils.LogMessage("Request", "Calories updated for dieter")
-		return nil
-	} else if err != nil {
+	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
 		return errors.New("error 102: Cannot update dieter information")
 	}
@@ -183,11 +180,22 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 
 	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot parse dieter from row returned", err)
+		return 0, errors.New("cannot parse dieter from row returned")
+	}
+
 	if Dieter != nil {
 
 		dieter.ID = Dieter[0].ID
 
 		db, err := getConnection()
+
+		if err != nil {
+			mutils.LogApplicationError("Database Error", "Cannot connect to the database", err)
+			return 0, errors.New("cannot connect to the database")
+		}
+
 		rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
 
 		if err != nil {
@@ -197,6 +205,11 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 
 		meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
+		if err != nil {
+			mutils.LogApplicationError("Application Error", "Cannot parse meals from row returned", err)
+			return 0, errors.New("cannot parse meals from row returned")
+		}
+
 		if len(meals) > 0 {
 
 			rows, err = db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
@@ -204,7 +217,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 				mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
 				return 0, errors.New("cannot get today's calories for dieter")
 			} else {
-				if rows.Next() == true {
+				if rows.Next() {
 					err = rows.Scan(&dieter.Calories)
 					if err != nil {
 						mutils.LogApplicationError("Request", "Cannot parse sum of calories for this dieter", err)
@@ -359,6 +372,11 @@ func GetMeal(meal models.Meal) ([]models.Meal, error) {
 	}
 
 	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot parse meal from row returned", err)
+		return nil, errors.New("cannot parse meal from row returned")
+	}
 
 	return meals, nil
 }
@@ -560,6 +578,11 @@ func getMealCalories(id int64) int64 {
 
 	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
 
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot parse entries from row returned", err)
+		return 0
+	}
+
 	if entries != nil {
 		return entries[0].ID
 	}
@@ -580,6 +603,11 @@ func getDieterIDByName(name string) int64 {
 	}
 
 	dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot parse dieter from row returned", err)
+		return 0
+	}
 
 	if dieter != nil {
 		return dieter[0].ID
@@ -688,6 +716,11 @@ func AddEntry(entry models.Entry) (models.Entry, error) {
 
 	_, err = db.Query(context.Background(), "INSERT INTO entry values ($1, $2, $3, $4)", newID+1, entry.Calories, entry.FoodID, entry.MealID)
 
+	if err != nil {
+		mutils.LogApplicationError("Database Error", "Cannot insert entry into database", err)
+		return newEntry, err
+	}
+
 	return entry, nil
 
 }
@@ -711,6 +744,11 @@ func AddEntryToMeal(entry models.Entry) error {
 	}
 
 	meal, err = pgx.CollectRows(meals, pgx.RowToStructByName[models.Meal])
+
+	if err != nil {
+		mutils.LogApplicationError("Application Error", "Cannot parse meal from row returned", err)
+		return err
+	}
 
 	newCalories := entry.Calories + meal[0].Calories
 
