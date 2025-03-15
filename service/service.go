@@ -1,12 +1,12 @@
 package service
 
 import (
-    "errors"
-	"net/http"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"mauit/models"
 	"mauit/mutils"
 	"mauit/repositories"
+	"net/http"
 )
 
 func GetDieters(req *gin.Context) {
@@ -24,7 +24,7 @@ func GetDieters(req *gin.Context) {
 
 }
 
-// Add specifically a dieter
+// AddDieter Add specifically a dieter
 func AddDieter(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -49,14 +49,14 @@ func AddDieter(req *gin.Context) {
 
 }
 
-// Get dieter by name
+// GetDieter Get dieter by name
 func GetDieter(req *gin.Context) {
 
 	var dieter models.Dieter
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, errors.New("Cannot create dieter object from JSON provided"))
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 		return
 	}
 
@@ -71,7 +71,7 @@ func GetDieter(req *gin.Context) {
 
 }
 
-// Set the calories available for a dieter
+// SetDieterCalories Set the calories available for a dieter
 func SetDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -98,7 +98,7 @@ func GetDieterCalories(req *gin.Context) {
 
 	if err := req.BindJSON(&dieter); err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided")) 
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 		return
 	}
 
@@ -153,7 +153,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot get remaining calories for dieter", err)
-		req.IndentedJSON(http.StatusInternalServerError,errors.New("cannot get remaining calories for dieter"))
+		req.IndentedJSON(http.StatusInternalServerError, errors.New("cannot get remaining calories for dieter"))
 		return
 	}
 
@@ -228,7 +228,7 @@ func GetMealEntries(req *gin.Context) {
 	}
 
 	req.IndentedJSON(http.StatusOK, entries)
-	
+
 }
 
 func GetDieterMeals(req *gin.Context) {
@@ -251,7 +251,7 @@ func GetDieterMeals(req *gin.Context) {
 	}
 
 	req.IndentedJSON(http.StatusOK, meals)
-	
+
 }
 
 func AddMeal(req *gin.Context) {
@@ -562,5 +562,5 @@ func DeleteEntry(req *gin.Context) {
 	}
 
 	req.IndentedJSON(http.StatusOK, nil)
-	
+
 }
