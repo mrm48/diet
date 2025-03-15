@@ -564,58 +564,6 @@ func AddMeal(meal models.Meal) error {
 	}
 }
 
-// getMealCalories retrieves the total calories for a meal from the database.
-func getMealCalories(id int64) int64 {
-	db, err := getConnection()
-	if err != nil {
-		return 0
-	}
-	rows, err := db.Query(context.Background(), "SUM(Calories) FROM entry WHERE MEAL_ID=$1", id)
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query entries from database", err)
-		return 0
-	}
-
-	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot parse entries from row returned", err)
-		return 0
-	}
-
-	if entries != nil {
-		return entries[0].ID
-	}
-
-	return 0
-}
-
-// getDieterIDByName retrieves the ID for a dieter from the database based on the provided dieter name.
-func getDieterIDByName(name string) int64 {
-	db, err := getConnection()
-	if err != nil {
-		return 0
-	}
-	rows, err := db.Query(context.Background(), "SELECT * FROM dieter WHERE NAME=$1", name)
-	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query dieter from database", err)
-		return 0
-	}
-
-	dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
-
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot parse dieter from row returned", err)
-		return 0
-	}
-
-	if dieter != nil {
-		return dieter[0].ID
-	}
-
-	return 0
-}
-
 // GetAllFood retrieves all food items from the database.
 func GetAllFood() ([]models.Food, error) {
 
