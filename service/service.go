@@ -167,6 +167,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 }
 
+// GetMeal from the database. Requires the meal name and day, if no day is provided it defaults to the current day.
 func GetMeal(req *gin.Context) {
 
 	var meal models.Meal
@@ -189,6 +190,7 @@ func GetMeal(req *gin.Context) {
 
 }
 
+// GetMealCalories from the database for a single meal. Requires the meal name, dieter name and day.
 func GetMealCalories(req *gin.Context) {
 
 	var meal models.Meal
@@ -212,6 +214,7 @@ func GetMealCalories(req *gin.Context) {
 	req.IndentedJSON(http.StatusOK, meal)
 }
 
+// GetMealEntries for a single meal. This will return the entries consumed during the specified meal on the specified day for the specified user in a JSON array.
 func GetMealEntries(req *gin.Context) {
 
 	var meal models.Meal
