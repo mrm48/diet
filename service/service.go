@@ -9,6 +9,7 @@ import (
 	"net/http"
 )
 
+// GetDieters from the database. This will return all dieters in a JSON array. Nothing needs to be sent in.
 func GetDieters(req *gin.Context) {
 
 	Dieters, err := repositories.GetAllDieters()
@@ -24,7 +25,7 @@ func GetDieters(req *gin.Context) {
 
 }
 
-// AddDieter Add specifically a dieter
+// AddDieter to the database. The request must have the name and number of calories the new dieter will target each day.
 func AddDieter(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -49,7 +50,7 @@ func AddDieter(req *gin.Context) {
 
 }
 
-// GetDieter Get dieter by name
+// GetDieter from the database using the dieter name. Two dieters cannot have the same name.
 func GetDieter(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -71,7 +72,7 @@ func GetDieter(req *gin.Context) {
 
 }
 
-// SetDieterCalories Set the calories available for a dieter
+// SetDieterCalories in the database. This will set the target number of calories for a user using its name. 
 func SetDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -92,6 +93,7 @@ func SetDieterCalories(req *gin.Context) {
 
 }
 
+// GetDieterCalories from the database, this will get the target number of calories from the user by name. 
 func GetDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -114,6 +116,7 @@ func GetDieterCalories(req *gin.Context) {
 	}
 }
 
+// GetDieterMealsToday will return the meals consumed today by a user by name.
 func GetDieterMealsToday(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -137,6 +140,7 @@ func GetDieterMealsToday(req *gin.Context) {
 
 }
 
+// GetRemainingDieterCalories from the database. This will get the number of calories remaining before the user (by name) will get to their daily target.
 func GetRemainingDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
