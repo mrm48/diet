@@ -72,7 +72,7 @@ func GetDieter(req *gin.Context) {
 
 }
 
-// SetDieterCalories in the database. This will set the target number of calories for a user using its name. 
+// SetDieterCalories in the database. This will set the target number of calories for a user using its name.
 func SetDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -93,7 +93,7 @@ func SetDieterCalories(req *gin.Context) {
 
 }
 
-// GetDieterCalories from the database, this will get the target number of calories from the user by name. 
+// GetDieterCalories from the database, this will get the target number of calories from the user by name.
 func GetDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -550,6 +550,7 @@ func DeleteDieter(req *gin.Context) {
 
 }
 
+// DeleteEntry from the database using Entry specified by the user (day, meal, dieter name)
 func DeleteEntry(req *gin.Context) {
 
 	var entry models.Entry
