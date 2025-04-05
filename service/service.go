@@ -238,6 +238,7 @@ func GetMealEntries(req *gin.Context) {
 
 }
 
+// GetDieterMeals by specifying the dieter. This will return the meals associated with the dieter in the request body
 func GetDieterMeals(req *gin.Context) {
 
 	var dieter models.Dieter
