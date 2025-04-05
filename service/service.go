@@ -371,6 +371,7 @@ func AddFood(req *gin.Context) {
 
 }
 
+// GetFood from the database by matching the name from the request body.
 func GetFood(req *gin.Context) {
 
 	var food models.Food
@@ -394,6 +395,7 @@ func GetFood(req *gin.Context) {
 
 }
 
+// EditFood calories by matching the food name specified in the request. 
 func EditFood(req *gin.Context) {
 
 	var food models.Food
@@ -418,6 +420,7 @@ func EditFood(req *gin.Context) {
 
 }
 
+// DeleteFood from the database using the food object specified in the request body
 func DeleteFood(req *gin.Context) {
 
 	var food models.Food
@@ -440,6 +443,7 @@ func DeleteFood(req *gin.Context) {
 
 }
 
+// DeleteMeal from the database using the meal specified in the request
 func DeleteMeal(req *gin.Context) {
 
 	var meal models.Meal
@@ -462,6 +466,7 @@ func DeleteMeal(req *gin.Context) {
 
 }
 
+// deleteMealsForDieter specified by the request. 
 func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 
 	err := repositories.DeleteMealsForDieter(dieterID)
@@ -476,6 +481,7 @@ func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 
 }
 
+// DeleteMealEntries associated with the meal object in the request.
 func DeleteMealEntries(req *gin.Context) {
 	var meal models.Meal
 
@@ -504,6 +510,7 @@ func DeleteMealEntries(req *gin.Context) {
 
 }
 
+// deleteEntriesByMeal ID given, helps with DeleteMealEntries.
 func deleteEntriesByMeal(mealID int64, req *gin.Context) error {
 
 	err := repositories.DeleteEntriesByMeal(mealID)
@@ -517,6 +524,7 @@ func deleteEntriesByMeal(mealID int64, req *gin.Context) error {
 
 }
 
+// GetAllFood items from the database and return as a JSON array
 func GetAllFood(req *gin.Context) {
 
 	food, err := repositories.GetAllFood()
@@ -531,6 +539,7 @@ func GetAllFood(req *gin.Context) {
 
 }
 
+// DeleteDieter from the database with specified user name
 func DeleteDieter(req *gin.Context) {
 
 	var dieter models.Dieter
