@@ -262,6 +262,7 @@ func GetDieterMeals(req *gin.Context) {
 
 }
 
+// AddMeal to the database using the meal object provided in body of the request (name and dieter id).
 func AddMeal(req *gin.Context) {
 	var meal models.Meal
 
@@ -286,6 +287,7 @@ func AddMeal(req *gin.Context) {
 
 }
 
+// GetEntry from the database using the Entry object (ID) provided in the request.
 func GetEntry(req *gin.Context) {
 
 	var entry models.Entry
@@ -306,6 +308,7 @@ func GetEntry(req *gin.Context) {
 	req.IndentedJSON(http.StatusOK, entry)
 }
 
+// AddEntry to the database using (calories, food, meal ID) provided in the body of the request.
 func AddEntry(req *gin.Context) {
 
 	var entry models.Entry
@@ -329,6 +332,7 @@ func AddEntry(req *gin.Context) {
 
 }
 
+// AddEntryToMeal calories consumed using the (mealID, name and calories) provided in the body of the request
 func AddEntryToMeal(req *gin.Context) {
 
 	var entry models.Entry
@@ -396,7 +400,7 @@ func GetFood(req *gin.Context) {
 
 }
 
-// EditFood calories by matching the food name specified in the request. 
+// EditFood calories by matching the food name specified in the request.
 func EditFood(req *gin.Context) {
 
 	var food models.Food
@@ -467,7 +471,7 @@ func DeleteMeal(req *gin.Context) {
 
 }
 
-// deleteMealsForDieter specified by the request. 
+// deleteMealsForDieter specified by the request.
 func deleteMealsForDieter(dieterID int64, req *gin.Context) {
 
 	err := repositories.DeleteMealsForDieter(dieterID)
