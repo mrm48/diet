@@ -355,6 +355,7 @@ func AddEntryToMeal(req *gin.Context) {
 
 }
 
+// AddFood item to the database. Requires the food "name", number of "calories" and the number of "units" corresponding to the number of calories.
 func AddFood(req *gin.Context) {
 
 	var food models.Food
