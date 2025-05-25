@@ -2,11 +2,12 @@ package service
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"mauit/models"
 	"mauit/mutils"
 	"mauit/repositories"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetDieters from the database. This will return all dieters in a JSON array. Nothing needs to be sent in.
@@ -114,6 +115,7 @@ func GetDieterCalories(req *gin.Context) {
 		req.IndentedJSON(http.StatusNotFound, errors.New("cannot find unique Dieter requested"))
 		return
 	}
+
 }
 
 // GetDieterMealsToday will return the meals consumed today by a user by name.
