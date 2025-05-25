@@ -5,9 +5,7 @@ import (
 	"log"
 )
 
-// LogConnectionError Logging should be easily filtered, split type of message from the message
-// using : separator
-// This is a connection error log message format for the log file
+// LogConnectionError to the app log when a connection cannot be established with the database
 func LogConnectionError(err error) {
 
 	slog := fmt.Sprintf("Database Connection Error: Could not connect to the database: %v", err)
@@ -17,7 +15,7 @@ func LogConnectionError(err error) {
 
 }
 
-// LogApplicationError This is for application errors, errors where there are no upstream issues
+// LogApplicationError to the app log when the application encounters an invalid value or state
 func LogApplicationError(ltype string, message string, err error) {
 
 	slog := fmt.Sprintf("%v: %v : %v", ltype, message, err)
@@ -27,7 +25,7 @@ func LogApplicationError(ltype string, message string, err error) {
 
 }
 
-// LogMessage This is a standard log message for application messages
+// LogMessage to the app log for normal processing messages
 func LogMessage(ltype string, message string) {
 
 	slog := fmt.Sprintf("%v: %v", ltype, message)
@@ -37,7 +35,7 @@ func LogMessage(ltype string, message string) {
 
 }
 
-// LogError This will log out any error messages when logging application activity
+// LogError to the app log when the application gets to a state where it cannot recover
 func LogError(logerr error) {
 	if logerr != nil {
 		res := fmt.Sprintf("Log error: %v", logerr)
