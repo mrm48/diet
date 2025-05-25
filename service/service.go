@@ -15,6 +15,7 @@ func GetDieters(req *gin.Context) {
 
 	Dieters, err := repositories.GetAllDieters()
 
+	mutils.WrapServiceError(err, "could not return the list of dieters from the database", "", req)
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Could not return the list of dieters from the database", err)
 		req.IndentedJSON(http.StatusInternalServerError, errors.New("could not return the list of dieters from the database"))
