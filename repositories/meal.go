@@ -11,16 +11,14 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// getConnection returns a connection to the database.
+// getConnection establishes and returns a connection to the PostgreSQL database.
+// It attempts to connect to a local PostgreSQL instance on port 5432.
+// Returns a pgx.Conn pointer and an error. If the connection fails,
+// the error will be logged and wrapped with a descriptive message. If the connection
+// is successful, the function returns the connection and a nil error.
 func getConnection() (*pgx.Conn, error) {
 	db, err := pgx.Connect(context.Background(), "postgres://postgres@localhost:5432/meal")
-
-	if err != nil {
-		mutils.LogConnectionError(err)
-		return nil, errors.New("error 001: Cannot connect to the database")
-	}
-
-	return db, nil
+	return db, mutils.WrapError(err, "error 001: Cannot connect to the database", "connection")
 }
 
 // GetAllDieters retrieves all dieters from the database.
