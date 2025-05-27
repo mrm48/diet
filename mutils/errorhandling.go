@@ -3,8 +3,9 @@ package mutils
 import (
 	"errors"
 
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // WrapError wraps an error message and then calls the appropriate logger function
@@ -20,11 +21,11 @@ func WrapError(err error, msg string, logger string) error {
 	return nil
 }
 
-func WrapServiceError(err error, msg string, logger string, req *gin.Context) error {
+func WrapServiceError(err error, msg string, req *gin.Context) error {
 	if err != nil {
 		LogError(err)
 		LogApplicationError("Application Error", msg, err)
 		req.IndentedJSON(http.StatusInternalServerError, errors.New(msg))
-	} 
+	}
 	return errors.New(msg)
 }
