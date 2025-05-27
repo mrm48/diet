@@ -15,21 +15,17 @@ func GetDieters(req *gin.Context) {
 
 	Dieters, err := repositories.GetAllDieters()
 
-	mutils.WrapServiceError(err, "could not return the list of dieters from the database", "", req)
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Could not return the list of dieters from the database", err)
-		req.IndentedJSON(http.StatusInternalServerError, errors.New("could not return the list of dieters from the database"))
+	req, err = mutils.WrapServiceError(err, "could not return the list of dieters from the database", req)
+	if err == nil {
+		req.IndentedJSON(http.StatusOK, Dieters)
+		mutils.LogMessage("Request", "Dieters retrieved and sent to user")
 		return
 	}
-
-	req.IndentedJSON(http.StatusOK, Dieters)
-	mutils.LogMessage("Request", "Dieters retrieved and sent to user")
 
 }
 
 // AddDieter to the database. The request must have the name and number of calories the new dieter will target each day.
 func AddDieter(req *gin.Context) {
-
 	var dieter models.Dieter
 
 	if err := req.BindJSON(&dieter); err != nil {
@@ -40,15 +36,11 @@ func AddDieter(req *gin.Context) {
 
 	err := repositories.AddNewDieter(dieter)
 
-	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot add user to the database", err)
-		req.IndentedJSON(http.StatusInternalServerError, errors.New("cannot add user to the database"))
-		return
+	req, err = mutils.WrapServiceError(err, "cannot add user to the database", req)
+	if err == nil {
+		req.IndentedJSON(http.StatusCreated, dieter)
+		mutils.LogMessage("Request", "Dieter added")
 	}
-
-	req.IndentedJSON(http.StatusCreated, dieter)
-
-	mutils.LogMessage("Request", "Dieter added")
 
 }
 
