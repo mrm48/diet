@@ -30,7 +30,6 @@ func AddDieter(req *gin.Context) {
 
 	err := req.BindJSON(&dieter)
 	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
-	req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 
 	if err == nil {
 
@@ -55,12 +54,11 @@ func GetDieter(req *gin.Context) {
 	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 	if err == nil {
 		dieter, err = repositories.GetSingleDieter(dieter)
-	}
+		req, err = mutils.WrapServiceError(err, "cannot find dieter in database", req, http.StatusNotFound)
 
-	req, err = mutils.WrapServiceError(err, "cannot find dieter in database", req, http.StatusNotFound)
-
-	if err == nil {
-		req.IndentedJSON(http.StatusOK, dieter)
+		if err == nil {
+			req.IndentedJSON(http.StatusOK, dieter)
+		}
 	}
 
 }
@@ -70,19 +68,17 @@ func SetDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
 
-	if err := req.BindJSON(&dieter); err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create dieter calories object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter calories object from JSON provided"))
-		return
+	err := req.BindJSON(&dieter)
+	req, err = mutils.WrapServiceError(err, "cannot create dieter calories object from JSON provided", req, http.StatusBadRequest)
+
+	if err == nil {
+		err = repositories.UpdateDieterCalories(dieter)
+		req, err = mutils.WrapServiceError(err, "cannot update dieter calories object", req, http.StatusNotFound)
+
+		if err == nil {
+			req.IndentedJSON(http.StatusOK, dieter)
+		}
 	}
-
-	err := repositories.UpdateDieterCalories(dieter)
-
-	if err != nil {
-		req.IndentedJSON(http.StatusNotFound, errors.New("cannot update calories for dieter"))
-	}
-
-	req.IndentedJSON(http.StatusOK, dieter)
 
 }
 
