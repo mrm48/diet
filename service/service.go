@@ -15,7 +15,7 @@ func GetDieters(req *gin.Context) {
 
 	Dieters, err := repositories.GetAllDieters()
 
-	req, err = mutils.WrapServiceError(err, "could not return the list of dieters from the database", req)
+	req, err = mutils.WrapServiceError(err, "could not return the list of dieters from the database", req, http.StatusInternalServerError)
 	if err == nil {
 		req.IndentedJSON(http.StatusOK, Dieters)
 		mutils.LogMessage("Request", "Dieters retrieved and sent to user")
@@ -28,18 +28,20 @@ func GetDieters(req *gin.Context) {
 func AddDieter(req *gin.Context) {
 	var dieter models.Dieter
 
-	if err := req.BindJSON(&dieter); err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
-		return
-	}
+	err := req.BindJSON(&dieter)
+	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 
-	err := repositories.AddNewDieter(dieter)
-
-	req, err = mutils.WrapServiceError(err, "cannot add user to the database", req)
 	if err == nil {
-		req.IndentedJSON(http.StatusCreated, dieter)
-		mutils.LogMessage("Request", "Dieter added")
+
+		err = repositories.AddNewDieter(dieter)
+
+		req, err = mutils.WrapServiceError(err, "cannot add user to the database", req, http.StatusInternalServerError)
+		if err == nil {
+			req.IndentedJSON(http.StatusCreated, dieter)
+			mutils.LogMessage("Request", "Dieter added")
+		}
+
 	}
 
 }
@@ -49,20 +51,17 @@ func GetDieter(req *gin.Context) {
 
 	var dieter models.Dieter
 
-	if err := req.BindJSON(&dieter); err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
-		return
+	err := req.BindJSON(&dieter)
+	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	if err == nil {
+		dieter, err = repositories.GetSingleDieter(dieter)
 	}
 
-	dieter, err := repositories.GetSingleDieter(dieter)
+	req, err = mutils.WrapServiceError(err, "cannot find dieter in database", req, http.StatusNotFound)
 
-	if err != nil {
-		req.IndentedJSON(http.StatusNotFound, errors.New("cannot retrieve dieter just created"))
-		return
+	if err == nil {
+		req.IndentedJSON(http.StatusOK, dieter)
 	}
-
-	req.IndentedJSON(http.StatusOK, dieter)
 
 }
 
