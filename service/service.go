@@ -121,7 +121,7 @@ func GetDieterMealsToday(req *gin.Context) {
 	}
 }
 
-// GetRemainingDieterCalories from the database. This will get the number of calories remaining before the user (by name) will get to their daily target.
+// GetRemainingDieterCalories from the database. This will get the number of calories remaining before the user (by name) gets their daily target.
 func GetRemainingDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
@@ -148,7 +148,7 @@ func GetRemainingDieterCalories(req *gin.Context) {
 
 }
 
-// GetMeal from the database. Requires the meal name and day, if no day is provided it defaults to the current day.
+// GetMeal from the database. Requires the meal name and day. If no day is provided, it defaults to the current day.
 func GetMeal(req *gin.Context) {
 
 	var meal models.Meal
@@ -243,7 +243,7 @@ func GetDieterMeals(req *gin.Context) {
 
 }
 
-// AddMeal to the database using the meal object provided in body of the request (name and dieter id).
+// AddMeal to the database using the meal object provided in the body of the request (name and dieter id).
 func AddMeal(req *gin.Context) {
 	var meal models.Meal
 
@@ -253,7 +253,7 @@ func AddMeal(req *gin.Context) {
 		return
 	}
 
-	// add in any missing fields to meal object (don't need day, dieterid or calories)
+	// add in any missing fields to the meal object (don't need day, dieterid or calories)
 	if meal.Day == "" {
 		meal.Day = models.GetCurrentDate()
 	}
@@ -526,7 +526,7 @@ func GetAllFood(req *gin.Context) {
 
 }
 
-// DeleteDieter from the database with specified user name
+// DeleteDieter from the database with the specified username.
 func DeleteDieter(req *gin.Context) {
 
 	var dieter models.Dieter
