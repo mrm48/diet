@@ -105,26 +105,20 @@ func GetDieterCalories(req *gin.Context) {
 
 // GetDieterMealsToday will return the meals consumed today by a user by name.
 func GetDieterMealsToday(req *gin.Context) {
-
 	var dieter models.Dieter
-
 	day := models.GetCurrentDate()
 
-	if err := req.BindJSON(&dieter); err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
-		return
+	err := req.BindJSON(&dieter)
+	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+
+	if err == nil {
+		meals, err := repositories.GetDieterMealsToday(dieter, day)
+		req, err = mutils.WrapServiceError(err, "cannot get list of meals for today", req, http.StatusInternalServerError)
+
+		if err == nil {
+			req.IndentedJSON(http.StatusOK, meals)
+		}
 	}
-
-	meals, err := repositories.GetDieterMealsToday(dieter, day)
-
-	if err != nil {
-		req.IndentedJSON(http.StatusInternalServerError, errors.New("cannot get list of meals for today"))
-		return
-	}
-
-	req.IndentedJSON(http.StatusOK, meals)
-
 }
 
 // GetRemainingDieterCalories from the database. This will get the number of calories remaining before the user (by name) will get to their daily target.
