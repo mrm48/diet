@@ -87,21 +87,18 @@ func GetDieterCalories(req *gin.Context) {
 
 	var dieter models.Dieter
 
-	if err := req.BindJSON(&dieter); err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create dieter object from JSON provided", err)
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
-		return
-	}
-
-	Dieters, err := repositories.GetDieterCalories(dieter)
+	err := req.BindJSON(&dieter)
+	req, err = mutils.WrapServiceError(err, "Cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
-		req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
-		return
-	} else {
-		mutils.LogApplicationError("Database Error", "Cannot find unique Dieter requested", nil)
-		req.IndentedJSON(http.StatusNotFound, errors.New("cannot find unique Dieter requested"))
-		return
+		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
+		Dieters, err := repositories.GetDieterCalories(dieter)
+
+		req, err = mutils.WrapServiceError(err, "cannot find unique Dieter requested", req, http.StatusNotFound)
+
+		if err == nil {
+			req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
+		}
 	}
 
 }
