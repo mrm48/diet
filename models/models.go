@@ -4,20 +4,6 @@ import (
 	"time"
 )
 
-// Describe a record in the database
-type Record interface {
-	GetID() int64
-	SetID(int64)
-}
-
-// Create an interface for items that have a calories property
-type Named interface {
-	GetName() string
-	SetName(string)
-	GetCalories() int
-	SetCalories(int)
-}
-
 // User struct, maximum daily calories and name
 type Dieter struct {
 	ID       int64  `json:"id"`
