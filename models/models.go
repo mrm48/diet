@@ -1,9 +1,5 @@
 package models
 
-import (
-	"time"
-)
-
 // User struct, maximum daily calories and name
 type Dieter struct {
 	ID       int64  `json:"id"`

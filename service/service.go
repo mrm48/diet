@@ -106,7 +106,7 @@ func GetDieterCalories(req *gin.Context) {
 // GetDieterMealsToday will return the meals consumed today by a user by name.
 func GetDieterMealsToday(req *gin.Context) {
 	var dieter models.Dieter
-	day := models.GetCurrentDate()
+	day := mutils.GetCurrentDate()
 
 	err := req.BindJSON(&dieter)
 	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
@@ -123,7 +123,7 @@ func GetDieterMealsToday(req *gin.Context) {
 
 func GetRemainingDieterCalories(req *gin.Context) {
 	var dieter models.Dieter
-	day := models.GetCurrentDate()
+	day := mutils.GetCurrentDate()
 
 	err := req.BindJSON(&dieter)
 	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
@@ -218,7 +218,7 @@ func AddMeal(req *gin.Context) {
 
 	if err == nil {
 		if meal.Day == "" {
-			meal.Day = models.GetCurrentDate()
+			meal.Day = mutils.GetCurrentDate()
 		}
 
 		err = repositories.AddMeal(meal)
