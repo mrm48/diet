@@ -19,11 +19,13 @@ func WrapError(err error, msg string, logger string) error {
 	return nil
 }
 
+// WrapServiceError will determine if an error has occurred and the error message to the response
 func WrapServiceError(err error, msg string, req *gin.Context, code int) (*gin.Context, error) {
 	if err != nil {
 		LogError(err)
 		LogApplicationError("Application Error", msg, err)
 		req.IndentedJSON(code, errors.New(msg))
+		return req, errors.New(msg)
 	}
-	return req, errors.New(msg)
+	return req, nil
 }
