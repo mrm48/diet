@@ -260,7 +260,7 @@ func DeleteDieter(dieter models.Dieter) error {
 	return nil
 }
 
-// DeleteMealsForDieter deletes all meals for a dieter from the database.
+// DeleteMealsForDieter uses a dieter_id to delete all meals for a dieter from the database
 func DeleteMealsForDieter(dieterID int64) error {
 
 	meal, err := getConnection()
@@ -308,7 +308,7 @@ func DeleteMealsForDieter(dieterID int64) error {
 
 }
 
-// GetFoodRow retrieves a food item from the database based on the provided food model.
+// GetFoodRow uses a food object to retrieve a food item from the database and return it as a food object
 func GetFoodRow(food models.Food) (models.Food, error) {
 
 	var errorFood models.Food
@@ -346,7 +346,7 @@ func GetFoodRow(food models.Food) (models.Food, error) {
 	return errorFood, errors.New("broken control flow, should not be able to get here")
 }
 
-// GetMeal retrieves a meal from the database, using the provided meal model.
+// GetMeal uses a meal object to retrieve a meal from the database and return it as a list of meal objects
 func GetMeal(meal models.Meal) ([]models.Meal, error) {
 	db, err := getConnection()
 
@@ -371,7 +371,7 @@ func GetMeal(meal models.Meal) ([]models.Meal, error) {
 	return meals, nil
 }
 
-// DeleteEntriesByMeal deletes all entries for a meal from the database.
+// DeleteEntriesByMeal uses a meal_id to delete all entries for a meal from the database
 func DeleteEntriesByMeal(mealID int64) error {
 
 	meal, err := getConnection()
@@ -391,7 +391,7 @@ func DeleteEntriesByMeal(mealID int64) error {
 
 }
 
-// DeleteMeal deletes a meal from the database.
+// DeleteMeal uses a meal object to find and delete a meal from the database
 func DeleteMeal(meal models.Meal) error {
 	db, err := getConnection()
 
@@ -426,7 +426,7 @@ func DeleteMeal(meal models.Meal) error {
 	return nil
 }
 
-// GetMealCalories retrieves the total calories for a meal from the database.
+// GetMealCalories uses a meal object to retrieve the total calories for a meal from the database
 func GetMealCalories(meal models.Meal) (int, error) {
 
 	db, err := getConnection()
@@ -453,7 +453,7 @@ func GetMealCalories(meal models.Meal) (int, error) {
 
 }
 
-// GetMealEntries retrieves all entries for a meal from the database.
+// GetMealEntries uses a meal object to retrieve all entries for a meal from the database
 func GetMealEntries(meal models.Meal) ([]models.Entry, error) {
 
 	db, err := getConnection()
@@ -479,7 +479,7 @@ func GetMealEntries(meal models.Meal) ([]models.Entry, error) {
 	return entries, nil
 }
 
-// GetDieterMeals retrieves all meals for a dieter from the database.
+// GetDieterMeals uses a dieter object to retrieve all meals for a dieter from the database
 func GetDieterMeals(dieter models.Dieter) ([]models.Meal, error) {
 	db, err := getConnection()
 	if err != nil {
@@ -496,6 +496,7 @@ func GetDieterMeals(dieter models.Dieter) ([]models.Meal, error) {
 	return meals, mutils.WrapError(err, "error 201: Cannot parse meals from rows", "parse")
 }
 
+// AddMeal uses a meal object to add a meal to the database
 func AddMeal(meal models.Meal) error {
 	var newID int64
 	var dieter models.Dieter
@@ -536,6 +537,7 @@ func AddMeal(meal models.Meal) error {
 	return mutils.WrapError(nil, "error 301: Cannot find dieter id", "notfound")
 }
 
+// GetAllFood retrieves all food items from the database and returns them as a list of food objects
 func GetAllFood() ([]models.Food, error) {
 	db, err := getConnection()
 	if err != nil {
@@ -552,6 +554,7 @@ func GetAllFood() ([]models.Food, error) {
 	return food, mutils.WrapError(err, "error 201: Cannot parse food items", "parse")
 }
 
+// AddFoodRow uses a food object to add a food item to the database
 func AddFoodRow(food models.Food) error {
 	db, err := getConnection()
 	if err != nil {
@@ -570,6 +573,7 @@ func AddFoodRow(food models.Food) error {
 	return mutils.WrapError(err, "error 102: Cannot insert food", "insert")
 }
 
+// UpdateFood uses a food object to update the calories for a food item in the database
 func UpdateFood(food models.Food) error {
 	db, err := getConnection()
 	if err != nil {
@@ -580,6 +584,7 @@ func UpdateFood(food models.Food) error {
 	return mutils.WrapError(err, "error 101: Cannot update food calories", "update")
 }
 
+// DeleteFoodRow uses a food object to find and delete a food item from the database
 func DeleteFoodRow(food models.Food) error {
 	db, err := getConnection()
 	if err != nil {
@@ -590,6 +595,7 @@ func DeleteFoodRow(food models.Food) error {
 	return mutils.WrapError(err, "error 101: Cannot delete food", "delete")
 }
 
+// AddEntry uses a complete entry object to add an entry to the database
 func AddEntry(entry models.Entry) (models.Entry, error) {
 	var newID int64
 	db, err := getConnection()
@@ -613,6 +619,7 @@ func AddEntry(entry models.Entry) (models.Entry, error) {
 	return entry, nil
 }
 
+// AddEntryToMeal uses an entry object that includes a meal_id to update a meal in the database to add the calories from the entry
 func AddEntryToMeal(entry models.Entry) error {
 	var meal []models.Meal
 	db, err := getConnection()
@@ -637,6 +644,7 @@ func AddEntryToMeal(entry models.Entry) error {
 	return mutils.WrapError(err, "error 102: Cannot update meal calories", "update")
 }
 
+// GetEntry uses an entry object to find and return an entry from the database
 func GetEntry(entry models.Entry) (models.Entry, error) {
 	db, err := getConnection()
 	if err != nil {
@@ -658,6 +666,7 @@ func GetEntry(entry models.Entry) (models.Entry, error) {
 	return entries[0], nil
 }
 
+// DeleteEntry uses an entry object to find and delete an entry from the database
 func DeleteEntry(entry models.Entry) error {
 	db, err := getConnection()
 	if err != nil {
@@ -668,6 +677,7 @@ func DeleteEntry(entry models.Entry) error {
 	return mutils.WrapError(err, "error 101: Cannot delete entry", "delete")
 }
 
+// retrieveDieter uses a dieter object to find a dieter in the database
 func retrieveDieter(dieter models.Dieter) (pgx.Rows, error) {
 	db, err := getConnection()
 	if err != nil {
