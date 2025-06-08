@@ -30,3 +30,4 @@ go.work.sum
 
 # Application Logging
 logs/
+.aider*
