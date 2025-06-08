@@ -10,6 +10,12 @@ import (
 	"os"
 )
 
+// main initializes and starts the meal tracking application server. Key responsibilities:
+// - Creates/opens log file at logs/mauit_app.log with append mode
+// - Configures CORS to allow requests from http://localhost:5173
+// - Sets up all API routes via router.SetRoutes()
+// - Starts HTTP server on localhost:9090
+// Logs errors to file and continues running if log file creation fails
 func main() {
 
 	f, err := os.OpenFile("logs/mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
