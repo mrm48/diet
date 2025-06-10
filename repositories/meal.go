@@ -175,6 +175,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 		return 0, errors.New("cannot parse dieter from row returned")
 	}
 
+	// Dieter is found, query all meals from dieter on specified day
 	if Dieter != nil {
 
 		dieter.ID = Dieter[0].ID
@@ -200,6 +201,8 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 			return 0, errors.New("cannot parse meals from row returned")
 		}
 
+		// Found meals from today for this dieter, query the database for the sum of calories for those meals.
+		// TODO: is the above query to check if there are meals for the "day" necessary? Would this not return total number of calories if no meals are found?
 		if len(meals) > 0 {
 
 			rows, err = db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
@@ -280,6 +283,7 @@ func DeleteMealsForDieter(dieterID int64) error {
 
 	var index int64
 
+	// Loop through all meals for the dieter returned from the query above and delete the entries for each meal.
 	for rows.Next() {
 		err = rows.Scan(&index)
 		if err != nil {
@@ -293,18 +297,11 @@ func DeleteMealsForDieter(dieterID int64) error {
 			return errors.New("cannot remove entries from the meal")
 		}
 
-		conn, err := getConnection()
-		if err != nil {
-			return err
-		}
-		_, err = conn.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", index)
-		if err != nil {
-			mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
-			return errors.New("cannot remove meal from the database")
-		}
+		_, err = meal.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", index)
+		err = mutils.WrapError(err, "error 101: Cannot delete meal from database", "query")
 	}
 
-	return nil
+	return err
 
 }
 
