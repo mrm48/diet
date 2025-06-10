@@ -210,6 +210,15 @@ func GetDieterMeals(req *gin.Context) {
 	}
 }
 
+func GetDateFromString(req *gin.Context) {
+	req.GetString("date")
+	parsedDate, err := mutils.GetDateFromString(req.GetString("date"))
+	req, err = mutils.WrapServiceError(err, "cannot create date object from JSON provided", req, http.StatusBadRequest)
+	if err == nil {
+		req.IndentedJSON(http.StatusOK, mutils.GetCurrentDate())
+	}
+}
+
 func AddMeal(req *gin.Context) {
 	var meal models.Meal
 
