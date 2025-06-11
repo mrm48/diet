@@ -13,8 +13,13 @@ func GetCurrentDate() string {
 	return day
 }
 
-// GetDateFromString will parse a time.Time object from a string that can be used to query the database for a specific day's meals/entries
+// GetDateFromString will parse a time.Time object from a string and format it correctly so that it can be used to query the database for a specific day's meals/entries
 func GetDateFromString(date string) (string, error) {
-	parsedDate, err := time.Parse("2006-01-02T15:04:05 -070000", date)
-	return parsedDate.Format("2006-01-02"), err
+	if date != "" {
+		parsedDate, err := time.Parse("2006-01-02T15:04:05 -070000", date)
+		stringDate := parsedDate.Format("2006-01-02")
+		return stringDate, err
+	} else {
+		return time.Now().Format("2006-01-02"), nil
+	}
 }
