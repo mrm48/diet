@@ -508,18 +508,22 @@ func AddMeal(meal models.Meal) error {
 	meal.Calories = 0
 	meal.Dieterid = dieter.ID
 
+	meal.Day, err = mutils.GetDateFromString(meal.Day)
+
 	if meal.Dieterid != 0 {
 		db, err := getConnection()
 		if err != nil {
 			return err
 		}
 
+		// Get the meal count to ensure the next ID is unique
 		err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from meal").Scan(&newID)
 		err = mutils.WrapError(err, "error 102: Cannot get meal count", "query")
 		if err != nil {
 			return err
 		}
 
+		// Add the meal to the database, add 1 to the last ID created
 		_, err = db.Exec(context.Background(), "INSERT INTO meal values ($1, $2, $3, $4, $5, $6)",
 			newID+1, meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
 		err = mutils.WrapError(err, "error 103: Cannot store new meal", "insert")
