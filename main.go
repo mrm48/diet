@@ -10,14 +10,13 @@ import (
 	"os"
 )
 
-// main initializes and starts the meal tracking application server. Key responsibilities:
+// main initializes and starts mauit. Key responsibilities:
 // - Creates/opens log file at logs/mauit_app.log with append mode
-// - Configures CORS to allow requests from http://localhost:5173
 // - Sets up all API routes via router.SetRoutes()
 // - Starts HTTP server on localhost:9090
-// Logs errors to file and continues running if log file creation fails
 func main() {
 
+	// create and / or open the application log file.
 	f, err := os.OpenFile("logs/mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	if err != nil {
@@ -34,6 +33,8 @@ func main() {
 
 	log.SetOutput(f)
 	mutils.LogMessage("Server Startup", "Initializing")
+
+	// setup the router
 	r := gin.Default()
     r.Use(cors.New(cors.Config{
         AllowOrigins:     []string{"http://localhost:5173"},
@@ -49,6 +50,7 @@ func main() {
 
 	router.SetRoutes(r)
 	mutils.LogMessage("Server Startup", "Routes set: Starting server")
+
 	// start server
 	r.Run("localhost:9090")
 
