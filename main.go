@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-    "github.com/gin-contrib/cors"
-    "time"
 	"log"
 	"mauit/mutils"
 	"mauit/router"
+	"net/http"
 	"os"
+	"time"
 )
 
 // main initializes and starts mauit. Key responsibilities:
@@ -36,23 +37,31 @@ func main() {
 
 	// setup the router
 	r := gin.Default()
-    r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"http://localhost:5173"},
-        AllowMethods:     []string{"GET","PUT","POST","DELETE","PATCH"},
-        AllowHeaders:     []string{"Origin"},
-        ExposeHeaders:    []string{"Content-Length"},
-        AllowCredentials: true,
-        AllowOriginFunc: func(origin string) bool {
-            return origin == "http://localhost:5173"
-        },
-        MaxAge: 12 * time.Hour,
-    }))
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "PUT", "POST", "DELETE", "PATCH"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return true
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 
+	// Setup API routes
 	router.SetRoutes(r)
-	mutils.LogMessage("Server Startup", "Routes set: Starting server")
+
+	// Serve static frontend files
+	r.StaticFS("/static", http.Dir("./frontend"))
+
+	// Serve index.html at the root path
+	r.GET("/", func(c *gin.Context) {
+		c.File("./frontend/index.html")
+	})
+	mutils.LogMessage("Server Startup", "Routes set and frontend configured: Starting server")
 
 	// start server
 	r.Run("localhost:9090")
 
 }
-

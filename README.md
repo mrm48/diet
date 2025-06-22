@@ -182,20 +182,13 @@ Dieter REST API written in Go using a postgresql database for storing foods, ent
 ### Dependencies
 ```
 	PostgresQL 15.4
-	openJDK 17
-	Maven 3.9.1
-```
-
-### Optional
-```
-	just (https://github.com/casey/just)
-	Nix Package Manager (https://nixos.org/download)
+	Go 1.21 or later
 ```
 
 ### Download and setup
 #### Clone this repository
 ```
-git clone https://github.com/mrm48/diet.git
+git clone https://github.com/mrm48/mauit.git
 ```
 
 #### Database
@@ -205,22 +198,46 @@ CREATE DATABASE meal;
 GRANT ALL PRIVILEGES ON DATABASE "meal" TO postgres;
 ```
 
-#### Note: A Nix Flake is available
-
-Add the following before running if you wish to use the flake.
-
+#### Run
 ```
-nix develop
+go run main.go
 ```
 
-#### Run (with just)
+## Frontend
+
+The application includes a web-based frontend that allows you to:
+
+- Manage users and their daily calorie targets
+- Add and manage foods in the database
+- Create and track meals
+- View calorie consumption and remaining daily calories
+
+### Accessing the Frontend
+
+After starting the application, open your web browser and navigate to:
+
 ```
-just run
+http://localhost:9090
 ```
 
-#### Run (without just)
-```
-mvn spring-boot:run
-```
+### Frontend Features
 
+1. **Dashboard**
+   - Select a user to view their calorie summary
+   - See daily calorie target, consumed calories, and remaining calories
+   - View today's meals
 
+2. **Meals**
+   - Add new meals with selected foods
+   - View meal history by day
+   - Delete meals
+
+3. **Foods**
+   - Add new foods with calorie information
+   - View all foods in the database
+   - Delete foods
+
+4. **Users**
+   - Add new users with daily calorie targets
+   - View all users
+   - Delete users

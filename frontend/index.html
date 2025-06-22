@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MauIt - Diet Tracker</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="/static/js/main.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MauIt Diet Tracker</h1>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
+                    <li><a href="#" data-page="meals">Meals</a></li>
+                    <li><a href="#" data-page="foods">Foods</a></li>
+                    <li><a href="#" data-page="users">Users</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main id="app">
+            <!-- Content will be loaded dynamically -->
+            <div id="loading">Loading...</div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 MauIt Diet Tracker</p>
+        </footer>
+    </div>
+
+    <!-- Templates -->
+    <template id="dashboard-template">
+        <div class="dashboard">
+            <h2>Dashboard</h2>
+            <div class="user-select">
+                <label for="user-select">Select User:</label>
+                <select id="user-select">
+                    <option value="">Select a user</option>
+                </select>
+            </div>
+            <div class="calorie-summary" id="calorie-summary" style="display: none;">
+                <h3>Calorie Summary for <span id="dashboard-user-name"></span></h3>
+                <div class="calorie-card">
+                    <h4>Daily Target</h4>
+                    <p id="daily-target">0</p>
+                </div>
+                <div class="calorie-card">
+                    <h4>Consumed Today</h4>
+                    <p id="consumed-today">0</p>
+                </div>
+                <div class="calorie-card">
+                    <h4>Remaining</h4>
+                    <p id="remaining">0</p>
+                </div>
+            </div>
+            <div class="today-meals" id="today-meals" style="display: none;">
+                <h3>Today's Meals</h3>
+                <div id="meals-list" class="meals-list">
+                    <!-- Meals will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="meals-template">
+        <div class="meals">
+            <h2>Meals</h2>
+            <div class="user-select">
+                <label for="meal-user-select">Select User:</label>
+                <select id="meal-user-select">
+                    <option value="">Select a user</option>
+                </select>
+            </div>
+            <div id="meal-management" style="display: none;">
+                <div class="add-meal">
+                    <h3>Add New Meal</h3>
+                    <form id="add-meal-form">
+                        <div class="form-group">
+                            <label for="meal-name">Meal Name:</label>
+                            <input type="text" id="meal-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meal-calories">Calories:</label>
+                            <input type="number" id="meal-calories" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="meal-foods">Foods:</label>
+                            <select id="meal-foods" multiple>
+                                <!-- Foods will be loaded here -->
+                            </select>
+                        </div>
+                        <button type="submit">Add Meal</button>
+                    </form>
+                </div>
+                <div class="meal-history">
+                    <h3>Meal History</h3>
+                    <div id="meal-history-list" class="meal-history-list">
+                        <!-- Meal history will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="foods-template">
+        <div class="foods">
+            <h2>Foods</h2>
+            <div class="add-food">
+                <h3>Add New Food</h3>
+                <form id="add-food-form">
+                    <div class="form-group">
+                        <label for="food-name">Food Name:</label>
+                        <input type="text" id="food-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="food-calories">Calories:</label>
+                        <input type="number" id="food-calories" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="food-units">Units:</label>
+                        <input type="number" id="food-units" value="1" required>
+                    </div>
+                    <button type="submit">Add Food</button>
+                </form>
+            </div>
+            <div class="food-list">
+                <h3>Food Database</h3>
+                <div id="food-list-container" class="food-list-container">
+                    <!-- Foods will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="users-template">
+        <div class="users">
+            <h2>Users</h2>
+            <div class="add-user">
+                <h3>Add New User</h3>
+                <form id="add-user-form">
+                    <div class="form-group">
+                        <label for="new-user-name">Name:</label>
+                        <input type="text" id="new-user-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-calories">Daily Calorie Target:</label>
+                        <input type="number" id="user-calories" required>
+                    </div>
+                    <button type="submit">Add User</button>
+                </form>
+            </div>
+            <div class="user-list">
+                <h3>User Management</h3>
+                <div id="user-list-container" class="user-list-container">
+                    <!-- Users will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+</html>

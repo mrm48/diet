@@ -30,4 +30,6 @@ go.work.sum
 
 # Application Logging
 logs/
+
+# aider AI tool
 .aider*
