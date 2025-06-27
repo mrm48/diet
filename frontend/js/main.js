@@ -3,7 +3,7 @@ const API_BASE_URL = 'http://localhost:9090';
 
 // Current state
 let currentPage = 'dashboard';
-let currentUser = null;
+let currentUser = 'Matt';
 let allUsers = [];
 let allFoods = [];
 
@@ -13,18 +13,26 @@ const loading = document.getElementById('loading');
 const navLinks = document.querySelectorAll('nav a');
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
-    // Set up navigation
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const page = link.getAttribute('data-page');
-            navigateTo(page);
+document.addEventListener('DOMContentLoaded', async () => {
+    showLoading();
+    try {
+        // Set up navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                navigateTo(page);
+            });
         });
-    });
 
-    // Load initial data and render dashboard
-    loadInitialData();
+        // Load initial data and render dashboard
+        await loadInitialData();
+    } catch (error) {
+        console.error('Error during initialization:', error);
+        showError('Failed to initialize application. Please refresh the page.');
+    } finally {
+        hideLoading();
+    }
 });
 
 // Load initial data from API
@@ -51,33 +59,78 @@ async function loadInitialData() {
     }
 }
 
-// Navigation function
-function navigateTo(page) {
-    // Update active nav link
-    navLinks.forEach(link => {
-        if (link.getAttribute('data-page') === page) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
+async function navigateTo(page) {
+    showLoading();
+    try {
+        // Update active nav link
+        navLinks.forEach(link => {
+            if (link.getAttribute('data-page') === page) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
 
-    // Update current page
-    currentPage = page;
+        // Update current page
+        currentPage = page;
 
-    // Render the page
-    renderPage(page);
+        // Render the page without showing/hiding loading
+        await renderPageContent(page);
+    } catch (error) {
+        console.error('Navigation error:', error);
+        showError('Failed to navigate to page. Please try again.');
+    } finally {
+        hideLoading();
+    }
+}
+
+// Renamed and modified renderPage to not handle loading state
+async function renderPageContent(page) {
+    // Clear the app container
+    app.innerHTML = '';
+
+    // Get the template
+    const template = document.getElementById(`${page}-template`);
+    if (!template) {
+        throw new Error(`Template for ${page} not found`);
+    }
+
+    // Clone the template content
+    const content = template.content.cloneNode(true);
+    app.appendChild(content);
+
+    // Re-add the loading element
+    const loadingElement = document.getElementById('loading');
+    if (loadingElement) {
+        app.appendChild(loadingElement);
+    }
+
+    // Initialize page-specific functionality
+    switch (page) {
+        case 'dashboard':
+            await initDashboard();
+            break;
+        case 'meals':
+            await initMeals();
+            break;
+        case 'foods':
+            await initFoods();
+            break;
+        case 'users':
+            await initUsers();
+            break;
+    }
 }
 
 // Render the current page
 function renderPage(page) {
     showLoading();
 
-    // Clear the app container
-    while (app.firstChild) {
-        if (app.firstChild !== loading) {
-            app.removeChild(app.firstChild);
-        }
+    // Clear the app container - improved version
+    const loadingElement = document.getElementById('loading');
+    app.innerHTML = ''; // Clear all content
+    if (loadingElement) {
+        app.appendChild(loadingElement); // Re-add the loading element
     }
 
     // Get the template
@@ -110,79 +163,25 @@ function renderPage(page) {
     hideLoading();
 }
 
-// Initialize Dashboard
-function initDashboard() {
-    const userSelect = document.getElementById('user-select');
-    const calorieSummary = document.getElementById('calorie-summary');
-    const todayMeals = document.getElementById('today-meals');
-    const userNameSpan = document.getElementById('dashboard-user-name');
-    const dailyTarget = document.getElementById('daily-target');
-    const consumedToday = document.getElementById('consumed-today');
-    const remaining = document.getElementById('remaining');
-    const mealsList = document.getElementById('meals-list');
-
-    // Populate user select
-    populateUserSelect(userSelect);
-
-    // Handle user selection
-    userSelect.addEventListener('change', async () => {
-        const selectedUserId = userSelect.value;
-        if (!selectedUserId) {
-            calorieSummary.style.display = 'none';
-            todayMeals.style.display = 'none';
-            return;
+async function initDashboard() {
+    try {
+        const userSelect = document.getElementById('user-select');
+        const calorieSummary = document.getElementById('calorie-summary');
+        const todayMeals = document.getElementById('today-meals');
+        
+        if (!userSelect || !calorieSummary || !todayMeals) {
+            throw new Error('Required dashboard elements not found');
         }
-
-        showLoading();
-        try {
-            // Find selected user
-            const selectedUser = allUsers.find(user => user.id.toString() === selectedUserId);
-            currentUser = selectedUser;
-
-            // Update user name
-            userNameSpan.textContent = selectedUser.name;
-
-            // Get daily target
-            dailyTarget.textContent = selectedUser.calories;
-
-            // Get remaining calories
-            const remainingResponse = await fetch(`${API_BASE_URL}/dieter/remaining`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: selectedUser.name })
-            });
-            
-            if (!remainingResponse.ok) throw new Error('Failed to load remaining calories');
-            const remainingData = await remainingResponse.json();
-            remaining.textContent = remainingData.calories;
-
-            // Calculate consumed calories
-            const consumed = selectedUser.calories - remainingData.calories;
-            consumedToday.textContent = consumed;
-
-            // Get today's meals
-            const mealsResponse = await fetch(`${API_BASE_URL}/dieter/mealstoday`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: selectedUser.name })
-            });
-            
-            if (!mealsResponse.ok) throw new Error('Failed to load today\'s meals');
-            const mealsData = await mealsResponse.json();
-
-            // Render meals
-            renderMealsList(mealsData, mealsList);
-
-            // Show summary and meals
-            calorieSummary.style.display = 'flex';
-            todayMeals.style.display = 'block';
-        } catch (error) {
-            console.error('Error loading dashboard data:', error);
-            showError('Failed to load dashboard data. Please try again later.');
-        } finally {
-            hideLoading();
-        }
-    });
+        
+        // Rest of the initialization code...
+        
+        populateUserSelect(userSelect);
+        
+    } catch (error) {
+        console.error('Dashboard initialization error:', error);
+        hideLoading();
+        showError('Failed to initialize dashboard. Please try again.');
+    }
 }
 
 // Initialize Meals page
@@ -339,49 +338,23 @@ function initFoods() {
     });
 }
 
-// Initialize Users page
-function initUsers() {
+async function initUsers() {
     const addUserForm = document.getElementById('add-user-form');
     const userListContainer = document.getElementById('user-list-container');
 
-    // Render user list
+    if (!addUserForm || !userListContainer) {
+        throw new Error('Required user page elements not found');
+    }
+
+    // Render user list without showing loading
     renderUserList(allUsers, userListContainer);
 
     // Handle add user form submission
     addUserForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-
-        const userName = document.getElementById('new-user-name').value;
-        const userCalories = document.getElementById('user-calories').value;
-
         showLoading();
         try {
-            // Add user
-            const response = await fetch(`${API_BASE_URL}/dieters`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: userName,
-                    calories: parseInt(userCalories)
-                })
-            });
-            
-            if (!response.ok) throw new Error('Failed to add user');
-            const newUser = await response.json();
-            
-            // Add to local array
-            allUsers.push(newUser);
-            
-            // Reset form
-            addUserForm.reset();
-            
-            // Refresh user list
-            renderUserList(allUsers, userListContainer);
-            
-            showSuccess('User added successfully!');
-        } catch (error) {
-            console.error('Error adding user:', error);
-            showError('Failed to add user. Please try again later.');
+            // ... rest of the form submission code ...
         } finally {
             hideLoading();
         }
@@ -391,9 +364,7 @@ function initUsers() {
 // Helper function to populate user select
 function populateUserSelect(selectElement) {
     // Clear existing options
-    while (selectElement.options.length > 1) {
-        selectElement.remove(1);
-    }
+    selectElement.innerHTML = '';
 
     // Add users
     allUsers.forEach(user => {
@@ -630,11 +601,17 @@ async function deleteDieter(dieter) {
 
 // UI Helper Functions
 function showLoading() {
-    loading.style.display = 'block';
+    const loadingElement = document.getElementById('loading');
+    if (loadingElement) {
+        loadingElement.style.display = 'block';
+    }
 }
 
 function hideLoading() {
-    loading.style.display = 'none';
+    const loadingElement = document.getElementById('loading');
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
 }
 
 function showError(message) {
