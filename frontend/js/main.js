@@ -340,6 +340,8 @@ function initFoods() {
 
 async function initUsers() {
     const addUserForm = document.getElementById('add-user-form');
+    const addUserFormName = document.getElementById('new-user-name');
+    const addUserFormCalories = document.getElementById('user-calories');
     const userListContainer = document.getElementById('user-list-container');
 
     if (!addUserForm || !userListContainer) {
@@ -354,7 +356,7 @@ async function initUsers() {
         e.preventDefault();
         showLoading();
         try {
-            // ... rest of the form submission code ...
+            await addDieter(addUserFormName.value, parseInt(addUserFormCalories.value));
         } finally {
             hideLoading();
         }
@@ -542,6 +544,23 @@ function renderUserList(users, container) {
 }
 
 // API Functions
+async function addDieter(name, calories) {
+    try {
+        // Add User
+        const addUserResponse = await fetch(`${API_BASE_URL}/dieters`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({name: name, calories: calories })
+        });
+        showSuccess('User added successfully!');
+        return true;
+    } catch (error) {
+        console.error('Error adding user:', error);
+        showError('Failed to add user. Please try again later.');
+        return false;
+
+    }
+}
 async function deleteMeal(meal) {
     try {
         const response = await fetch(`${API_BASE_URL}/meal`, {
