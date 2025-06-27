@@ -36,9 +36,17 @@ func AddDieter(req *gin.Context) {
 		err = repositories.AddNewDieter(dieter)
 
 		req, err = mutils.WrapServiceError(err, "cannot add user to the database", req, http.StatusInternalServerError)
+
 		if err == nil {
-			req.IndentedJSON(http.StatusCreated, dieter)
-			mutils.LogMessage("Request", "Dieter added")
+
+			dieter, err = repositories.GetSingleDieter(dieter)
+
+			req, err = mutils.WrapServiceError(err, "cannot retrieve user from database after it has been added", req, http.StatusInternalServerError)
+			if err == nil {
+				req.IndentedJSON(http.StatusCreated, dieter)
+				mutils.LogMessage("Request", "Dieter added")
+			}
+
 		}
 
 	}
