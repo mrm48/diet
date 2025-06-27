@@ -545,6 +545,7 @@ function renderUserList(users, container) {
 
 // API Functions
 async function addDieter(name, calories) {
+    const userListContainer = document.getElementById('user-list-container');
     try {
         // Add User
         const addUserResponse = await fetch(`${API_BASE_URL}/dieters`, {
@@ -553,6 +554,8 @@ async function addDieter(name, calories) {
             body: JSON.stringify({name: name, calories: calories })
         });
         showSuccess('User added successfully!');
+        allUsers.push(await addUserResponse.json());
+        renderUserList(allUsers, userListContainer);
         return true;
     } catch (error) {
         console.error('Error adding user:', error);
