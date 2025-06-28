@@ -166,32 +166,81 @@ function renderPage(page) {
 async function initDashboard() {
     try {
         const userSelect = document.getElementById('user-select');
-        const calorieSummary = document.getElementById('calorie-summary');
+        const remainingCard = document.getElementById('remaining');
         const todayMeals = document.getElementById('today-meals');
+        const mealManagement = document.getElementById('meal-management');
+        const caloriesSummary = document.getElementById('calorie-summary');
+        const totalCaloriesCard = document.getElementById('daily-target');
+        const consumedCaloriesCard = document.getElementById('consumed-today');
         
-        if (!userSelect || !calorieSummary || !todayMeals) {
+        if (!userSelect || !caloriesSummary || !todayMeals) {
             throw new Error('Required dashboard elements not found');
         }
         
         // Rest of the initialization code...
         populateUserSelect(userSelect);
 
-        if (userSelect.value.toString() !== '') {
+        userSelect.addEventListener('change', async () => {
             const selectedUserId = userSelect.value;
-            const selectedUser = allUsers.find(user => user.id.toString() === selectedUserId);
-            currentUser = selectedUser;
-            const caloriesResponse = await fetch(`${API_BASE_URL}/dieter/remaining`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: selectedUser.name })
-            });
+            if (!selectedUserId) {
+                mealManagement.style.display = 'none';
+                caloriesSummary.style.display = 'none';
+                return;
+            }
 
-            if (!caloriesResponse.ok) throw new Error('Failed to load meals');
-            const caloriesData = await caloriesResponse.json();
+            showLoading();
+            try {
+                // Find selected user
+                const selectedUser = allUsers.find(user => user.id.toString() === selectedUserId);
+                currentUser = selectedUser;
 
-            document.getElementById('consumed-today').innerHTML = caloriesData.calories.toString();
-        }
-        
+                // Get user's meals
+//                const mealsResponse = await fetch(`${API_BASE_URL}/dieter/meals`, {
+//                    method: 'POST',
+//                    headers: { 'Content-Type': 'application/json' },
+//                    body: JSON.stringify({ name: selectedUser.name })
+//                });
+//
+//                if (!mealsResponse.ok) throw new Error('Failed to load meals');
+//                const mealsData = await mealsResponse.json();
+
+                const caloriesRemaining = await fetch(`${API_BASE_URL}/dieter/remaining`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: selectedUser.name })
+                });
+
+                const caloriesTotal = await fetch(`${API_BASE_URL}/dieter/calories`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: selectedUser.name })
+                });
+
+                if (!caloriesRemaining.ok) throw new Error('Failed to load remaining calories');
+                const caloriesRemainingToday = await caloriesRemaining.json();
+
+                if (!caloriesTotal.ok) throw new Error('Failed to load total calories');
+                const caloriesTotalToday = await caloriesTotal.json();
+
+                // Render meal history
+                //renderMealHistory(mealsData, mealHistoryList);
+
+                remainingCard.textContent = `${caloriesRemainingToday.calories}`;
+                totalCaloriesCard.textContent = `${caloriesTotalToday}`;
+                consumedCaloriesCard.textContent = `${caloriesTotalToday - caloriesRemainingToday.calories}`;
+
+                caloriesSummary.style.display = 'block';
+
+                // Show meal management
+                //mealManagement.style.display = 'block';
+            } catch (error) {
+                console.error('Error loading meals data:', error);
+                showError('Failed to load meals data. Please try again later.');
+            } finally {
+                hideLoading();
+            }
+        });
+
     } catch (error) {
         console.error('Dashboard initialization error:', error);
         hideLoading();
