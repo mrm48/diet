@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"mauit/models"
 	"mauit/mutils"
 	"mauit/repositories"
@@ -99,7 +98,6 @@ func GetDieterCalories(req *gin.Context) {
 	req, err = mutils.WrapServiceError(err, "Cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 		Dieters, err := repositories.GetDieterCalories(dieter)
 
 		req, err = mutils.WrapServiceError(err, "cannot find unique Dieter requested", req, http.StatusNotFound)
