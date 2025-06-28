@@ -166,6 +166,7 @@ function renderPage(page) {
 async function initDashboard() {
     try {
         const userSelect = document.getElementById('user-select');
+        const dashboardUserName = document.getElementById('dashboard-user-name');
         const remainingCard = document.getElementById('remaining');
         const todayMeals = document.getElementById('today-meals');
         const mealManagement = document.getElementById('meal-management');
@@ -182,6 +183,8 @@ async function initDashboard() {
 
         userSelect.addEventListener('change', async () => {
             const selectedUserId = userSelect.value;
+
+            dashboardUserName.textContent = selectedUserId ? allUsers.find(user => user.id.toString() === selectedUserId).name : 'Select a user';
             if (!selectedUserId) {
                 mealManagement.style.display = 'none';
                 caloriesSummary.style.display = 'none';
@@ -194,7 +197,7 @@ async function initDashboard() {
                 const selectedUser = allUsers.find(user => user.id.toString() === selectedUserId);
                 currentUser = selectedUser;
 
-                // Get user's meals
+                // Get user's meals -- implement in the future
 //                const mealsResponse = await fetch(`${API_BASE_URL}/dieter/meals`, {
 //                    method: 'POST',
 //                    headers: { 'Content-Type': 'application/json' },
