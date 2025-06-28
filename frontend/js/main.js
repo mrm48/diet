@@ -174,8 +174,23 @@ async function initDashboard() {
         }
         
         // Rest of the initialization code...
-        
         populateUserSelect(userSelect);
+
+        if (userSelect.value.toString() !== '') {
+            const selectedUserId = userSelect.value;
+            const selectedUser = allUsers.find(user => user.id.toString() === selectedUserId);
+            currentUser = selectedUser;
+            const caloriesResponse = await fetch(`${API_BASE_URL}/dieter/remaining`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: selectedUser.name })
+            });
+
+            if (!caloriesResponse.ok) throw new Error('Failed to load meals');
+            const caloriesData = await caloriesResponse.json();
+
+            document.getElementById('consumed-today').innerHTML = caloriesData.calories.toString();
+        }
         
     } catch (error) {
         console.error('Dashboard initialization error:', error);
