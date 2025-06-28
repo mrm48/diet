@@ -15,7 +15,7 @@ CREATE TABLE food (
 
 -- Create the meal table
 CREATE TABLE meal (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     calories INTEGER NOT NULL,
     day VARCHAR(255) NOT NULL,
     dieter VARCHAR(255) NOT NULL,
