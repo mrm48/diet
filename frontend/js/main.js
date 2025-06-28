@@ -184,7 +184,6 @@ async function initDashboard() {
         userSelect.addEventListener('change', async () => {
             const selectedUserId = userSelect.value;
 
-            dashboardUserName.textContent = selectedUserId ? allUsers.find(user => user.id.toString() === selectedUserId).name : 'Select a user';
             if (!selectedUserId) {
                 mealManagement.style.display = 'none';
                 caloriesSummary.style.display = 'none';
@@ -195,6 +194,7 @@ async function initDashboard() {
             try {
                 // Find selected user
                 const selectedUser = allUsers.find(user => user.id.toString() === selectedUserId);
+                dashboardUserName.textContent = selectedUser.name;
                 currentUser = selectedUser;
 
                 // Get user's meals -- implement in the future
