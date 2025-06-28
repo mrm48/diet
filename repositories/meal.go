@@ -505,7 +505,6 @@ func AddMeal(meal models.Meal) error {
 		return err
 	}
 
-	meal.Calories = 0
 	meal.Dieterid = dieter.ID
 
 	meal.Day, err = mutils.GetDateFromString(meal.Day)
