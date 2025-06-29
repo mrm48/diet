@@ -1,13 +1,13 @@
 -- Create the dieter table
 CREATE TABLE dieter (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     calories INTEGER NOT NULL,
     name VARCHAR(255) NOT NULL UNIQUE
 );
 
 -- Create the food table
 CREATE TABLE food (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     calories INTEGER NOT NULL,
     units INTEGER NOT NULL
@@ -26,7 +26,7 @@ CREATE TABLE meal (
 
 -- Create the entry table
 CREATE TABLE entry (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     calories INTEGER NOT NULL,
     food_id BIGINT NOT NULL,
     meal_id BIGINT NOT NULL,
