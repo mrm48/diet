@@ -223,9 +223,7 @@ func AddMeal(req *gin.Context) {
 	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
-		if meal.Day == "" {
-			meal.Day = mutils.GetCurrentDate()
-		}
+		meal.Day = mutils.GetCurrentDate()
 
 		err = repositories.AddMeal(meal)
 		req, err = mutils.WrapServiceError(err, "cannot add meal to database", req, http.StatusInternalServerError)

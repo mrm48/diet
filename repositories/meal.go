@@ -507,8 +507,6 @@ func AddMeal(meal models.Meal) error {
 
 	meal.Dieterid = dieter.ID
 
-	meal.Day, err = mutils.GetDateFromString(meal.Day)
-
 	if meal.Dieterid != 0 {
 		db, err := getConnection()
 		if err != nil {
