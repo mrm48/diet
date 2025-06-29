@@ -169,6 +169,7 @@ async function initDashboard() {
         const dashboardUserName = document.getElementById('dashboard-user-name');
         const remainingCard = document.getElementById('remaining');
         const todayMeals = document.getElementById('today-meals');
+        const mealsListContainer = document.getElementById('meals-list');
         const mealManagement = document.getElementById('meal-management');
         const caloriesSummary = document.getElementById('calorie-summary');
         const totalCaloriesCard = document.getElementById('daily-target');
@@ -198,14 +199,17 @@ async function initDashboard() {
                 currentUser = selectedUser;
 
                 // Get user's meals -- implement in the future
-//                const mealsResponse = await fetch(`${API_BASE_URL}/dieter/meals`, {
-//                    method: 'POST',
-//                    headers: { 'Content-Type': 'application/json' },
-//                    body: JSON.stringify({ name: selectedUser.name })
-//                });
-//
-//                if (!mealsResponse.ok) throw new Error('Failed to load meals');
-//                const mealsData = await mealsResponse.json();
+                const mealsResponse = await fetch(`${API_BASE_URL}/dieter/mealstoday`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: selectedUser.name })
+                });
+
+                if (!mealsResponse.ok) throw new Error('Failed to load meals');
+                const mealsData = await mealsResponse.json();
+
+                renderMealHistory(mealsData,mealsListContainer)
+                todayMeals.style.display = 'block';
 
                 const caloriesRemaining = await fetch(`${API_BASE_URL}/dieter/remaining`, {
                     method: 'POST',
