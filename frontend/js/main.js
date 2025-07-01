@@ -336,11 +336,15 @@ function initMeals() {
                     name: mealName,
                     dieter: currentUser.name,
                     calories: parseInt(mealCalories),
-                    food: selectedFoods
                 })
             });
             
             if (!response.ok) throw new Error('Failed to add meal');
+
+            // add entries for each of the foods selected
+            selectedFoods.forEach(foodItem => {
+                addEntry(foodItem, response);
+            });
             
             // Reset form
             addMealForm.reset();
@@ -690,6 +694,19 @@ async function deleteDieter(dieter) {
         showError('Failed to delete user. Please try again later.');
         return false;
     }
+}
+
+async function addEntry(foodItem, response){
+   const responseEntry = await fetch(`${API_BASE_URL}/entry`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            food:foodItem.id,
+            meal:response.id,
+            calories:food.calories,
+        })
+   });
+   if (!responseEntry.ok) throw new Error ('Failed to add entry');
 }
 
 // UI Helper Functions
