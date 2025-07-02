@@ -228,6 +228,11 @@ func AddMeal(req *gin.Context) {
 		err = repositories.AddMeal(meal)
 		req, err = mutils.WrapServiceError(err, "cannot add meal to database", req, http.StatusInternalServerError)
 
+		// return meal ID
+		mealList, err := repositories.GetMeal(meal)
+		meal = mealList[0]
+		req, err = mutils.WrapServiceError(err, "cannot retrieve meal from database", req, http.StatusInternalServerError)
+
 		if err == nil {
 			req.IndentedJSON(http.StatusCreated, meal)
 		}
