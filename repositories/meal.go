@@ -595,20 +595,13 @@ func DeleteFoodRow(food models.Food) error {
 
 // AddEntry uses a complete entry object to add an entry to the database
 func AddEntry(entry models.Entry) (models.Entry, error) {
-	var newID int64
 	db, err := getConnection()
 	if err != nil {
 		return entry, err
 	}
 
-	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from entry").Scan(&newID)
-	err = mutils.WrapError(err, "error 101: Cannot query entry count", "query")
-	if err != nil {
-		return entry, err
-	}
-
-	_, err = db.Query(context.Background(), "INSERT INTO entry values ($1, $2, $3, $4)",
-		newID+1, entry.Calories, entry.FoodID, entry.MealID)
+	_, err = db.Query(context.Background(), "INSERT INTO entry (calories, food_id, meal_id) values ($1, $2, $3)",
+		entry.Calories, entry.FoodID, entry.MealID)
 	err = mutils.WrapError(err, "error 102: Cannot insert entry", "insert")
 	if err != nil {
 		return entry, err
