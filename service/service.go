@@ -163,6 +163,26 @@ func GetMeal(req *gin.Context) {
 	}
 }
 
+// SetMealCalories in the database. This will set the target number of calories for a meal using its name.
+func SetMealCalories(req *gin.Context) {
+
+	var meal models.Meal
+
+	err := req.BindJSON(&meal)
+	req, err = mutils.WrapServiceError(err, "cannot create meal calories object from JSON provided", req, http.StatusBadRequest)
+
+	if err == nil {
+		err = repositories.UpdateMealCalories(meal)
+		req, err = mutils.WrapServiceError(err, "cannot update meal from object", req, http.StatusNotFound)
+
+		if err == nil {
+			mutils.LogMessage("Request", "Updated meal calories")
+			req.IndentedJSON(http.StatusOK, meal)
+		}
+	}
+
+}
+
 // GetMealCalories from the database for a single meal. Requires the meal name, dieter name and day.
 func GetMealCalories(req *gin.Context) {
 	var meal models.Meal

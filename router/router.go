@@ -2,6 +2,7 @@ package router
 
 import (
 	"mauit/service"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,6 +28,7 @@ func SetRoutes(Router *gin.Engine) {
 	Router.POST("/meal/entries", service.GetMealEntries)
 	Router.POST("/meal/entry", service.AddEntryToMeal)
 	Router.PUT("/meal", service.AddMeal)
+	Router.PUT("/meal/calories", service.SetMealCalories)
 	Router.DELETE("/meal", service.DeleteMeal)
 	Router.DELETE("/meal/entries", service.DeleteMealEntries)
 

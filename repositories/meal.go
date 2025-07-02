@@ -535,6 +535,16 @@ func AddMeal(meal models.Meal) error {
 	return mutils.WrapError(nil, "error 301: Cannot find dieter id", "notfound")
 }
 
+func UpdateMealCalories(meal models.Meal) error {
+	db, err := getConnection()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Query(context.Background(), "UPDATE meal SET calories = $1 WHERE ID = $2", meal.Calories, meal.ID)
+	return mutils.WrapError(err, "error 101: Cannot update meal calories", "update")
+}
+
 // GetAllFood retrieves all food items from the database and returns them as a list of food objects
 func GetAllFood() ([]models.Food, error) {
 	db, err := getConnection()
