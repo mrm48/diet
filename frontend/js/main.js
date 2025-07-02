@@ -340,10 +340,14 @@ function initMeals() {
             });
             
             if (!response.ok) throw new Error('Failed to add meal');
+            const newMeal = await response.json();
 
             // add entries for each of the foods selected
-            selectedFoods.forEach(foodItem => {
-                addEntry(foodItem, response);
+            const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
+                const foodId = option.value;
+                const food = allFoods.find(f => f.id.toString() === foodId);
+                addEntry(food.calories, food.id, newMeal.id);
+                return food.name;
             });
             
             // Reset form
@@ -696,14 +700,14 @@ async function deleteDieter(dieter) {
     }
 }
 
-async function addEntry(foodItem, response){
+async function addEntry(foodCalories, foodID, newMealID){
    const responseEntry = await fetch(`${API_BASE_URL}/entry`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            food:foodItem.id,
-            meal:response.id,
-            calories:food.calories,
+            food:foodID,
+            meal:newMealID,
+            calories:foodCalories,
         })
    });
    if (!responseEntry.ok) throw new Error ('Failed to add entry');
