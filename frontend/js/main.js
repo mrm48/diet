@@ -357,7 +357,7 @@ function initMeals() {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    id: newMeal.ID,
+                    id: newMeal.id,
                     calories: totalMealCalories,
                 })
             });
