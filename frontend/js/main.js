@@ -343,13 +343,27 @@ function initMeals() {
             const newMeal = await response.json();
 
             // add entries for each of the foods selected
-            const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
+            const selectedCalories = Array.from(mealFoodsSelect.selectedOptions).map(option => {
                 const foodId = option.value;
                 const food = allFoods.find(f => f.id.toString() === foodId);
                 addEntry(food.calories, food.id, newMeal.id);
-                return food.name;
+                return food.calories;
             });
-            
+
+           const totalMealCalories = selectedCalories.reduce((a, b) => a + b, 0);
+
+            // Update meal calories
+            const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: newMeal.ID,
+                    calories: totalMealCalories,
+                })
+            });
+
+            if (!mealCaloriesResponse.ok) throw new Error('Failed to update meal calories');
+
             // Reset form
             addMealForm.reset();
             
