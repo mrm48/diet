@@ -111,10 +111,10 @@ async function renderPageContent(page) {
             await initDashboard();
             break;
         case 'meals':
-            await initMeals();
+            initMeals();
             break;
         case 'foods':
-            await initFoods();
+            initFoods();
             break;
         case 'users':
             await initUsers();
