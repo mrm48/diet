@@ -205,7 +205,7 @@ Get the total calories for a specific meal.
 }
 ```
 
-#### POST /meal/entries
+#### PUT /meal/entries
 Get all entries (food items) for a specific meal.
 - **Request**:
 ```json
