@@ -105,6 +105,32 @@
         </div>
     </template>
 
+    <template id="idividual-meal-template">
+        <div class="individual-meal">
+            <h2>Entries</h2>
+            <div id="individual-meal-management" style="display: none;">
+                <div class="add-entry">
+                    <h3>Add New Entry</h3>
+                    <form id="add-entry-form">
+                        <div class="form-group">
+                            <label for="meal-foods">Foods:</label>
+                            <select id="entry-foods" multiple>
+                                <!-- Foods will be loaded here -->
+                            </select>
+                        </div>
+                        <button type="submit">Add Entry</button>
+                    </form>
+                </div>
+                <div class="entry-history">
+                    <h3>Meal History</h3>
+                    <div id="entry-history-list" class="entry-history-list">
+                        <!-- Entry history for the selected meal will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <template id="foods-template">
         <div class="foods">
             <h2>Foods</h2>

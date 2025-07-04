@@ -158,6 +158,9 @@ function renderPage(page) {
         case 'users':
             initUsers();
             break;
+        case 'entry':
+            initEntries();
+            break;
     }
 
     hideLoading();
@@ -358,6 +361,99 @@ function initMeals() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: newMeal.id,
+                    calories: totalMealCalories,
+                })
+            });
+
+            if (!mealCaloriesResponse.ok) throw new Error('Failed to update meal calories');
+
+            // Reset form
+            addMealForm.reset();
+            
+            // Refresh meals
+            userSelect.dispatchEvent(new Event('change'));
+            
+            showSuccess('Meal added successfully!');
+        } catch (error) {
+            console.error('Error adding meal:', error);
+            showError('Failed to add meal. Please try again later.');
+        } finally {
+            hideLoading();
+        }
+    });
+}
+
+// Initialize Entry page
+function initEntries() {
+    const mealManagement = document.getElementById('individual-meal-management');
+    const addMealForm = document.getElementById('add-entry-form');
+    const mealFoodsSelect = document.getElementById('individual-meal-foods');
+    const mealHistoryList = document.getElementById('entry-history-list');
+
+    // Populate user select
+    populateUserSelect(userSelect);
+
+    // Populate foods select
+    allFoods.forEach(food => {
+        const option = document.createElement('option');
+        option.value = food.id;
+        option.textContent = `${food.name} (${food.calories} cal)`;
+        mealFoodsSelect.appendChild(option);
+    });
+
+    // Handle add meal form submission
+    addMealForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentUser) return;
+
+        const mealName = document.getElementById('meal-name').value;
+        const mealCalories = document.getElementById('meal-calories').value;
+        
+        // Get selected foods
+        const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
+            const foodId = option.value;
+            const food = allFoods.find(f => f.id.toString() === foodId);
+            return food.name;
+        });
+
+        showLoading();
+        try {
+
+            // find the amount of calories being added for the entry for each of the foods selected
+            const selectedCalories = Array.from(mealFoodsSelect.selectedOptions).map(option => {
+                const foodId = option.value;
+                const food = allFoods.find(f => f.id.toString() === foodId);
+                addEntry(food.calories, food.id, newMeal.id);
+                return food.calories;
+            });
+
+            if (!response.ok) throw new Error('Failed to add entry');
+            const newEntry = await response.json();
+
+            const totalMealCalories = selectedCalories.reduce((a, b) => a + b, 0);
+
+            // TODO: need to add each food as a different entry, split this and loop through the selected foods
+            const response = await fetch(`${API_BASE_URL}/meal/entry`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: mealName,
+                    dieter: currentUser.name,
+                    meal_id: meal.id,
+                    food_id: food.id,
+                    calories: parseInt(totalMealCalories),
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to add entry');
+            const newEntry = await response.json();
+
+            // Update meal calories
+            const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: meal.id,
                     calories: totalMealCalories,
                 })
             });
