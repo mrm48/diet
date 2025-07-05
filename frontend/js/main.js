@@ -5,6 +5,7 @@ const API_BASE_URL = 'http://localhost:9090';
 let currentPage = 'dashboard';
 let currentUser = 'Matt';
 let allUsers = [];
+let allMeals = [];
 let allFoods = [];
 
 // DOM Elements
@@ -43,6 +44,15 @@ async function loadInitialData() {
     const usersResponse = await fetch(`${API_BASE_URL}/dieters/all`);
     if (!usersResponse.ok) throw new Error('Failed to load users');
     allUsers = await usersResponse.json();
+
+    const mealsResponse = await fetch(`${API_BASE_URL}/dieter/mealstoday`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentUser })
+    });
+
+    if (!mealsResponse.ok) throw new Error('Failed to load meals for this dieter');
+    allMeals = await mealsResponse.json();
 
     // Load all foods
     const foodsResponse = await fetch(`${API_BASE_URL}/food/all`);
@@ -119,6 +129,9 @@ async function renderPageContent(page) {
     case 'users':
       await initUsers();
       break;
+    case 'entries':
+      initEntries();
+      break;
   }
 }
 
@@ -158,8 +171,8 @@ function renderPage(page) {
     case 'users':
       initUsers();
       break;
-    case 'entry':
-      initEntries("");
+    case 'entries':
+      initEntries();
       break;
   }
 
@@ -367,6 +380,8 @@ function initMeals() {
 
       if (!mealCaloriesResponse.ok) throw new Error('Failed to update meal calories');
 
+      allMeals.push(newMeal);
+
       // Reset form
       addMealForm.reset();
 
@@ -391,6 +406,7 @@ function initEntries() {
     const entryHistoryList = document.getElementById('entry-history-list');
     const entryMealSelect = document.getElementById('entry-meal-select');
 
+    populateMealSelect(entryMealSelect);
     const listEntries = populateMealEntries(entryMealSelect.value);
 
     renderEntryHistory(listEntries, entryHistoryList);
@@ -557,13 +573,41 @@ async function populateMealEntries(mealSelect) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      id: mealSelect,
+      name: allMeals[mealSelect],
+      dieter: currentUser.name,
+      day: new Date().toISOString().split('T')[0]
     })
   });
 
   if (!response.ok) throw new Error('Failed to load entries');
   return await response.json();
 
+}
+
+// Allow user to select meals from the database
+async function populateMealSelect(selectElement) {
+  // Clear existing options
+  selectElement.innerHTML = '';
+
+  if (!allMeals || allMeals.length === 0) {
+    return;
+  }
+
+  // Add meals
+  allMeals.forEach(meal => { const option = document.createElement('option');
+    option.value = meal.id;
+    option.textContent = meal.name;
+    selectElement.appendChild(option);
+  });
+
+}
+
+async function getDieterMealsToday() {
+  return await fetch(`${API_BASE_URL}/dieter/meals`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: currentUser.name })
+  })
 }
 
 // Helper function to populate user select
