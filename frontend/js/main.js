@@ -384,14 +384,14 @@ function initMeals() {
 }
 
 // Initialize Entry page
-function initEntries(mealSelect) {
-  if (mealSelect !== "") {
-    const mealManagement = document.getElementById('individual-meal-management');
+function initEntries() {
+    const mealManagement = document.getElementById('entry-management');
     const addMealForm = document.getElementById('add-entry-form');
-    const mealFoodsSelect = document.getElementById('individual-meal-foods');
+    const mealFoodsSelect = document.getElementById('entry-foods');
     const entryHistoryList = document.getElementById('entry-history-list');
+    const entryMealSelect = document.getElementById('entry-meal-select');
 
-    const listEntries = populateMealEntries(mealSelect);
+    const listEntries = populateMealEntries(entryMealSelect.value);
 
     renderEntryHistory(listEntries, entryHistoryList);
 
@@ -473,7 +473,6 @@ function initEntries(mealSelect) {
         hideLoading();
       }
     });
-  }
 }
 
 // Initialize Foods page
@@ -558,7 +557,7 @@ async function populateMealEntries(mealSelect) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      id: mealSelect.id,
+      id: mealSelect,
     })
   });
 
