@@ -389,10 +389,11 @@ function initEntries(mealSelect) {
     const mealManagement = document.getElementById('individual-meal-management');
     const addMealForm = document.getElementById('add-entry-form');
     const mealFoodsSelect = document.getElementById('individual-meal-foods');
-    const mealHistoryList = document.getElementById('entry-history-list');
+    const entryHistoryList = document.getElementById('entry-history-list');
 
-    populateMealEntries(mealSelect);
+    const listEntries = populateMealEntries(mealSelect);
 
+    renderEntryHistory(listEntries, entryHistoryList);
 
     // Populate foods select
     allFoods.forEach(food => {
@@ -615,6 +616,19 @@ function renderMealsList(meals, container) {
   });
 }
 
+function renderEntryHistory(listEntries, container) {
+
+  // Clear container
+  container.innerHTML = '';
+
+  if (!listEntries || listEntries.length === 0) {
+    container.innerHTML = '<p>No entry history found.</p>';
+    return;
+  }
+
+  // Start rendering cards for all entries passed in.
+
+}
 // Helper function to render meal history
 function renderMealHistory(meals, container) {
   // Clear container
