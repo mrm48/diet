@@ -385,16 +385,14 @@ function initMeals() {
 
 // Initialize Entry page
 function initEntries(mealSelect) {
-  if (mealSelect != "") {
+  if (mealSelect !== "") {
     const mealManagement = document.getElementById('individual-meal-management');
     const addMealForm = document.getElementById('add-entry-form');
     const mealFoodsSelect = document.getElementById('individual-meal-foods');
     const mealHistoryList = document.getElementById('entry-history-list');
 
-    // Populate user select
-    populateUserSelect(userSelect);
-
     populateMealEntries(mealSelect);
+
 
     // Populate foods select
     allFoods.forEach(food => {
@@ -551,6 +549,21 @@ async function initUsers() {
       hideLoading();
     }
   });
+}
+
+async function populateMealEntries(mealSelect) {
+
+  const response = await fetch(`${API_BASE_URL}/meal/entries`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: mealSelect.id,
+    })
+  });
+
+  if (!response.ok) throw new Error('Failed to load entries');
+  return await response.json();
+
 }
 
 // Helper function to populate user select
