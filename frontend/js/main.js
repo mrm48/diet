@@ -406,8 +406,13 @@ function initEntries() {
     const entryHistoryList = document.getElementById('entry-history-list');
     const entryMealSelect = document.getElementById('entry-meal-select');
 
-    populateMealSelect(entryMealSelect);
-    const listEntries = populateMealEntries(entryMealSelect.value);
+    const populateResponse = populateMealSelect(entryMealSelect);
+    if (!populateResponse) {
+      mealManagement.style.display = 'none';
+      return;
+    }
+
+    const listEntries = populateMealEntries(entryMealSelect.value, entryHistoryList);
 
     renderEntryHistory(listEntries, entryHistoryList);
 
@@ -567,7 +572,7 @@ async function initUsers() {
   });
 }
 
-async function populateMealEntries(mealSelect) {
+async function populateMealEntries(mealSelect, entriesContainer) {
 
   const response = await fetch(`${API_BASE_URL}/meal/entries`, {
     method: 'POST',
@@ -582,6 +587,32 @@ async function populateMealEntries(mealSelect) {
   if (!response.ok) throw new Error('Failed to load entries');
   return await response.json();
 
+}
+
+function renderEntryHistory(listEntries, container) {
+
+  container.innerHTML = '';
+
+  if (!listEntries || listEntries.length === 0) {
+    container.innerHTML = '<p>No meal history found.</p>';
+    return;
+  }
+
+  // Add entries
+    const entryHeader = document.createElement('h4');
+    entryHeader.textContent = "Meal History";
+    container.appendChild(entryHeader);
+
+    listEntries.forEach(entry => {
+      const entryCard = document.createElement('div');
+      entryCard.className = 'meal-card';
+      entryCard.innerHTML = `
+                <h4>${entry.id}</h4>
+                <p><strong>Calories:</strong> ${meal.calories}</p>
+            `;
+
+      container.appendChild(entryCard);
+    });
 }
 
 // Allow user to select meals from the database
@@ -659,19 +690,6 @@ function renderMealsList(meals, container) {
   });
 }
 
-function renderEntryHistory(listEntries, container) {
-
-  // Clear container
-  container.innerHTML = '';
-
-  if (!listEntries || listEntries.length === 0) {
-    container.innerHTML = '<p>No entry history found.</p>';
-    return;
-  }
-
-  // Start rendering cards for all entries passed in.
-
-}
 // Helper function to render meal history
 function renderMealHistory(meals, container) {
   // Clear container
