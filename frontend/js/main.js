@@ -7,6 +7,7 @@ let currentUser = 'Matt';
 let allUsers = [];
 let allMeals = [];
 let allFoods = [];
+let listEntries = [];
 
 // DOM Elements
 const app = document.getElementById('app');
@@ -412,7 +413,13 @@ function initEntries() {
       return;
     }
 
-    const listEntries = populateMealEntries(entryMealSelect.value, entryHistoryList);
+    const mealEntriesResponse = populateMealEntries(entryMealSelect.value, entryHistoryList);
+
+    if (!mealEntriesResponse) {
+      mealManagement.style.display = 'none';
+      console.log('No entries found for this meal.');
+      return;
+    }
 
     renderEntryHistory(listEntries, entryHistoryList);
 
@@ -585,7 +592,7 @@ async function populateMealEntries(mealSelect, entriesContainer) {
   });
 
   if (!response.ok) throw new Error('Failed to load entries');
-  return await response.json();
+  listEntries = await response.json();
 
 }
 
