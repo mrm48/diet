@@ -413,15 +413,21 @@ function initEntries() {
       return;
     }
 
-    const mealEntriesResponse = populateMealEntries(entryMealSelect.value, entryHistoryList);
+    entryMealSelect.addEventListener('change', async () => {
+      const mealId = entryMealSelect.value;
+      const selectedMeal = allMeals.find(meal => meal.id.toString() === mealId);
+      listEntries = [];
+      const mealEntriesResponse = await populateMealEntries(selectedMeal.id, entryHistoryList);
+      if (listEntries.length === 0) {
+        mealManagement.style.display = 'none';
+        console.log('No entries found for this meal.');
+        return;
+      }
+      renderEntryHistory(entryHistoryList);
+    });
 
-    if (!mealEntriesResponse) {
-      mealManagement.style.display = 'none';
-      console.log('No entries found for this meal.');
-      return;
-    }
 
-    renderEntryHistory(listEntries, entryHistoryList);
+
 
     // Populate foods select
     allFoods.forEach(food => {
@@ -585,9 +591,7 @@ async function populateMealEntries(mealSelect, entriesContainer) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      name: allMeals[mealSelect],
-      dieter: currentUser.name,
-      day: new Date().toISOString().split('T')[0]
+      id: mealSelect,
     })
   });
 
@@ -596,7 +600,7 @@ async function populateMealEntries(mealSelect, entriesContainer) {
 
 }
 
-function renderEntryHistory(listEntries, container) {
+function renderEntryHistory(container) {
 
   container.innerHTML = '';
 
@@ -615,7 +619,7 @@ function renderEntryHistory(listEntries, container) {
       entryCard.className = 'meal-card';
       entryCard.innerHTML = `
                 <h4>${entry.id}</h4>
-                <p><strong>Calories:</strong> ${meal.calories}</p>
+                <p><strong>Calories:</strong> ${entry.calories}</p>
             `;
 
       container.appendChild(entryCard);
