@@ -417,7 +417,7 @@ function initEntries() {
       const mealId = entryMealSelect.value;
       const selectedMeal = allMeals.find(meal => meal.id.toString() === mealId);
       listEntries = [];
-      const mealEntriesResponse = await populateMealEntries(selectedMeal.id, entryHistoryList);
+      const mealEntriesResponse = await populateMealEntries(selectedMeal.id);
       if (listEntries.length === 0) {
         mealManagement.style.display = 'none';
         console.log('No entries found for this meal.');
@@ -585,7 +585,7 @@ async function initUsers() {
   });
 }
 
-async function populateMealEntries(mealSelect, entriesContainer) {
+async function populateMealEntries(mealSelect) {
 
   const response = await fetch(`${API_BASE_URL}/meal/entries`, {
     method: 'POST',
