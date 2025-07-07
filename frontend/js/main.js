@@ -608,20 +608,20 @@ function renderEntryHistory(container) {
   container.innerHTML = '';
 
   if (!listEntries || listEntries.length === 0) {
-    container.innerHTML = '<p>No meal history found.</p>';
+    container.innerHTML = '<p>No entries found.</p>';
     return;
   }
 
   // Add entries
     const entryHeader = document.createElement('h4');
-    entryHeader.textContent = "Meal History";
+    entryHeader.textContent = "Entries";
     container.appendChild(entryHeader);
 
     listEntries.forEach(entry => {
       const entryCard = document.createElement('div');
       entryCard.className = 'meal-card';
       entryCard.innerHTML = `
-                <h4>${entry.id}</h4>
+                <h4>${allFoods[entry.food].name}</h4>
                 <p><strong>Calories:</strong> ${entry.calories}</p>
             `;
 
