@@ -424,6 +424,7 @@ function initEntries() {
         return;
       }
       renderEntryHistory(entryHistoryList);
+      entryHistoryList.style.display = 'block';
     });
 
 
@@ -507,6 +508,8 @@ function initEntries() {
         hideLoading();
       }
     });
+
+    mealManagement.style.display = 'block';
 }
 
 // Initialize Foods page

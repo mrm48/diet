@@ -152,7 +152,7 @@ button:hover {
 }
 
 /* Meals List Styles */
-.meals-list, .meal-history-list, .food-list-container, .user-list-container {
+.meals-list, .meal-history-list, .food-list-container, .user-list-container, .entry-history-list {
     margin-top: 1rem;
 }
 
