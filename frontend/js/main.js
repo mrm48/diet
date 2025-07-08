@@ -439,12 +439,14 @@ function initEntries() {
       try {
 
         // Add entries to the meal
-        let selectedCalories = setCaloriesSelected(mealFoodsSelect, entryMealSelect.value);
-
-        selectedCalories = selectedCalories + entryMealSelect.value;
-
+        const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
+          const foodId = option.value;
+          return allFoods.find(f => f.id.toString() === foodId);
+        });
+        let selectedCalories = 0;
         allMeals.forEach(meal => {
           if (meal.id.toString() === entryMealSelect.value) {
+            selectedCalories = setCaloriesSelected(selectedFoods, meal.id);
             selectedCalories = meal.calories + selectedCalories;
           }
         })
