@@ -410,13 +410,20 @@ function initEntries() {
   }
 
   entryMealSelect.addEventListener('change', async () => {
-    listEntries = [];
-    if (listEntries.length === 0) {
-      mealManagement.style.display = 'none';
-      console.error("No entries found for this meal")
-      return;
-    }
-    renderEntryHistory(entryHistoryList);
+    let selectedMeal = allMeals.find(meal => meal.id.toString() === entryMealSelect.value);
+    populateMealEntries(selectedMeal);
+    const response = await fetch(`${API_BASE_URL}/meal/entries`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: selectedMeal.id,
+      })
+    });
+
+    if (!response.ok) throw new Error('Failed to load entries');
+    listEntries = await response.json();
+
+    renderEntryHistory(entryHistoryList, listEntries);
     entryHistoryList.style.display = 'block';
   });
 
@@ -554,13 +561,13 @@ async function initUsers() {
   });
 }
 
-async function populateMealEntries(mealSelect) {
+async function populateMealEntries(meal) {
 
   const response = await fetch(`${API_BASE_URL}/meal/entries`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      id: mealSelect,
+      id: meal.id,
     })
   });
 
@@ -569,7 +576,7 @@ async function populateMealEntries(mealSelect) {
 
 }
 
-function renderEntryHistory(container) {
+function renderEntryHistory(container, listEntries) {
 
   container.innerHTML = '';
 
@@ -584,14 +591,17 @@ function renderEntryHistory(container) {
   container.appendChild(entryHeader);
 
   listEntries.forEach(entry => {
-    const entryCard = document.createElement('div');
-    entryCard.className = 'meal-card';
-    entryCard.innerHTML = `
-                <h4>${allFoods[entry.food].name}</h4>
+    if (entry.food) {
+      const entryCard = document.createElement('div');
+      entryCard.className = 'meal-card';
+      entryCard.innerHTML = `
+                <h4>${allFoods[entry.food - 1].name}</h4>
                 <p><strong>Calories:</strong> ${entry.calories}</p>
             `;
 
-    container.appendChild(entryCard);
+      container.appendChild(entryCard);
+
+    }
   });
 }
 
@@ -608,7 +618,7 @@ async function populateMealSelect(selectElement) {
   allMeals.forEach(meal => {
     const option = document.createElement('option');
     option.value = meal.id;
-    option.textContent = meal.name;
+    option.textContent = `` + meal.name + ``;
     selectElement.appendChild(option);
   });
 
