@@ -264,12 +264,13 @@ async function initDashboard() {
         hideLoading();
       }
     });
-
+    userSelect.dispatchEvent(new Event('change'));
   } catch (error) {
     console.error('Dashboard initialization error:', error);
     hideLoading();
     showError('Failed to initialize dashboard. Please try again.');
   }
+
 }
 
 // Initialize Meals page
@@ -339,8 +340,7 @@ function initMeals() {
     // Get selected foods
     const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
       const foodId = option.value;
-      const food = allFoods.find(f => f.id.toString() === foodId);
-      return food.name;
+      return allFoods.find(f => f.id.toString() === foodId);
     });
 
     showLoading();
@@ -360,14 +360,7 @@ function initMeals() {
       const newMeal = await response.json();
 
       // add entries for each of the foods selected
-      const selectedCalories = Array.from(mealFoodsSelect.selectedOptions).map(option => {
-        const foodId = option.value;
-        const food = allFoods.find(f => f.id.toString() === foodId);
-        addEntry(food.calories, food.id, newMeal.id);
-        return food.calories;
-      });
-
-      const totalMealCalories = selectedCalories.reduce((a, b) => a + b, 0);
+      const selectedCalories = setCaloriesSelected(selectedFoods, newMeal.id);
 
       // Update meal calories
       const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
@@ -375,7 +368,7 @@ function initMeals() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: newMeal.id,
-          calories: totalMealCalories,
+          calories: selectedCalories,
         })
       });
 
@@ -397,6 +390,8 @@ function initMeals() {
       hideLoading();
     }
   });
+
+  userSelect.dispatchEvent(new Event('change'));
 }
 
 // Initialize Entry page
@@ -427,9 +422,6 @@ function initEntries() {
       entryHistoryList.style.display = 'block';
     });
 
-
-
-
     // Populate foods select
     allFoods.forEach(food => {
       const option = document.createElement('option');
@@ -443,38 +435,19 @@ function initEntries() {
       e.preventDefault();
       if (!currentUser) return;
 
-      const mealName = document.getElementById('meal-name').value;
-      const mealCalories = document.getElementById('meal-calories').value;
-
-      // Get selected foods
-      const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
-        const foodId = option.value;
-        const food = allFoods.find(f => f.id.toString() === foodId);
-        return food.name;
-      });
-
       showLoading();
       try {
 
-        // find the amount of calories being added for the entry for each of the foods selected
-        const selectedCalories = Array.from(mealFoodsSelect.selectedOptions).map(option => {
-          const foodId = option.value;
-          const food = allFoods.find(f => f.id.toString() === foodId);
-          addEntry(food.calories, food.id, newMeal.id);
-          return food.calories;
-        });
+        // Add entries to the meal
+        const selectedCalories = setCaloriesSelected(mealFoodsSelect, entryMealSelect.value);
 
         const totalMealCalories = selectedCalories.reduce((a, b) => a + b, 0);
 
-        // TODO: need to add each food as a different entry, split this and loop through the selected foods
-        const response = await fetch(`${API_BASE_URL}/meal/entry`, {
+        const response = await fetch(`${API_BASE_URL}/meal/calories`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: mealName,
-            dieter: currentUser.name,
-            meal_id: meal.id,
-            food_id: food.id,
+            id: entryMealSelect.value,
             calories: parseInt(totalMealCalories),
           })
         });
@@ -482,23 +455,11 @@ function initEntries() {
         if (!response.ok) throw new Error('Failed to add entry');
         const newEntry = await response.json();
 
-        // Update meal calories
-        const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: meal.id,
-            calories: newEntry.calories,
-          })
-        });
-
-        if (!mealCaloriesResponse.ok) throw new Error('Failed to update meal calories');
-
         // Reset form
         addMealForm.reset();
 
         // Refresh meals
-        userSelect.dispatchEvent(new Event('change'));
+        entryMealSelect.dispatchEvent(new Event('change'));
 
         showSuccess('Entry added successfully!');
       } catch (error) {
@@ -508,6 +469,8 @@ function initEntries() {
         hideLoading();
       }
     });
+
+    entryMealSelect.dispatchEvent(new Event('change'));
 
     mealManagement.style.display = 'block';
 }
@@ -969,4 +932,16 @@ function showSuccess(message) {
   setTimeout(() => {
     successElement.remove();
   }, 3000);
+}
+
+function setCaloriesSelected(food, newMeal) {
+  let selectedCalories = 0;
+
+  food.forEach((item) => {
+    console.log("adding: " + item)
+    const addEntryResponse = addEntry(item.calories, item.id, newMeal);
+    selectedCalories += item.calories;
+  })
+
+  return selectedCalories;
 }
