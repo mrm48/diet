@@ -335,12 +335,15 @@ function initMeals() {
     if (!currentUser) return;
 
     const mealName = document.getElementById('meal-name').value;
-    const mealCalories = document.getElementById('meal-calories').value;
-
+    let totalCalories = 0;
     // Get selected foods
     const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
       const foodId = option.value;
       return allFoods.find(f => f.id.toString() === foodId);
+    });
+
+    selectedFoods.forEach(food => {
+      totalCalories += food.calories;
     });
 
     showLoading();
@@ -353,7 +356,7 @@ function initMeals() {
         body: JSON.stringify({
           name: mealName,
           dieter: currentUser.name,
-          calories: parseInt(mealCalories),
+          calories: parseInt(totalCalories),
         })
       });
 
