@@ -361,7 +361,7 @@ function initMeals() {
       const newMeal = await response.json();
 
       // add entries for each of the foods selected
-      const selectedCalories = setCaloriesSelected(selectedFoods);
+      const selectedCalories = setCaloriesSelected(selectedFoods, newMeal);
 
       // Update meal calories
       const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
@@ -444,7 +444,7 @@ function initEntries() {
         return allFoods.find(f => f.id.toString() === foodId);
       });
 
-      let selectedCalories = setCaloriesSelected(selectedFoods);
+      let selectedCalories = setCaloriesSelected(selectedFoods, selectedMeal);
       selectedMeal.calories = selectedMeal.calories + selectedCalories;
 
       const response = await fetch(`${API_BASE_URL}/meal/calories`, {
@@ -938,11 +938,12 @@ function showSuccess(message) {
   }, 3000);
 }
 
-function setCaloriesSelected(food) {
+function setCaloriesSelected(food, meal) {
   let selectedCalories = 0;
 
   food.forEach((item) => {
     selectedCalories += item.calories;
+    const addEntryResponse = addEntry(item.calories, item.id, meal.id);
   })
 
   return selectedCalories;
