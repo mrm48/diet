@@ -345,6 +345,7 @@ function initMeals() {
 
     showLoading();
     try {
+
       // Add meal
       const response = await fetch(`${API_BASE_URL}/meal`, {
         method: 'PUT',
@@ -360,7 +361,7 @@ function initMeals() {
       const newMeal = await response.json();
 
       // add entries for each of the foods selected
-      const selectedCalories = setCaloriesSelected(selectedFoods, newMeal.id);
+      const selectedCalories = setCaloriesSelected(selectedFoods);
 
       // Update meal calories
       const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
@@ -396,90 +397,85 @@ function initMeals() {
 
 // Initialize Entry page
 function initEntries() {
-    const mealManagement = document.getElementById('entry-management');
-    const addMealForm = document.getElementById('add-entry-form');
-    const mealFoodsSelect = document.getElementById('entry-foods');
-    const entryHistoryList = document.getElementById('entry-history-list');
-    const entryMealSelect = document.getElementById('entry-meal-select');
+  const mealManagement = document.getElementById('entry-management');
+  const addMealForm = document.getElementById('add-entry-form');
+  const mealFoodsSelect = document.getElementById('entry-foods');
+  const entryHistoryList = document.getElementById('entry-history-list');
+  const entryMealSelect = document.getElementById('entry-meal-select');
 
-    const populateResponse = populateMealSelect(entryMealSelect);
-    if (!populateResponse) {
+  const populateResponse = populateMealSelect(entryMealSelect);
+  if (!populateResponse) {
+    mealManagement.style.display = 'none';
+    return;
+  }
+
+  entryMealSelect.addEventListener('change', async () => {
+    listEntries = [];
+    if (listEntries.length === 0) {
       mealManagement.style.display = 'none';
+      console.error("No entries found for this meal")
       return;
     }
+    renderEntryHistory(entryHistoryList);
+    entryHistoryList.style.display = 'block';
+  });
 
-    entryMealSelect.addEventListener('change', async () => {
+  // Populate foods select
+  allFoods.forEach(food => {
+    const option = document.createElement('option');
+    option.value = food.id;
+    option.textContent = `${food.name} (${food.calories} cal)`;
+    mealFoodsSelect.appendChild(option);
+  });
+
+  // Handle add meal form submission
+  addMealForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentUser) return;
+
+    showLoading();
+    try {
       const mealId = entryMealSelect.value;
-      const selectedMeal = allMeals.find(meal => meal.id.toString() === mealId);
-      listEntries = [];
-      const mealEntriesResponse = await populateMealEntries(selectedMeal.id);
-      if (listEntries.length === 0) {
-        mealManagement.style.display = 'none';
-        console.log('No entries found for this meal.');
-        return;
-      }
-      renderEntryHistory(entryHistoryList);
-      entryHistoryList.style.display = 'block';
-    });
+      let selectedMeal = allMeals.find(meal => meal.id.toString() === mealId);
 
-    // Populate foods select
-    allFoods.forEach(food => {
-      const option = document.createElement('option');
-      option.value = food.id;
-      option.textContent = `${food.name} (${food.calories} cal)`;
-      mealFoodsSelect.appendChild(option);
-    });
+      // Add entries to the meal
+      const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
+        const foodId = option.value;
+        return allFoods.find(f => f.id.toString() === foodId);
+      });
 
-    // Handle add meal form submission
-    addMealForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!currentUser) return;
+      let selectedCalories = setCaloriesSelected(selectedFoods);
+      selectedMeal.calories = selectedMeal.calories + selectedCalories;
 
-      showLoading();
-      try {
-
-        // Add entries to the meal
-        const selectedFoods = Array.from(mealFoodsSelect.selectedOptions).map(option => {
-          const foodId = option.value;
-          return allFoods.find(f => f.id.toString() === foodId);
-        });
-        let selectedCalories = 0;
-        allMeals.forEach(meal => {
-          if (meal.id.toString() === entryMealSelect.value) {
-            selectedCalories = setCaloriesSelected(selectedFoods, meal.id);
-            selectedCalories = meal.calories + selectedCalories;
-          }
+      const response = await fetch(`${API_BASE_URL}/meal/calories`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: entryMealSelect.value,
+          calories: parseInt(selectedMeal.calories),
         })
-        const response = await fetch(`${API_BASE_URL}/meal/calories`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: entryMealSelect.value,
-            calories: parseInt(selectedCalories),
-          })
-        });
+      });
 
-        if (!response.ok) throw new Error('Failed to add entry');
-        const newEntry = await response.json();
+      if (!response.ok) throw new Error('Failed to add entry');
 
-        // Reset form
-        addMealForm.reset();
+      // Reset form
+      addMealForm.reset();
 
-        // Refresh meals
-        entryMealSelect.dispatchEvent(new Event('change'));
+      // Refresh meals
+      entryMealSelect.dispatchEvent(new Event('change'));
 
-        showSuccess('Entry added successfully!');
-      } catch (error) {
-        console.error('Error adding entry:', error);
-        showError('Failed to add entry. Please try again later.');
-      } finally {
-        hideLoading();
-      }
-    });
+      showSuccess('Entry added successfully!');
+    } catch (error) {
+      console.error('Error adding entry:', error);
+      showError('Failed to add entry. Please try again later.');
+    } finally {
+      hideLoading();
+    }
+  });
 
-    entryMealSelect.dispatchEvent(new Event('change'));
+  entryMealSelect.dispatchEvent(new Event('change'));
 
-    mealManagement.style.display = 'block';
+  mealManagement.style.display = 'block';
 }
 
 // Initialize Foods page
@@ -583,20 +579,20 @@ function renderEntryHistory(container) {
   }
 
   // Add entries
-    const entryHeader = document.createElement('h4');
-    entryHeader.textContent = "Entries";
-    container.appendChild(entryHeader);
+  const entryHeader = document.createElement('h4');
+  entryHeader.textContent = "Entries";
+  container.appendChild(entryHeader);
 
-    listEntries.forEach(entry => {
-      const entryCard = document.createElement('div');
-      entryCard.className = 'meal-card';
-      entryCard.innerHTML = `
+  listEntries.forEach(entry => {
+    const entryCard = document.createElement('div');
+    entryCard.className = 'meal-card';
+    entryCard.innerHTML = `
                 <h4>${allFoods[entry.food].name}</h4>
                 <p><strong>Calories:</strong> ${entry.calories}</p>
             `;
 
-      container.appendChild(entryCard);
-    });
+    container.appendChild(entryCard);
+  });
 }
 
 // Allow user to select meals from the database
@@ -609,7 +605,8 @@ async function populateMealSelect(selectElement) {
   }
 
   // Add meals
-  allMeals.forEach(meal => { const option = document.createElement('option');
+  allMeals.forEach(meal => {
+    const option = document.createElement('option');
     option.value = meal.id;
     option.textContent = meal.name;
     selectElement.appendChild(option);
@@ -941,12 +938,10 @@ function showSuccess(message) {
   }, 3000);
 }
 
-function setCaloriesSelected(food, newMeal) {
+function setCaloriesSelected(food) {
   let selectedCalories = 0;
 
   food.forEach((item) => {
-    console.log("adding: " + item)
-    const addEntryResponse = addEntry(item.calories, item.id, newMeal);
     selectedCalories += item.calories;
   })
 
