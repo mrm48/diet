@@ -439,16 +439,21 @@ function initEntries() {
       try {
 
         // Add entries to the meal
-        const selectedCalories = setCaloriesSelected(mealFoodsSelect, entryMealSelect.value);
+        let selectedCalories = setCaloriesSelected(mealFoodsSelect, entryMealSelect.value);
 
-        const totalMealCalories = selectedCalories.reduce((a, b) => a + b, 0);
+        selectedCalories = selectedCalories + entryMealSelect.value;
 
+        allMeals.forEach(meal => {
+          if (meal.id.toString() === entryMealSelect.value) {
+            selectedCalories = meal.calories + selectedCalories;
+          }
+        })
         const response = await fetch(`${API_BASE_URL}/meal/calories`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             id: entryMealSelect.value,
-            calories: parseInt(totalMealCalories),
+            calories: parseInt(selectedCalories),
           })
         });
 
