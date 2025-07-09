@@ -505,10 +505,7 @@ func AddMeal(meal models.Meal) error {
 		return err
 	}
 
-	meal.Calories = 0
 	meal.Dieterid = dieter.ID
-
-	meal.Day, err = mutils.GetDateFromString(meal.Day)
 
 	if meal.Dieterid != 0 {
 		db, err := getConnection()
@@ -524,8 +521,8 @@ func AddMeal(meal models.Meal) error {
 		}
 
 		// Add the meal to the database, add 1 to the last ID created
-		_, err = db.Exec(context.Background(), "INSERT INTO meal values ($1, $2, $3, $4, $5, $6)",
-			newID+1, meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
+		_, err = db.Exec(context.Background(), "INSERT INTO meal (calories, day, dieter, dieterid, name) values ($1, $2, $3, $4, $5)",
+			meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
 		err = mutils.WrapError(err, "error 103: Cannot store new meal", "insert")
 		if err != nil {
 			return err
@@ -536,6 +533,16 @@ func AddMeal(meal models.Meal) error {
 	}
 
 	return mutils.WrapError(nil, "error 301: Cannot find dieter id", "notfound")
+}
+
+func UpdateMealCalories(meal models.Meal) error {
+	db, err := getConnection()
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Query(context.Background(), "UPDATE meal SET calories = $1 WHERE ID = $2", meal.Calories, meal.ID)
+	return mutils.WrapError(err, "error 101: Cannot update meal calories", "update")
 }
 
 // GetAllFood retrieves all food items from the database and returns them as a list of food objects
@@ -598,20 +605,13 @@ func DeleteFoodRow(food models.Food) error {
 
 // AddEntry uses a complete entry object to add an entry to the database
 func AddEntry(entry models.Entry) (models.Entry, error) {
-	var newID int64
 	db, err := getConnection()
 	if err != nil {
 		return entry, err
 	}
 
-	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from entry").Scan(&newID)
-	err = mutils.WrapError(err, "error 101: Cannot query entry count", "query")
-	if err != nil {
-		return entry, err
-	}
-
-	_, err = db.Query(context.Background(), "INSERT INTO entry values ($1, $2, $3, $4)",
-		newID+1, entry.Calories, entry.FoodID, entry.MealID)
+	_, err = db.Query(context.Background(), "INSERT INTO entry (calories, food_id, meal_id) values ($1, $2, $3)",
+		entry.Calories, entry.FoodID, entry.MealID)
 	err = mutils.WrapError(err, "error 102: Cannot insert entry", "insert")
 	if err != nil {
 		return entry, err

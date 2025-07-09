@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"mauit/models"
 	"mauit/mutils"
 	"mauit/repositories"
@@ -36,9 +35,17 @@ func AddDieter(req *gin.Context) {
 		err = repositories.AddNewDieter(dieter)
 
 		req, err = mutils.WrapServiceError(err, "cannot add user to the database", req, http.StatusInternalServerError)
+
 		if err == nil {
-			req.IndentedJSON(http.StatusCreated, dieter)
-			mutils.LogMessage("Request", "Dieter added")
+
+			dieter, err = repositories.GetSingleDieter(dieter)
+
+			req, err = mutils.WrapServiceError(err, "cannot retrieve user from database after it has been added", req, http.StatusInternalServerError)
+			if err == nil {
+				req.IndentedJSON(http.StatusCreated, dieter)
+				mutils.LogMessage("Request", "Dieter added")
+			}
+
 		}
 
 	}
@@ -91,7 +98,6 @@ func GetDieterCalories(req *gin.Context) {
 	req, err = mutils.WrapServiceError(err, "Cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
-		req.IndentedJSON(http.StatusBadRequest, errors.New("cannot create dieter object from JSON provided"))
 		Dieters, err := repositories.GetDieterCalories(dieter)
 
 		req, err = mutils.WrapServiceError(err, "cannot find unique Dieter requested", req, http.StatusNotFound)
@@ -157,6 +163,26 @@ func GetMeal(req *gin.Context) {
 	}
 }
 
+// SetMealCalories in the database. This will set the target number of calories for a meal using its name.
+func SetMealCalories(req *gin.Context) {
+
+	var meal models.Meal
+
+	err := req.BindJSON(&meal)
+	req, err = mutils.WrapServiceError(err, "cannot create meal calories object from JSON provided", req, http.StatusBadRequest)
+
+	if err == nil {
+		err = repositories.UpdateMealCalories(meal)
+		req, err = mutils.WrapServiceError(err, "cannot update meal from object", req, http.StatusNotFound)
+
+		if err == nil {
+			mutils.LogMessage("Request", "Updated meal calories")
+			req.IndentedJSON(http.StatusOK, meal)
+		}
+	}
+
+}
+
 // GetMealCalories from the database for a single meal. Requires the meal name, dieter name and day.
 func GetMealCalories(req *gin.Context) {
 	var meal models.Meal
@@ -217,12 +243,15 @@ func AddMeal(req *gin.Context) {
 	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
-		if meal.Day == "" {
-			meal.Day = mutils.GetCurrentDate()
-		}
+		meal.Day = mutils.GetCurrentDate()
 
 		err = repositories.AddMeal(meal)
 		req, err = mutils.WrapServiceError(err, "cannot add meal to database", req, http.StatusInternalServerError)
+
+		// return meal ID
+		mealList, err := repositories.GetMeal(meal)
+		meal = mealList[0]
+		req, err = mutils.WrapServiceError(err, "cannot retrieve meal from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusCreated, meal)
