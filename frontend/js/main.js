@@ -877,6 +877,30 @@ async function deleteEntry(entry) {
 
     if (!response.ok) throw new Error('Failed to delete entry');
 
+    const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: entry.meal,
+      })
+    })
+
+    if (!mealCaloriesResponse.ok) throw new Error('Failed to load meal calories');
+   const mealCalories = await mealCaloriesResponse.json();
+
+    const newCalorieTotal = mealCalories.calories - entry.calories;
+
+    const mealResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: entry.meal,
+        calories: newCalorieTotal
+      })
+    })
+
+    if (!mealResponse.ok) throw new Error('Failed to update meal calories');
+
     showSuccess('Entry deleted successfully!');
     return true;
   } catch (error) {
