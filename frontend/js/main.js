@@ -600,7 +600,19 @@ function renderEntryHistory(container, listEntries) {
       entryCard.innerHTML = `
                 <h4>${allFoods[entry.food - 1].name}</h4>
                 <p><strong>Calories:</strong> ${entry.calories}</p>
+                    <div class="actions">
+                        <button class="delete-btn" data-id="${entry.id}">Delete</button>
+                    </div>
             `;
+
+      // Add delete event listener
+      const deleteBtn = entryCard.querySelector('.delete-btn');
+      deleteBtn.addEventListener('click', async () => {
+        if (confirm(`Are you sure you want to delete ${allFoods[entry.food - 1].name}?`)) {
+          await deleteEntry(entry);
+          entryCard.remove();
+        }
+      });
 
       container.appendChild(entryCard);
 
@@ -851,6 +863,25 @@ async function deleteMeal(meal) {
   } catch (error) {
     console.error('Error deleting meal:', error);
     showError('Failed to delete meal. Please try again later.');
+    return false;
+  }
+}
+
+async function deleteEntry(entry) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/entry`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    });
+
+    if (!response.ok) throw new Error('Failed to delete entry');
+
+    showSuccess('Entry deleted successfully!');
+    return true;
+  } catch (error) {
+    console.error('Error deleting entry:', error);
+    showError('Failed to delete entry. Please try again later.');
     return false;
   }
 }
