@@ -461,7 +461,7 @@ function initEntries() {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: entryMealSelect.value,
+          id: selectedMeal.id,
           calories: parseInt(selectedMeal.calories),
         })
       });
