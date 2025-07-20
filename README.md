@@ -1,6 +1,6 @@
 # MauIt
 
-Dieter REST API written in Go using a postgresql database for storing foods, entries and dieter information.
+Dieter REST API written in Go using a postgresql database for storing foods, entries and dieter information. A frontend is also provided.
 
 ## Endpoints
 
