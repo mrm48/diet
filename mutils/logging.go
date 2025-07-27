@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-var callDepthLogged int = 1
+var callDepthLogged int = 2
 
 // LogConnectionError to the app log when a connection cannot be established with the database
 func LogConnectionError(err error) {
@@ -22,14 +22,9 @@ func LogApplicationError(ltype string, message string, err error) {
 
 	slog := fmt.Sprintf("%v: %v : %v", ltype, message, err)
 
-	var tempCallDepth = callDepthLogged
-	callDepthLogged = 2
-
 	logerr := log.Output(callDepthLogged, slog)
 
     LogError(logerr)
-
-	callDepthLogged = tempCallDepth
 
 }
 
