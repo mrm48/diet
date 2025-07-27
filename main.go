@@ -20,7 +20,7 @@ func main() {
 
 	host := "localhost"
 	portNumber := 9090
-	routerHost := host + strconv.Itoa(portNumber)
+	routerHost := host + ":" + strconv.Itoa(portNumber)
 
 	// create and / or open the application log file.
 	f, err := os.OpenFile("logs/mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
