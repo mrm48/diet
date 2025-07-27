@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"strconv"
 )
 
 // main initializes and starts mauit. Key responsibilities:
@@ -16,6 +17,10 @@ import (
 // - Sets up all API routes via router.SetRoutes()
 // - Starts HTTP server on localhost:9090
 func main() {
+
+	host := "localhost"
+	portNumber := 9090
+	routerHost := host + strconv.Itoa(portNumber)
 
 	// create and / or open the application log file.
 	f, err := os.OpenFile("logs/mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
@@ -62,6 +67,6 @@ func main() {
 	mutils.LogMessage("Server Startup", "Routes set and frontend configured: Starting server")
 
 	// start server
-	r.Run("localhost:9090")
+	r.Run(routerHost)
 
 }
