@@ -5,11 +5,13 @@ import (
 	"log"
 )
 
+var callDepthLogged int = 1
+
 // LogConnectionError to the app log when a connection cannot be established with the database
 func LogConnectionError(err error) {
 
 	slog := fmt.Sprintf("Database Connection Error: Could not connect to the database: %v", err)
-	logerr := log.Output(1, slog)
+	logerr := log.Output(callDepthLogged, slog)
 
     LogError(logerr)
 
@@ -19,9 +21,15 @@ func LogConnectionError(err error) {
 func LogApplicationError(ltype string, message string, err error) {
 
 	slog := fmt.Sprintf("%v: %v : %v", ltype, message, err)
-	logerr := log.Output(2, slog)
+
+	var tempCallDepth = callDepthLogged
+	callDepthLogged = 2
+
+	logerr := log.Output(callDepthLogged, slog)
 
     LogError(logerr)
+
+	callDepthLogged = tempCallDepth
 
 }
 
@@ -29,7 +37,7 @@ func LogApplicationError(ltype string, message string, err error) {
 func LogMessage(ltype string, message string) {
 
 	slog := fmt.Sprintf("%v: %v", ltype, message)
-	logerr := log.Output(1, slog)
+	logerr := log.Output(callDepthLogged, slog)
 
     LogError(logerr)
 
@@ -39,6 +47,6 @@ func LogMessage(ltype string, message string) {
 func LogError(logerr error) {
 	if logerr != nil {
 		res := fmt.Sprintf("Log error: %v", logerr)
-		log.Output(1, res)
+		log.Output(callDepthLogged, res)
 	}
 }

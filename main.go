@@ -38,6 +38,7 @@ func main() {
 	}(f)
 
 	log.SetOutput(f)
+	log.SetFlags(log.LstdFlags|log.Lshortfile)
 	mutils.LogMessage("Server Startup", "Initializing")
 
 	// setup the router
