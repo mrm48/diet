@@ -21,9 +21,11 @@ func main() {
 	host := "localhost"
 	portNumber := 9090
 	routerHost := host + ":" + strconv.Itoa(portNumber)
+	year, month, day := time.Now().Local().Date()
+	logFile := "logs/mauit_app-" + strconv.Itoa(year) + month.String() + strconv.Itoa(day) + ".log"
 
 	// create and / or open the application log file.
-	f, err := os.OpenFile("logs/mauit_app.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 
 	if err != nil {
 		log.Fatal(err)
