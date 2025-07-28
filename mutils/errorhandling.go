@@ -6,6 +6,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type ErrorCode int
+
+const (
+	NotConnected ErrorCode = iota
+	ApplicationError
+	DatabaseError
+)
+
+var errorName = map[ErrorCode]string{
+	NotConnected:		"error 101:",
+	ApplicationError:	"error 201:",
+	DatabaseError:		"error 301:",
+}
+
+func (en ErrorCode) String() string{
+	return errorName[en]
+}
+
 // WrapError wraps an error message and then calls the appropriate logger function
 func WrapError(err error, msg string, logger string) error {
 	if err != nil {
