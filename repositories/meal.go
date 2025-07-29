@@ -14,7 +14,7 @@ import (
 // getConnection establishes and returns a connection to the PostgreSQL database.
 func getConnection() (*pgx.Conn, error) {
 	db, err := pgx.Connect(context.Background(), "postgres://postgres@localhost:5432/meal")
-	return db, mutils.WrapError(err, "error 001: Cannot connect to the database", "connection")
+	return db, mutils.WrapError(err, mutils.NotConnected.String() + " Cannot connect to the database", "connection")
 }
 
 // GetAllDieters retrieves all dieters from the database.
@@ -28,11 +28,11 @@ func GetAllDieters() ([]models.Dieter, error) {
 
 	rows, err := db.Query(context.Background(), "Select * FROM dieter")
 
-	err = mutils.WrapError(err, "error 101: cannot retrieve dieter rows from database", "table")
+	err = mutils.WrapError(err, mutils.DatabaseError.String() + " cannot retrieve dieter rows from database", "table")
 	if err == nil {
 		Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
-		err = mutils.WrapError(err, "error 201: Cannot get dieter information", "notfound")
+		err = mutils.WrapError(err, mutils.ApplicationError.String() + " Cannot get dieter information", "notfound")
 
 		defer rows.Close()
 		return Dieters, err
@@ -51,7 +51,7 @@ func GetSingleDieter(dieter models.Dieter) (models.Dieter, error) {
 
 		if err != nil {
 			mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
-			return dieter, errors.New("error 201: Cannot create a list of dieters from search")
+			return dieter, errors.New(mutils.ApplicationError.String() + " Cannot create a list of dieters from search")
 		}
 
 		defer rows.Close()
