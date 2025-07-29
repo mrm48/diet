@@ -14,7 +14,7 @@ func GetDieters(req *gin.Context) {
 
 	Dieters, err := repositories.GetAllDieters()
 
-	req, err = mutils.WrapServiceError(err, "could not return the list of dieters from the database", req, http.StatusInternalServerError)
+	req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " could not return the list of dieters from the database", req, http.StatusInternalServerError)
 	if err == nil {
 		req.IndentedJSON(http.StatusOK, Dieters)
 		mutils.LogMessage("Request", "Dieters retrieved and sent to user")
@@ -28,19 +28,19 @@ func AddDieter(req *gin.Context) {
 	var dieter models.Dieter
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 
 		err = repositories.AddNewDieter(dieter)
 
-		req, err = mutils.WrapServiceError(err, "cannot add user to the database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot add user to the database", req, http.StatusInternalServerError)
 
 		if err == nil {
 
 			dieter, err = repositories.GetSingleDieter(dieter)
 
-			req, err = mutils.WrapServiceError(err, "cannot retrieve user from database after it has been added", req, http.StatusInternalServerError)
+			req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot retrieve user from database after it has been added", req, http.StatusInternalServerError)
 			if err == nil {
 				req.IndentedJSON(http.StatusCreated, dieter)
 				mutils.LogMessage("Request", "Dieter added")
@@ -58,10 +58,10 @@ func GetDieter(req *gin.Context) {
 	var dieter models.Dieter
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 	if err == nil {
 		dieter, err = repositories.GetSingleDieter(dieter)
-		req, err = mutils.WrapServiceError(err, "cannot find dieter in database", req, http.StatusNotFound)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot find dieter in database", req, http.StatusNotFound)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, dieter)
@@ -76,11 +76,11 @@ func SetDieterCalories(req *gin.Context) {
 	var dieter models.Dieter
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "cannot create dieter calories object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create dieter calories object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.UpdateDieterCalories(dieter)
-		req, err = mutils.WrapServiceError(err, "cannot update dieter calories object", req, http.StatusNotFound)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot update dieter calories object", req, http.StatusNotFound)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, dieter)
@@ -95,12 +95,12 @@ func GetDieterCalories(req *gin.Context) {
 	var dieter models.Dieter
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "Cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " Cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		Dieters, err := repositories.GetDieterCalories(dieter)
 
-		req, err = mutils.WrapServiceError(err, "cannot find unique Dieter requested", req, http.StatusNotFound)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot find unique Dieter requested", req, http.StatusNotFound)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, Dieters[0].Calories)
@@ -115,11 +115,11 @@ func GetDieterMealsToday(req *gin.Context) {
 	day := mutils.GetCurrentDate()
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		meals, err := repositories.GetDieterMealsToday(dieter, day)
-		req, err = mutils.WrapServiceError(err, "cannot get list of meals for today", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot get list of meals for today", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, meals)
@@ -132,11 +132,11 @@ func GetRemainingDieterCalories(req *gin.Context) {
 	day := mutils.GetCurrentDate()
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		calories, err := repositories.GetRemainingCaloriesToday(dieter, day)
-		req, err = mutils.WrapServiceError(err, "cannot get remaining calories for dieter", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot get remaining calories for dieter", req, http.StatusInternalServerError)
 
 		if err == nil {
 			dieter.Calories = calories
@@ -150,11 +150,11 @@ func GetMeal(req *gin.Context) {
 	var meal models.Meal
 
 	err := req.BindJSON(&meal)
-	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		meals, err := repositories.GetMeal(meal)
-		req, err = mutils.WrapServiceError(err, "cannot retrieve meal from database", req, http.StatusNotFound)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot retrieve meal from database", req, http.StatusNotFound)
 
 		if err == nil {
 			mutils.LogMessage("Request", "Responded with the meal requested")
@@ -169,11 +169,11 @@ func SetMealCalories(req *gin.Context) {
 	var meal models.Meal
 
 	err := req.BindJSON(&meal)
-	req, err = mutils.WrapServiceError(err, "cannot create meal calories object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create meal calories object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.UpdateMealCalories(meal)
-		req, err = mutils.WrapServiceError(err, "cannot update meal from object", req, http.StatusNotFound)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot update meal from object", req, http.StatusNotFound)
 
 		if err == nil {
 			mutils.LogMessage("Request", "Updated meal calories")
@@ -188,11 +188,11 @@ func GetMealCalories(req *gin.Context) {
 	var meal models.Meal
 
 	err := req.BindJSON(&meal)
-	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		newCalories, err := repositories.GetMealCalories(meal)
-		req, err = mutils.WrapServiceError(err, "cannot get calories from meal database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot get calories from meal database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			meal.Calories = newCalories
@@ -207,11 +207,11 @@ func GetMealEntries(req *gin.Context) {
 	var meal models.Meal
 
 	err := req.BindJSON(&meal)
-	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		entries, err := repositories.GetMealEntries(meal)
-		req, err = mutils.WrapServiceError(err, "cannot populate list of entries from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot populate list of entries from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, entries)
@@ -224,11 +224,11 @@ func GetDieterMeals(req *gin.Context) {
 	var dieter models.Dieter
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		meals, err := repositories.GetDieterMeals(dieter)
-		req, err = mutils.WrapServiceError(err, "cannot populate list of meals from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot populate list of meals from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, meals)
@@ -240,18 +240,18 @@ func AddMeal(req *gin.Context) {
 	var meal models.Meal
 
 	err := req.BindJSON(&meal)
-	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		meal.Day = mutils.GetCurrentDate()
 
 		err = repositories.AddMeal(meal)
-		req, err = mutils.WrapServiceError(err, "cannot add meal to database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot add meal to database", req, http.StatusInternalServerError)
 
 		// return meal ID
 		mealList, err := repositories.GetMeal(meal)
 		meal = mealList[0]
-		req, err = mutils.WrapServiceError(err, "cannot retrieve meal from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot retrieve meal from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusCreated, meal)
@@ -263,11 +263,11 @@ func GetEntry(req *gin.Context) {
 	var entry models.Entry
 
 	err := req.BindJSON(&entry)
-	req, err = mutils.WrapServiceError(err, "cannot create entry object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create entry object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		entry, err = repositories.GetEntry(entry)
-		req, err = mutils.WrapServiceError(err, "cannot retrieve entry from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot retrieve entry from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, entry)
@@ -279,11 +279,11 @@ func AddEntry(req *gin.Context) {
 	var entry models.Entry
 
 	err := req.BindJSON(&entry)
-	req, err = mutils.WrapServiceError(err, "cannot create entry object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create entry object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		entry, err = repositories.AddEntry(entry)
-		req, err = mutils.WrapServiceError(err, "cannot add entry to database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot add entry to database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			mutils.LogMessage("Request", "Added entry to the database")
@@ -296,11 +296,11 @@ func AddEntryToMeal(req *gin.Context) {
 	var entry models.Entry
 
 	err := req.BindJSON(&entry)
-	req, err = mutils.WrapServiceError(err, "cannot create entry object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create entry object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.AddEntryToMeal(entry)
-		req, err = mutils.WrapServiceError(err, "cannot update meal by adding the entry", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot update meal by adding the entry", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, entry)
@@ -312,11 +312,11 @@ func AddFood(req *gin.Context) {
 	var food models.Food
 
 	err := req.BindJSON(&food)
-	req, err = mutils.WrapServiceError(err, "cannot create food object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create food object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.AddFoodRow(food)
-		req, err = mutils.WrapServiceError(err, "cannot insert food into database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot insert food into database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			mutils.LogMessage("Request", "Added food to the database")
@@ -329,11 +329,11 @@ func GetFood(req *gin.Context) {
 	var food models.Food
 
 	err := req.BindJSON(&food)
-	req, err = mutils.WrapServiceError(err, "cannot create food object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create food object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		food, err = repositories.GetFoodRow(food)
-		req, err = mutils.WrapServiceError(err, "cannot retrieve food from database", req, http.StatusNotFound)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot retrieve food from database", req, http.StatusNotFound)
 
 		if err == nil {
 			if food.Name != "nil" {
@@ -347,11 +347,11 @@ func EditFood(req *gin.Context) {
 	var food models.Food
 
 	err := req.BindJSON(&food)
-	req, err = mutils.WrapServiceError(err, "cannot create food calories object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create food calories object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.UpdateFood(food)
-		req, err = mutils.WrapServiceError(err, "cannot set food calories", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot set food calories", req, http.StatusInternalServerError)
 
 		if err == nil {
 			mutils.LogMessage("Request", "Calories updated for food")
@@ -364,11 +364,11 @@ func DeleteFood(req *gin.Context) {
 	var food models.Food
 
 	err := req.BindJSON(&food)
-	req, err = mutils.WrapServiceError(err, "cannot create food object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create food object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.DeleteFoodRow(food)
-		req, err = mutils.WrapServiceError(err, "cannot delete food from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot delete food from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, nil)
@@ -381,11 +381,11 @@ func DeleteMeal(req *gin.Context) {
 	var meal models.Meal
 
 	err := req.BindJSON(&meal)
-	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.DeleteMeal(meal)
-		req, err = mutils.WrapServiceError(err, "cannot delete meal from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot delete meal from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, nil)
@@ -412,15 +412,15 @@ func DeleteMealEntries(req *gin.Context) {
 	var meal models.Meal
 
 	err := req.BindJSON(&meal)
-	req, err = mutils.WrapServiceError(err, "cannot create meal object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create meal object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		meals, err := repositories.GetMeal(meal)
-		req, err = mutils.WrapServiceError(err, "cannot retrieve meal from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot retrieve meal from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			err = deleteEntriesByMeal(meals[0].ID, req)
-			req, err = mutils.WrapServiceError(err, "could not remove meal entries from database", req, http.StatusInternalServerError)
+			req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " could not remove meal entries from database", req, http.StatusInternalServerError)
 
 			if err == nil {
 				req.IndentedJSON(http.StatusOK, nil)
@@ -432,14 +432,14 @@ func DeleteMealEntries(req *gin.Context) {
 // deleteEntriesByMeal ID given, helps with DeleteMealEntries.
 func deleteEntriesByMeal(mealID int64, req *gin.Context) error {
 	err := repositories.DeleteEntriesByMeal(mealID)
-	req, err = mutils.WrapServiceError(err, "cannot delete entries for meal", req, http.StatusInternalServerError)
+	req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot delete entries for meal", req, http.StatusInternalServerError)
 	return err
 }
 
 // GetAllFood items from the database and return as a JSON array
 func GetAllFood(req *gin.Context) {
 	food, err := repositories.GetAllFood()
-	req, err = mutils.WrapServiceError(err, "cannot get all food from database", req, http.StatusInternalServerError)
+	req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot get all food from database", req, http.StatusInternalServerError)
 
 	if err == nil {
 		req.IndentedJSON(http.StatusOK, food)
@@ -450,11 +450,11 @@ func DeleteDieter(req *gin.Context) {
 	var dieter models.Dieter
 
 	err := req.BindJSON(&dieter)
-	req, err = mutils.WrapServiceError(err, "cannot create dieter object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create dieter object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.DeleteDieter(dieter)
-		req, err = mutils.WrapServiceError(err, "cannot delete dieter from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot delete dieter from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, nil)
@@ -466,11 +466,11 @@ func DeleteEntry(req *gin.Context) {
 	var entry models.Entry
 
 	err := req.BindJSON(&entry)
-	req, err = mutils.WrapServiceError(err, "cannot create entry object from JSON provided", req, http.StatusBadRequest)
+	req, err = mutils.WrapServiceError(err, mutils.ApplicationError.String() + " cannot create entry object from JSON provided", req, http.StatusBadRequest)
 
 	if err == nil {
 		err = repositories.DeleteEntry(entry)
-		req, err = mutils.WrapServiceError(err, "cannot delete entry from database", req, http.StatusInternalServerError)
+		req, err = mutils.WrapServiceError(err, mutils.DatabaseError.String() + " cannot delete entry from database", req, http.StatusInternalServerError)
 
 		if err == nil {
 			req.IndentedJSON(http.StatusOK, nil)
