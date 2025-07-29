@@ -81,14 +81,14 @@ func AddNewDieter(dieter models.Dieter) error {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot query dieter count from database", err)
-		return errors.New("error 101: Cannot get dieter count")
+		return errors.New(mutils.DatabaseError.String() + " Cannot get dieter count")
 	}
 
 	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", newID+1, dieter.Calories, dieter.Name)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot store new dieter", err)
-		return errors.New("error 102: Cannot store new dieter")
+		return errors.New(mutils.DatabaseError.String() + " Cannot store new dieter")
 	}
 
 	return nil
@@ -108,7 +108,7 @@ func UpdateDieterCalories(dieter models.Dieter) error {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
-		return errors.New("error 102: Cannot update dieter information")
+		return errors.New(mutils.DatabaseError.String() + " Cannot update dieter information")
 	}
 
 	return nil
@@ -121,13 +121,13 @@ func GetDieterCalories(dieter models.Dieter) ([]models.Dieter, error) {
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
-		return nil, errors.New("cannot get dieter information")
+		return nil, errors.New(mutils.DatabaseError.String() + " cannot get dieter information")
 	}
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
-		return nil, errors.New("cannot create a dieter object to return")
+		return nil, errors.New(mutils.ApplicationError.String() + " cannot create a dieter object to return")
 	}
 
 	return Dieters, nil
@@ -138,21 +138,21 @@ func GetDieterMealsToday(dieter models.Dieter, day string) ([]models.Meal, error
 	db, err := getConnection()
 
 	if err != nil {
-		return nil, errors.New("could not connect to the database")
+		return nil, errors.New(mutils.NotConnected.String() + " could not connect to the database")
 	}
 
 	rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieter=$1 AND day=$2", dieter.Name, day)
 
 	if err != nil {
 		mutils.LogApplicationError("Database Error", "Cannot retrieve meals by day for dieter from database", err)
-		return nil, errors.New("cannot retrieve meals from database")
+		return nil, errors.New(mutils.DatabaseError.String() + " cannot retrieve meals from database")
 	}
 
 	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
 	if err != nil {
 		mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
-		return nil, errors.New("cannot create an array of objects to return")
+		return nil, errors.New(mutils.ApplicationError.String() + " cannot create an array of objects to return")
 	}
 
 	return meals, nil
