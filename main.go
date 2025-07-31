@@ -8,8 +8,8 @@ import (
 	"mauit/router"
 	"net/http"
 	"os"
-	"time"
 	"strconv"
+	"time"
 )
 
 // main initializes and starts mauit. Key responsibilities:
@@ -40,8 +40,8 @@ func main() {
 	}(f)
 
 	log.SetOutput(f)
-	log.SetFlags(log.LstdFlags|log.Lshortfile)
-	mutils.LogMessage("Server Startup", "Initializing")
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	mutils.LogMessage(mutils.ServerStartup.String(), "Initializing")
 
 	// setup the router
 	r := gin.Default()
@@ -67,7 +67,7 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.File("./frontend/index.html")
 	})
-	mutils.LogMessage("Server Startup", "Routes set and frontend configured: Starting server")
+	mutils.LogMessage(mutils.ServerStartup.String(), "Routes set and frontend configured: Starting server")
 
 	// start server
 	r.Run(routerHost)

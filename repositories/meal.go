@@ -14,7 +14,7 @@ import (
 // getConnection establishes and returns a connection to the PostgreSQL database.
 func getConnection() (*pgx.Conn, error) {
 	db, err := pgx.Connect(context.Background(), "postgres://postgres@localhost:5432/meal")
-	return db, mutils.WrapError(err, mutils.NotConnected.String() + " Cannot connect to the database", "connection")
+	return db, mutils.WrapError(err, mutils.NotConnected.String()+" Cannot connect to the database", "connection")
 }
 
 // GetAllDieters retrieves all dieters from the database.
@@ -28,11 +28,11 @@ func GetAllDieters() ([]models.Dieter, error) {
 
 	rows, err := db.Query(context.Background(), "Select * FROM dieter")
 
-	err = mutils.WrapError(err, mutils.DatabaseError.String() + " cannot retrieve dieter rows from database", "table")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" cannot retrieve dieter rows from database", "table")
 	if err == nil {
 		Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
-		err = mutils.WrapError(err, mutils.ApplicationError.String() + " Cannot get dieter information", "notfound")
+		err = mutils.WrapError(err, mutils.ApplicationError.String()+" Cannot get dieter information", "notfound")
 
 		defer rows.Close()
 		return Dieters, err
@@ -50,7 +50,7 @@ func GetSingleDieter(dieter models.Dieter) (models.Dieter, error) {
 		Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 		if err != nil {
-			mutils.LogApplicationError("Application Error", "Cannot create a list of dieters from search", err)
+			mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot create a list of dieters from search", err)
 			return dieter, errors.New(mutils.ApplicationError.String() + " Cannot create a list of dieters from search")
 		}
 
@@ -80,14 +80,14 @@ func AddNewDieter(dieter models.Dieter) error {
 	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from dieter").Scan(&newID)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query dieter count from database", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot query dieter count from database", err)
 		return errors.New(mutils.DatabaseError.String() + " Cannot get dieter count")
 	}
 
 	_, err = db.Exec(context.Background(), "INSERT INTO dieter values ($1, $2, $3)", newID+1, dieter.Calories, dieter.Name)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot store new dieter", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot store new dieter", err)
 		return errors.New(mutils.DatabaseError.String() + " Cannot store new dieter")
 	}
 
@@ -107,7 +107,7 @@ func UpdateDieterCalories(dieter models.Dieter) error {
 	_, err = db.Query(context.Background(), "UPDATE dieter SET Calories = $1 WHERE Name = $2", dieter.Calories, dieter.Name)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot set dieter calories", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot set dieter calories", err)
 		return errors.New(mutils.DatabaseError.String() + " Cannot update dieter information")
 	}
 
@@ -120,13 +120,13 @@ func GetDieterCalories(dieter models.Dieter) ([]models.Dieter, error) {
 	rows, err := retrieveDieter(dieter)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot retrieve dieter information from database", err)
 		return nil, errors.New(mutils.DatabaseError.String() + " cannot get dieter information")
 	}
 	Dieters, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create a dieter object from search", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot create a dieter object from search", err)
 		return nil, errors.New(mutils.ApplicationError.String() + " cannot create a dieter object to return")
 	}
 
@@ -144,14 +144,14 @@ func GetDieterMealsToday(dieter models.Dieter, day string) ([]models.Meal, error
 	rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieter=$1 AND day=$2", dieter.Name, day)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot retrieve meals by day for dieter from database", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot retrieve meals by day for dieter from database", err)
 		return nil, errors.New(mutils.DatabaseError.String() + " cannot retrieve meals from database")
 	}
 
 	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot populate list of meals with data returned from database", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot populate list of meals with data returned from database", err)
 		return nil, errors.New(mutils.ApplicationError.String() + " cannot create an array of objects to return")
 	}
 
@@ -164,14 +164,14 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 	rows, err := retrieveDieter(dieter)
 
 	if err != nil {
-		mutils.LogApplicationError("Database error", "Cannot find dieter by name", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot find dieter by name", err)
 		return 0, errors.New(mutils.DatabaseError.String() + " cannot get dieter information")
 	}
 
 	Dieter, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Dieter])
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot parse dieter from row returned", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot parse dieter from row returned", err)
 		return 0, errors.New(mutils.ApplicationError.String() + " cannot parse dieter from row returned")
 	}
 
@@ -183,21 +183,21 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 		db, err := getConnection()
 
 		if err != nil {
-			mutils.LogApplicationError("Database Error", "Cannot connect to the database", err)
+			mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot connect to the database", err)
 			return 0, errors.New(mutils.DatabaseError.String() + " cannot connect to the database")
 		}
 
 		rows, err := db.Query(context.Background(), "SELECT * from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
 
 		if err != nil {
-			mutils.LogApplicationError("Database Error", "Cannot get meals from database for current user on the current day", err)
+			mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot get meals from database for current user on the current day", err)
 			return 0, errors.New(mutils.DatabaseError.String() + " cannot get meals for the dieter")
 		}
 
 		meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
 		if err != nil {
-			mutils.LogApplicationError("Application Error", "Cannot parse meals from row returned", err)
+			mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot parse meals from row returned", err)
 			return 0, errors.New(mutils.ApplicationError.String() + " cannot parse meals from row returned")
 		}
 
@@ -207,13 +207,13 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 
 			rows, err = db.Query(context.Background(), "Select SUM(Calories) from meal WHERE dieterid=$1 AND day=$2", dieter.ID, day)
 			if err != nil {
-				mutils.LogApplicationError("Database Error", "Cannot retrieve dieter information from database", err)
+				mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot retrieve dieter information from database", err)
 				return 0, errors.New(mutils.DatabaseError.String() + " cannot get today's calories for dieter")
 			} else {
 				if rows.Next() {
 					err = rows.Scan(&dieter.Calories)
 					if err != nil {
-						mutils.LogApplicationError("Request", "Cannot parse sum of calories for this dieter", err)
+						mutils.LogApplicationError(mutils.Request.String(), "Cannot parse sum of calories for this dieter", err)
 						return 0, errors.New(mutils.ApplicationError.String() + " cannot parse the sum of calories for this dieter")
 					} else {
 						return Dieter[0].Calories - dieter.Calories, nil
@@ -224,7 +224,7 @@ func GetRemainingCaloriesToday(dieter models.Dieter, day string) (int, error) {
 			return Dieter[0].Calories, nil
 		}
 	} else {
-		mutils.LogApplicationError("Database Error", "Cannot find remaining dieter calories requested", nil)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot find remaining dieter calories requested", nil)
 		return 0, errors.New(mutils.DatabaseError.String() + " cannot find dieter information")
 	}
 
@@ -242,21 +242,21 @@ func DeleteDieter(dieter models.Dieter) error {
 	err = db.QueryRow(context.Background(), "SELECT * from dieter WHERE Name=$1", dieter.Name).Scan(&dieter.ID, &dieter.Calories, &dieter.Name)
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot retrieve dieter with name provided", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot retrieve dieter with name provided", err)
 		return errors.New(mutils.ApplicationError.String() + " cannot find dieter")
 	}
 
 	err = DeleteMealsForDieter(dieter.ID)
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot delete meals with dieter id provided", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot delete meals with dieter id provided", err)
 		return errors.New(mutils.ApplicationError.String() + " cannot delete meals with dieter id provided")
 	}
 
 	_, err = db.Query(context.Background(), "DELETE from dieter WHERE ID=$1", dieter.ID)
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot delete dieter retrieved by ID", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot delete dieter retrieved by ID", err)
 		return errors.New(mutils.ApplicationError.String() + " cannot delete dieter")
 	}
 
@@ -275,7 +275,7 @@ func DeleteMealsForDieter(dieterID int64) error {
 	rows, err := meal.Query(context.Background(), "SELECT ID FROM meal WHERE dieterID=$1", dieterID)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot find meals by dieter from database", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot find meals by dieter from database", err)
 		return errors.New(mutils.DatabaseError.String() + " cannot find meals for requested dieter")
 	}
 
@@ -287,18 +287,18 @@ func DeleteMealsForDieter(dieterID int64) error {
 	for rows.Next() {
 		err = rows.Scan(&index)
 		if err != nil {
-			mutils.LogApplicationError("Application Error", "Cannot get meal ID from returned rows", err)
+			mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot get meal ID from returned rows", err)
 			return errors.New(mutils.ApplicationError.String() + " cannot retrieve the meal ID: " + strconv.FormatInt(index, 10))
 		}
 		err = DeleteEntriesByMeal(index)
 
 		if err != nil {
-			mutils.LogApplicationError("Application Error", "Cannot delete entries for meal", err)
+			mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot delete entries for meal", err)
 			return errors.New(mutils.ApplicationError.String() + " cannot remove entries from the meal")
 		}
 
 		_, err = meal.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", index)
-		err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot delete meal from database", "query")
+		err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot delete meal from database", "query")
 	}
 
 	return err
@@ -320,14 +320,14 @@ func GetFoodRow(food models.Food) (models.Food, error) {
 	rows, err := db.Query(context.Background(), "Select * FROM Food WHERE name=$1", food.Name)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot get food information", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot get food information", err)
 		return errorFood, errors.New(mutils.DatabaseError.String() + " cannot retrieve food information from provided name:" + food.Name)
 	}
 
 	items, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Food])
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot create a list of food from search", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot create a list of food from search", err)
 		return errorFood, errors.New(mutils.ApplicationError.String() + " cannot retrieve a list of food items matching the provided name: " + food.Name)
 	}
 
@@ -335,7 +335,7 @@ func GetFoodRow(food models.Food) (models.Food, error) {
 
 	for _, v := range items {
 		if v.Name == food.Name {
-			mutils.LogMessage("Request", "food information sent back to user")
+			mutils.LogMessage(mutils.Request.String(), "food information sent back to user")
 			return v, nil
 		}
 	}
@@ -354,14 +354,14 @@ func GetMeal(meal models.Meal) ([]models.Meal, error) {
 	rows, err := db.Query(context.Background(), "Select * FROM meal WHERE name=$1 AND dieter=$2 AND day=$3", meal.Name, meal.Dieter, meal.Day)
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot query meal from database", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot query meal from database", err)
 		return nil, errors.New(mutils.ApplicationError.String() + " cannot retrieve meal from the database")
 	}
 
 	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot parse meal from row returned", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot parse meal from row returned", err)
 		return nil, errors.New(mutils.ApplicationError.String() + " cannot parse meal from row returned")
 	}
 
@@ -380,7 +380,7 @@ func DeleteEntriesByMeal(mealID int64) error {
 	_, err = meal.Query(context.Background(), "DELETE FROM entry WHERE MEAL_ID=$1", mealID)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot delete entries for meal from database", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot delete entries for meal from database", err)
 		return errors.New(mutils.DatabaseError.String() + " cannot remove entries from the database for the provided meal id")
 	}
 
@@ -400,7 +400,7 @@ func DeleteMeal(meal models.Meal) error {
 	err = db.QueryRow(context.Background(), "SELECT ID FROM meal WHERE Name = $1 AND Dieter = $2 AND Day = $3", meal.Name, meal.Dieter, meal.Day).Scan(&dbMeal.ID)
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot find meal in database", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot find meal in database", err)
 		return errors.New(mutils.ApplicationError.String() + " cannot find the requested meal in the database")
 	}
 
@@ -409,14 +409,14 @@ func DeleteMeal(meal models.Meal) error {
 	err = DeleteEntriesByMeal(meal.ID)
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot delete meal entries from database", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot delete meal entries from database", err)
 		return errors.New(mutils.ApplicationError.String() + " cannot remove meal entries from the database")
 	}
 
 	_, err = db.Query(context.Background(), "DELETE FROM meal WHERE ID=$1", meal.ID)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot delete meal from database", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot delete meal from database", err)
 		return errors.New(mutils.DatabaseError.String() + " cannot remove meal " + strconv.FormatInt(meal.ID, 10) + " from the database")
 	}
 
@@ -435,14 +435,14 @@ func GetMealCalories(meal models.Meal) (int, error) {
 	rows, err := db.Query(context.Background(), "Select SUM(Calories) from meal WHERE name=$1 AND day=$2 AND dieter=3", meal.Name, meal.Day, meal.Dieter)
 
 	if err != nil {
-		mutils.LogApplicationError("Database Error", "Cannot query meal from database", err)
+		mutils.LogApplicationError(mutils.DatabaseError.String(), "Cannot query meal from database", err)
 		return 0, err
 	}
 
 	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot parse meal objects from row returned from the database", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot parse meal objects from row returned from the database", err)
 		return 0, err
 	}
 
@@ -462,14 +462,14 @@ func GetMealEntries(meal models.Meal) ([]models.Entry, error) {
 	rows, err := db.Query(context.Background(), "Select * from entry where MEAL_ID = $1", strconv.FormatInt(meal.ID, 10))
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot find entries for provided meal ID", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot find entries for provided meal ID", err)
 		return nil, err
 	}
 
 	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
 
 	if err != nil {
-		mutils.LogApplicationError("Application Error", "Cannot populate list of entries from rows returned", err)
+		mutils.LogApplicationError(mutils.ApplicationError.String(), "Cannot populate list of entries from rows returned", err)
 		return nil, err
 	}
 
@@ -484,13 +484,13 @@ func GetDieterMeals(dieter models.Dieter) ([]models.Meal, error) {
 	}
 
 	rows, err := db.Query(context.Background(), "Select * from meal where dieter = $1", dieter.Name)
-	err = mutils.WrapError(err, "error 101: Cannot find meals for dieter", "query")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot find meals for dieter", "query")
 	if err != nil {
 		return nil, err
 	}
 
 	meals, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Meal])
-	return meals, mutils.WrapError(err, mutils.ApplicationError.String() + " Cannot parse meals from rows", "parse")
+	return meals, mutils.WrapError(err, mutils.ApplicationError.String()+" Cannot parse meals from rows", "parse")
 }
 
 // AddMeal uses a meal object to add a meal to the database
@@ -500,7 +500,7 @@ func AddMeal(meal models.Meal) error {
 
 	dieter.Name = meal.Dieter
 	dieter, err := GetSingleDieter(dieter)
-	err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot find dieter in database", "query")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot find dieter in database", "query")
 	if err != nil {
 		return err
 	}
@@ -515,7 +515,7 @@ func AddMeal(meal models.Meal) error {
 
 		// Get the meal count to ensure the next ID is unique
 		err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from meal").Scan(&newID)
-		err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot get meal count", "query")
+		err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot get meal count", "query")
 		if err != nil {
 			return err
 		}
@@ -523,16 +523,16 @@ func AddMeal(meal models.Meal) error {
 		// Add the meal to the database, add 1 to the last ID created
 		_, err = db.Exec(context.Background(), "INSERT INTO meal (calories, day, dieter, dieterid, name) values ($1, $2, $3, $4, $5)",
 			meal.Calories, meal.Day, meal.Dieter, meal.Dieterid, meal.Name)
-		err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot store new meal", "insert")
+		err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot store new meal", "insert")
 		if err != nil {
 			return err
 		}
 
-		mutils.LogMessage("Request", "Meal added")
+		mutils.LogMessage(mutils.Request.String(), "Meal added")
 		return nil
 	}
 
-	return mutils.WrapError(nil, mutils.ApplicationError.String() + " Cannot find dieter id", "notfound")
+	return mutils.WrapError(nil, mutils.ApplicationError.String()+" Cannot find dieter id", "notfound")
 }
 
 func UpdateMealCalories(meal models.Meal) error {
@@ -542,7 +542,7 @@ func UpdateMealCalories(meal models.Meal) error {
 	}
 
 	_, err = db.Query(context.Background(), "UPDATE meal SET calories = $1 WHERE ID = $2", meal.Calories, meal.ID)
-	return mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot update meal calories", "update")
+	return mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot update meal calories", "update")
 }
 
 // GetAllFood retrieves all food items from the database and returns them as a list of food objects
@@ -553,13 +553,13 @@ func GetAllFood() ([]models.Food, error) {
 	}
 
 	rows, err := db.Query(context.Background(), "SELECT * FROM food")
-	err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot query food items", "query")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot query food items", "query")
 	if err != nil {
 		return nil, err
 	}
 
 	food, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Food])
-	return food, mutils.WrapError(err, mutils.ApplicationError.String() + " Cannot parse food items", "parse")
+	return food, mutils.WrapError(err, mutils.ApplicationError.String()+" Cannot parse food items", "parse")
 }
 
 // AddFoodRow uses a food object to add a food item to the database
@@ -571,14 +571,14 @@ func AddFoodRow(food models.Food) error {
 
 	var count int64
 	err = db.QueryRow(context.Background(), "SELECT count(*) AS exact_count from food").Scan(&count)
-	err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot query food count", "query")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot query food count", "query")
 	if err != nil {
 		return err
 	}
 
 	_, err = db.Query(context.Background(), "INSERT INTO food (id, calories, units, name) values ($1, $2, $3, $4)",
 		count+1, food.Calories, food.Units, food.Name)
-	return mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot insert food", "insert")
+	return mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot insert food", "insert")
 }
 
 // UpdateFood uses a food object to update the calories for a food item in the database
@@ -589,7 +589,7 @@ func UpdateFood(food models.Food) error {
 	}
 
 	_, err = db.Query(context.Background(), "UPDATE food SET Calories = $1 WHERE Name = $2", food.Calories, food.Name)
-	return mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot update food calories", "update")
+	return mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot update food calories", "update")
 }
 
 // DeleteFoodRow uses a food object to find and delete a food item from the database
@@ -600,7 +600,7 @@ func DeleteFoodRow(food models.Food) error {
 	}
 
 	_, err = db.Query(context.Background(), "DELETE FROM food WHERE Name = $1", food.Name)
-	return mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot delete food", "delete")
+	return mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot delete food", "delete")
 }
 
 // AddEntry uses a complete entry object to add an entry to the database
@@ -612,7 +612,7 @@ func AddEntry(entry models.Entry) (models.Entry, error) {
 
 	_, err = db.Query(context.Background(), "INSERT INTO entry (calories, food_id, meal_id) values ($1, $2, $3)",
 		entry.Calories, entry.FoodID, entry.MealID)
-	err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot insert entry", "insert")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot insert entry", "insert")
 	if err != nil {
 		return entry, err
 	}
@@ -629,20 +629,20 @@ func AddEntryToMeal(entry models.Entry) error {
 	}
 
 	meals, err := db.Query(context.Background(), "SELECT * FROM meal WHERE ID = $1", entry.MealID)
-	err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot query meal", "query")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot query meal", "query")
 	if err != nil {
 		return err
 	}
 
 	meal, err = pgx.CollectRows(meals, pgx.RowToStructByName[models.Meal])
-	err = mutils.WrapError(err, mutils.ApplicationError.String() + " Cannot parse meal", "parse")
+	err = mutils.WrapError(err, mutils.ApplicationError.String()+" Cannot parse meal", "parse")
 	if err != nil {
 		return err
 	}
 
 	newCalories := entry.Calories + meal[0].Calories
 	_, err = db.Query(context.Background(), "UPDATE meal SET Calories = $1 WHERE id = $2", newCalories, entry.MealID)
-	return mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot update meal calories", "update")
+	return mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot update meal calories", "update")
 }
 
 // GetEntry uses an entry object to find and return an entry from the database
@@ -653,13 +653,13 @@ func GetEntry(entry models.Entry) (models.Entry, error) {
 	}
 
 	rows, err := db.Query(context.Background(), "Select * FROM entry WHERE ID=$1", entry.ID)
-	err = mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot query entry", "query")
+	err = mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot query entry", "query")
 	if err != nil {
 		return entry, err
 	}
 
 	entries, err := pgx.CollectRows(rows, pgx.RowToStructByName[models.Entry])
-	err = mutils.WrapError(err, mutils.ApplicationError.String() + " Cannot parse entry", "parse")
+	err = mutils.WrapError(err, mutils.ApplicationError.String()+" Cannot parse entry", "parse")
 	if err != nil {
 		return entry, err
 	}
@@ -675,16 +675,16 @@ func DeleteEntry(entry models.Entry) error {
 	}
 
 	_, err = db.Query(context.Background(), "DELETE from ENTRY where ID = $1", entry.ID)
-	return mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot delete entry", "delete")
+	return mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot delete entry", "delete")
 }
 
 // retrieveDieter uses a dieter object to find a dieter in the database
 func retrieveDieter(dieter models.Dieter) (pgx.Rows, error) {
 	db, err := getConnection()
 	if err != nil {
-		return nil, mutils.WrapError(err, "error 001: Cannot connect to database", "connection")
+		return nil, mutils.WrapError(err, mutils.NotConnected.String()+" Cannot connect to database", "connection")
 	}
 
 	rows, err := db.Query(context.Background(), "SELECT * FROM dieter WHERE name = $1", dieter.Name)
-	return rows, mutils.WrapError(err, mutils.DatabaseError.String() + " Cannot query dieter", "query")
+	return rows, mutils.WrapError(err, mutils.DatabaseError.String()+" Cannot query dieter", "query")
 }
