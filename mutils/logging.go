@@ -13,12 +13,14 @@ const (
 	ServerStartup
 )
 
+// Keep Log Prefixes consistent, use this table to populate first portion of log messages using the .String() function
 var logType = map[LogType]string{
 	Request:       "Request:",
 	Debug:         "Debug:",
 	ServerStartup: "Server Startup:",
 }
 
+// Associate LogType enum with the logType map and return value as a string, called in log messages
 func (lt LogType) String() string {
 	return logType[lt]
 }
