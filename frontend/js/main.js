@@ -158,7 +158,7 @@ async function initDashboard() {
     }
 
     // Rest of the initialization code...
-    user.populateUserSelect(userSelect);
+    user.populateUserSelect(allUsers, userSelect);
 
     userSelect.addEventListener('change', async () => {
       const selectedUserId = userSelect.value;
@@ -243,7 +243,7 @@ function initMeals() {
   const mealHistoryList = document.getElementById('meal-history-list');
 
   // Populate user select
-  user.populateUserSelect(userSelect);
+  user.populateUserSelect(allUsers, userSelect);
 
   // Populate foods select
   allFoods.forEach(food => {
