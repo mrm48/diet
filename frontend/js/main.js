@@ -278,7 +278,7 @@ function initMeals() {
       const mealsData = await mealsResponse.json();
 
       // Render meal history
-      renderMealHistory(mealsData, mealHistoryList);
+      meal.renderMealHistory(mealsData, mealHistoryList);
 
       // Show meal management
       mealManagement.style.display = 'block';
@@ -367,7 +367,7 @@ function initEntries() {
   const entryHistoryList = document.getElementById('entry-history-list');
   const entryMealSelect = document.getElementById('entry-meal-select');
 
-  const populateResponse = meal.populateMealSelect(entryMealSelect);
+  const populateResponse = meal.populateMealSelect(allMeals, entryMealSelect);
   if (!populateResponse) {
     mealManagement.style.display = 'none';
     return;
