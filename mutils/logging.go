@@ -28,7 +28,7 @@ var callDepthLogged int = 2
 // LogConnectionError to the app log when a connection cannot be established with the database
 func LogConnectionError(err error) {
 
-	slog := fmt.Sprintf("Database Connection Error: Could not connect to the database: %v", err)
+	slog := fmt.Sprintf(NotConnected.String()+" Could not connect to the database: %v", err)
 	logerr := log.Output(callDepthLogged, slog)
 
 	LogError(logerr)
