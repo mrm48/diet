@@ -1,10 +1,10 @@
+import * as user from './userFunctions.js'
+import * as meal from './mealFunctions.js'
+import * as food from './foodFunctions.js'
+import * as entry from './entryFunctions.js'
 // API Base URL
 const API_BASE_URL = 'http://localhost:9090';
 
-import "./userFunctions.js"
-import "./mealFunctions.js"
-import "./foodFunctions.js"
-import "./entryFunctions.js"
 
 
 // Current state
@@ -158,7 +158,7 @@ async function initDashboard() {
     }
 
     // Rest of the initialization code...
-    populateUserSelect(userSelect);
+    user.populateUserSelect(userSelect);
 
     userSelect.addEventListener('change', async () => {
       const selectedUserId = userSelect.value;
