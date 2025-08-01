@@ -186,7 +186,7 @@ async function initDashboard() {
         if (!mealsResponse.ok) throw new Error('Failed to load meals');
         const mealsData = await mealsResponse.json();
 
-        renderMealHistory(mealsData, mealsListContainer)
+        meal.renderMealHistory(mealsData, mealsListContainer)
         todayMeals.style.display = 'block';
 
         const caloriesRemaining = await fetch(`${API_BASE_URL}/dieter/remaining`, {
@@ -243,7 +243,7 @@ function initMeals() {
   const mealHistoryList = document.getElementById('meal-history-list');
 
   // Populate user select
-  populateUserSelect(userSelect);
+  user.populateUserSelect(userSelect);
 
   // Populate foods select
   allFoods.forEach(food => {
@@ -325,7 +325,7 @@ function initMeals() {
       const newMeal = await response.json();
 
       // add entries for each of the foods selected
-      const selectedCalories = setCaloriesSelected(selectedFoods, newMeal);
+      const selectedCalories = meal.setCaloriesSelected(selectedFoods, newMeal);
 
       // Update meal calories
       const mealCaloriesResponse = await fetch(`${API_BASE_URL}/meal/calories`, {
@@ -367,7 +367,7 @@ function initEntries() {
   const entryHistoryList = document.getElementById('entry-history-list');
   const entryMealSelect = document.getElementById('entry-meal-select');
 
-  const populateResponse = populateMealSelect(entryMealSelect);
+  const populateResponse = meal.populateMealSelect(entryMealSelect);
   if (!populateResponse) {
     mealManagement.style.display = 'none';
     return;
@@ -387,7 +387,7 @@ function initEntries() {
     if (!response.ok) throw new Error('Failed to load entries');
     listEntries = await response.json();
 
-    renderEntryHistory(entryHistoryList, listEntries);
+    entry.renderEntryHistory(entryHistoryList, listEntries);
     entryHistoryList.style.display = 'block';
   });
 
@@ -415,7 +415,7 @@ function initEntries() {
         return allFoods.find(f => f.id.toString() === foodId);
       });
 
-      let selectedCalories = setCaloriesSelected(selectedFoods, selectedMeal);
+      let selectedCalories = meal.setCaloriesSelected(selectedFoods, selectedMeal);
       selectedMeal.calories = selectedMeal.calories + selectedCalories;
 
       const response = await fetch(`${API_BASE_URL}/meal/calories`, {
@@ -488,7 +488,7 @@ function initFoods() {
       addFoodForm.reset();
 
       // Refresh food list
-      renderFoodList(allFoods, foodListContainer);
+      food.renderFoodList(allFoods, foodListContainer);
 
       showSuccess('Food added successfully!');
     } catch (error) {
@@ -511,7 +511,7 @@ async function initUsers() {
   }
 
   // Render user list without showing loading
-  renderUserList(allUsers, userListContainer);
+  user.renderUserList(allUsers, userListContainer);
 
   // Handle add user form submission
   addUserForm.addEventListener('submit', async (e) => {
