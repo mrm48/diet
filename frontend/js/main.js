@@ -511,14 +511,14 @@ async function initUsers() {
   }
 
   // Render user list without showing loading
-  user.renderUserList(allUsers, userListContainer);
+  user.renderUserList(app, API_BASE_URL, allUsers, userListContainer);
 
   // Handle add user form submission
   addUserForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     showLoading();
     try {
-      await addDieter(addUserFormName.value, parseInt(addUserFormCalories.value));
+      await user.addDieter(app, API_BASE_URL, allUsers, addUserFormName.value, parseInt(addUserFormCalories.value));
     } finally {
       hideLoading();
     }
