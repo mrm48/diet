@@ -375,7 +375,7 @@ function initEntries() {
 
   entryMealSelect.addEventListener('change', async () => {
     let selectedMeal = allMeals.find(meal => meal.id.toString() === entryMealSelect.value);
-    populateMealEntries(selectedMeal);
+    entry.populateMealEntries(selectedMeal);
     const response = await fetch(`${API_BASE_URL}/meal/entries`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -455,7 +455,7 @@ function initFoods() {
   const foodListContainer = document.getElementById('food-list-container');
 
   // Render food list
-  renderFoodList(allFoods, foodListContainer);
+  food.renderFoodList(allFoods, foodListContainer);
 
   // Handle add food form submission
   addFoodForm.addEventListener('submit', async (e) => {
